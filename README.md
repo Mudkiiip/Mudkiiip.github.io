@@ -26,10 +26,16 @@ body{overflow:hidden;background:#000;font-family:'Rajdhani',sans-serif;user-sele
 .setting-slider{flex:1;-webkit-appearance:none;height:4px;background:rgba(255,255,255,.1);border-radius:2px;outline:none;}
 .setting-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,#ff8800,#ff4400);cursor:pointer;}
 /* HUD skin progress */
-.hud-skin-prog{position:absolute;bottom:62px;left:24px;display:flex;align-items:center;gap:7px;}
+.hud-skin-prog{position:absolute;bottom:137px;left:24px;display:flex;align-items:center;gap:7px;}
 .hud-spbar-bg{width:120px;height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;}
 .hud-spbar-fill{height:100%;background:linear-gradient(90deg,#ff8800,#ffd700);border-radius:2px;transition:width .4s;}
 .hud-sp-label{font-size:9px;color:#555;font-family:'Space Mono',monospace;}
+.hud-util-row{display:flex;align-items:center;gap:5px;opacity:0.85;}
+.hud-util-row.util-not-owned{opacity:0.2;}
+.hud-util-icon{font-size:13px;line-height:1;width:16px;text-align:center;}
+.hud-util-bar-bg{width:72px;height:4px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden;}
+.hud-util-bar-fill{height:100%;border-radius:2px;transition:width .15s,background .3s;}
+.hud-util-label{font-size:9px;font-family:'Space Mono',monospace;color:#666;min-width:28px;text-align:right;}
 .cred-disp{display:inline-flex;align-items:center;gap:7px;background:rgba(255,200,0,.07);border:1px solid rgba(255,200,0,.22);border-radius:4px;padding:4px 14px;font-size:14px;color:#ffd700;font-weight:700;margin-top:8px;}
 .nav-tabs{display:flex;justify-content:center;gap:2px;padding:18px 40px 0;position:relative;z-index:2;}
 .nav-tab{padding:11px 32px;background:transparent;border:none;border-bottom:3px solid transparent;color:#444;font-size:13px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:'Rajdhani',sans-serif;transition:all .2s;text-transform:uppercase;}
@@ -56,6 +62,8 @@ body{overflow:hidden;background:#000;font-family:'Rajdhani',sans-serif;user-sele
 .btn-buy{padding:6px 16px;background:linear-gradient(90deg,#ffd700,#ff8800);border:none;border-radius:3px;color:#000;font-weight:700;font-size:11px;letter-spacing:1px;cursor:pointer;transition:all .2s;font-family:'Rajdhani',sans-serif;}
 .btn-buy:hover:not(:disabled){transform:scale(1.05);}
 .btn-buy:disabled{background:#2a2a2a;color:#555;cursor:not-allowed;}
+.btn-save{padding:7px 18px;background:rgba(255,180,0,0.1);border:1px solid rgba(255,180,0,0.3);border-radius:4px;color:#ffcc44;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;cursor:pointer;transition:all .2s;}
+.btn-save:hover{background:rgba(255,180,0,0.2);border-color:rgba(255,180,0,0.6);}
 .codes-wrap{max-width:420px;margin:20px auto 0;}
 .codes-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:4px;color:#eee;margin-bottom:4px;}
 .codes-sub{font-size:11px;color:#444;font-family:'Space Mono',monospace;margin-bottom:20px;}
@@ -70,6 +78,16 @@ body{overflow:hidden;background:#000;font-family:'Rajdhani',sans-serif;user-sele
 .inv-subtab{padding:7px 20px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:4px;color:#444;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:'Rajdhani',sans-serif;text-transform:uppercase;transition:all .2s;}
 .inv-subtab:hover{color:#aaa;}
 .inv-subtab.active{background:rgba(255,100,0,.12);border-color:rgba(255,100,0,.4);color:#ff8040;}
+.util-card{display:flex;align-items:center;gap:16px;padding:16px 18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;margin-bottom:12px;}
+.util-icon{font-size:36px;flex-shrink:0;width:50px;text-align:center;}
+.util-info{flex:1;}
+.util-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#eee;margin-bottom:2px;}
+.util-desc{font-size:11px;color:#555;font-family:'Space Mono',monospace;line-height:1.6;margin-bottom:6px;}
+.util-cd-row{display:flex;align-items:center;gap:8px;margin-top:4px;}
+.util-cd-bar-bg{flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;}
+.util-cd-bar-fill{height:100%;background:linear-gradient(90deg,#ff8800,#ffdd00);border-radius:2px;transition:width .2s;}
+.util-cd-label{font-size:10px;color:#ff8040;font-family:'Space Mono',monospace;white-space:nowrap;min-width:50px;}
+.util-keybind{font-size:10px;color:#444;font-family:'Space Mono',monospace;margin-top:3px;}
 .weapon-list-panel{width:150px;flex-shrink:0;}
 .weapon-list-panel h4{font-size:10px;letter-spacing:3px;color:#444;text-transform:uppercase;margin-bottom:8px;font-family:'Space Mono',monospace;}
 .wpick-btn{display:block;width:100%;padding:9px 12px;background:transparent;border:1px solid rgba(255,255,255,.06);border-radius:4px;color:#555;font-size:12px;font-weight:700;letter-spacing:1px;text-align:left;cursor:pointer;margin-bottom:5px;transition:all .2s;font-family:'Rajdhani',sans-serif;text-transform:uppercase;}
@@ -184,6 +202,12 @@ body{overflow:hidden;background:#000;font-family:'Rajdhani',sans-serif;user-sele
     <div class="tab-content active" id="tabMain">
       <div class="main-play-area">
         <button class="btn-play" id="btnPlay">PLAY</button>
+        <div style="display:flex;gap:10px;margin-top:14px;justify-content:center;">
+          <button class="btn-save" id="btnSave" onclick="saveGame()">💾 SAVE</button>
+          <button class="btn-save" id="btnLoad" onclick="loadGame()" style="background:rgba(80,180,255,0.12);border-color:rgba(80,180,255,0.35);color:#88ccff;">📂 LOAD</button>
+          <button class="btn-save" id="btnClearSave" onclick="clearSave()" style="background:rgba(200,40,40,0.1);border-color:rgba(200,40,40,0.3);color:#ff6666;">🗑 RESET</button>
+        </div>
+        <div id="saveStatus" style="font-family:'Space Mono',monospace;font-size:10px;color:#555;margin-top:8px;text-align:center;min-height:14px;"></div>
         <div class="controls-hint">
           <b>WASD</b> move &nbsp;·&nbsp; <b>MOUSE</b> look &nbsp;·&nbsp; <b>LMB</b> shoot<br>
           <b>1</b> primary &nbsp;·&nbsp; <b>2</b> secondary &nbsp;·&nbsp; <b>3 / Q</b> knife &nbsp;·&nbsp; <b>R</b> reload<br>
@@ -196,6 +220,8 @@ body{overflow:hidden;background:#000;font-family:'Rajdhani',sans-serif;user-sele
       <div class="shop-grid" id="shopWeapons"></div>
       <div class="sec-title">AMMO and SUPPLIES</div>
       <div class="shop-grid" id="shopSupplies"></div>
+      <div class="sec-title">UTILITIES</div>
+      <div class="shop-grid" id="shopUtils"></div>
     </div>
     <div class="tab-content" id="tabCodes">
       <div class="codes-wrap">
@@ -213,8 +239,10 @@ body{overflow:hidden;background:#000;font-family:'Rajdhani',sans-serif;user-sele
         <button class="inv-subtab active" data-islot="primary">PRIMARY</button>
         <button class="inv-subtab" data-islot="secondary">SECONDARY</button>
         <button class="inv-subtab" data-islot="knife">KNIFE</button>
+        <button class="inv-subtab" data-islot="utility">UTILITY</button>
       </div>
       <div id="invWeaponList"></div>
+      <div id="utilityPanel" style="display:none"></div>
     </div>
     <div class="tab-content" id="tabSettings">
       <div class="settings-wrap">
@@ -302,10 +330,29 @@ body{overflow:hidden;background:#000;font-family:'Rajdhani',sans-serif;user-sele
     <div class="hud-wep-name" id="hudWepName">PISTOL</div>
     <div class="hud-skin-name" id="hudSkinName">Default</div>
   </div>
+  <!-- Skin progress bar -->
   <div class="hud-skin-prog" id="hudSkinProg">
     <span class="hud-sp-label" id="hudSpLabel">NEXT SKIN</span>
     <div class="hud-spbar-bg"><div class="hud-spbar-fill" id="hudSpFill" style="width:0%"></div></div>
     <span class="hud-sp-label" id="hudSpPct">0%</span>
+  </div>
+  <!-- Utility cooldown bars -->
+  <div id="hudUtils" style="position:absolute;bottom:130px;right:24px;display:flex;flex-direction:column;gap:5px;align-items:flex-end;pointer-events:none;">
+    <div class="hud-util-row" id="hudUtilGrenade">
+      <span class="hud-util-icon">💣</span>
+      <div class="hud-util-bar-bg"><div class="hud-util-bar-fill" id="hudUtilGrenFill"></div></div>
+      <span class="hud-util-label" id="hudUtilGrenLabel">Z</span>
+    </div>
+    <div class="hud-util-row" id="hudUtilStun">
+      <span class="hud-util-icon">💥</span>
+      <div class="hud-util-bar-bg"><div class="hud-util-bar-fill" id="hudUtilStunFill"></div></div>
+      <span class="hud-util-label" id="hudUtilStunLabel">X</span>
+    </div>
+    <div class="hud-util-row" id="hudUtilDrone">
+      <span class="hud-util-icon">🚁</span>
+      <div class="hud-util-bar-bg"><div class="hud-util-bar-fill" id="hudUtilDroneFill"></div></div>
+      <span class="hud-util-label" id="hudUtilDroneLabel">C</span>
+    </div>
   </div>
   <div class="hud-ammo" id="hudAmmoBlock">
     <div class="hud-ammo-cur" id="ammoCur">30</div>
@@ -368,7 +415,7 @@ body{overflow:hidden;background:#000;font-family:'Rajdhani',sans-serif;user-sele
 'use strict';
 
 // ══ DATA ══
-const RC={common:'#aaaaaa',rare:'#5588ff',epic:'#cc44ff',legendary:'#ff8800'};
+const RC={common:'#aaaaaa',rare:'#5588ff',epic:'#cc44ff',legendary:'#ff8800',secret:'#ffd700'};
 const WDEFS={
   // ── PRIMARIES (slot 1) ──
   smg:{name:'MP5',slot:'primary',type:'gun',price:3000,hitsToKill:10,fireMs:110,startAmmo:50,resAmmo:150,boxCost:60,boxAmt:50,skins:[
@@ -388,30 +435,39 @@ const WDEFS={
     {id:'ghillie', name:'Ghillie Strike',   kills:20, colors:[0x3a5a1a,0x1a3008],rarity:'epic',     emoji:'G'},
     {id:'crimson', name:'Crimson Reaper',   kills:35, colors:[0xaa1111,0x330000],rarity:'epic',     emoji:'C'},
     {id:'phantom', name:'Phantom Protocol', kills:50, colors:[0x0a0a1a,0x4400aa],rarity:'legendary',emoji:'P'},
+    {id:'early',   name:'Early Access',     kills:0,  colors:[0xffd700,0xff4400],rarity:'secret',  emoji:'★', secret:true},
   ]},
   // ── SECONDARIES (slot 2) ──
-  pistol:{name:'Pistol',slot:'secondary',type:'gun',hitsToKill:3,fireMs:480,startAmmo:30,resAmmo:90,boxCost:50,boxAmt:30,skins:[
+  pistol:{name:'Pistol',slot:'secondary',type:'gun',hitsToKill:8,fireMs:480,startAmmo:30,resAmmo:90,boxCost:50,boxAmt:30,skins:[
     {id:'default',name:'Default',       kills:0,  colors:[0x888888,0x333333],rarity:'common',   emoji:'?'},
     {id:'golden', name:'Golden Eagle',  kills:7,  colors:[0xFFD700,0xAA7700],rarity:'rare',     emoji:'G'},
     {id:'crimson',name:'Crimson Web',  kills:14, colors:[0xCC2222,0x660000],rarity:'epic',     emoji:'C'},
     {id:'fade',   name:'Aurora Blight',kills:21, colors:[0x00FF88,0x9400D3],rarity:'legendary',emoji:'A'},
     {id:'neon',   name:'Neon Rider',   kills:28, colors:[0x00FFCC,0xFF00AA],rarity:'legendary',emoji:'N'},
   ]},
-  revolver:{name:'Revolver',slot:'secondary',type:'gun',price:800,hitsToKill:2,fireMs:650,startAmmo:6,resAmmo:32,boxCost:55,boxAmt:12,skins:[
+  revolver:{name:'Revolver',slot:'secondary',type:'gun',price:800,hitsToKill:5,fireMs:650,startAmmo:6,resAmmo:32,boxCost:55,boxAmt:12,skins:[
     {id:'default', name:'Default',       kills:0,  colors:[0x666666,0x444444],rarity:'common',   emoji:'?'},
     {id:'nickel',  name:'Nickel Plated', kills:7,  colors:[0xCCCCCC,0x888888],rarity:'rare',     emoji:'N'},
     {id:'serpent', name:'Serpent Scale', kills:14, colors:[0x2d6e2d,0x0a2a0a],rarity:'epic',     emoji:'S'},
     {id:'wildwest',name:'Wild West',     kills:21, colors:[0xC8860A,0x7a4400],rarity:'legendary',emoji:'W'},
   ]},
-  deagle:{name:'Desert Eagle',slot:'secondary',type:'gun',price:1500,hitsToKill:2,fireMs:380,startAmmo:8,resAmmo:32,boxCost:65,boxAmt:16,skins:[
+  deagle:{name:'Desert Eagle',slot:'secondary',type:'gun',price:1500,hitsToKill:4,fireMs:380,startAmmo:8,resAmmo:32,boxCost:65,boxAmt:16,skins:[
     {id:'default',name:'Default',         kills:0,  colors:[0x555555,0x222222],rarity:'common',   emoji:'?'},
     {id:'golden', name:'Blaze',           kills:7,  colors:[0xFF6600,0xCC3300],rarity:'rare',     emoji:'B'},
     {id:'oxide',  name:'Prismatic Storm', kills:14, colors:[0x00AAFF,0xFF00AA],rarity:'legendary',emoji:'P'},
   ]},
-  compact:{name:'MAC-10',slot:'secondary',type:'gun',price:600,hitsToKill:6,fireMs:80,startAmmo:30,resAmmo:90,boxCost:45,boxAmt:30,skins:[
+  compact:{name:'MAC-10',slot:'secondary',type:'gun',price:600,hitsToKill:14,fireMs:80,startAmmo:30,resAmmo:90,boxCost:45,boxAmt:30,skins:[
     {id:'default',name:'Default',       kills:0,  colors:[0x444444,0x222222],rarity:'common',emoji:'?'},
     {id:'rust',   name:'Rust Coat',     kills:7,  colors:[0x8B3A0F,0x5a1a00],rarity:'rare',  emoji:'R'},
     {id:'hotrod', name:'Dark Vortex',   kills:14, colors:[0x110022,0x8800FF],rarity:'legendary',emoji:'D'},
+  ]},
+  boomerang:{name:'Boomerang',slot:'secondary',type:'thrown',price:900,hitsToKill:4,flightMs:2400,skins:[
+    {id:'default',  name:'Timber',          kills:0,  colors:[0x8B5A2B,0xA0522D], rarity:'common',   emoji:'B'},
+    {id:'aboriginal',name:'Dreamtime',      kills:7,  colors:[0xCC4400,0xFFCC00], rarity:'rare',     emoji:'D'},
+    {id:'neon',     name:'Neon Disc',        kills:14, colors:[0x00FFFF,0xFF00AA], rarity:'epic',     emoji:'N'},
+    {id:'steel',    name:'Steel Cutter',     kills:22, colors:[0xCCCCCC,0x556677], rarity:'epic',     emoji:'S'},
+    {id:'dragon',   name:'Dragon Scale',     kills:30, colors:[0x228B22,0xCC2200], rarity:'legendary',emoji:'G'},
+    {id:'spike',    name:'Spike Lord',       kills:40, colors:[0x111111,0xFF6600], rarity:'legendary',emoji:'X', hasSpikes:true},
   ]},
   // ── KNIVES (slot 3) ──
   knife:{name:'Knife',slot:'knife',type:'melee',hitsToKill:2,cooldown:1500,skins:[
@@ -429,7 +485,7 @@ const WDEFS={
 };
 const WAVES=[5,10,22,45,90];
 const HEAL_COST=75,HEAL_AMT=50,SKIN_BONUS=50;
-const CODES={'free1000':{type:'credits',amount:1000,msg:'+1000 CREDITS!'},'Dev':{type:'devmode',msg:'ALL UNLOCKED!'}};
+const CODES={'free1000':{type:'credits',amount:1000,msg:'+1000 CREDITS!'},'Dev':{type:'devmode',msg:'ALL UNLOCKED!'},'Early!':{type:'secretskin',wid:'sniper',skinId:'early',msg:'★ SECRET SKIN UNLOCKED: Early Access Sniper!'}};
 
 // ══ STATE ══
 const S={
@@ -442,18 +498,24 @@ const S={
     revolver:{owned:false,ammo:0, res:0,   kills:0,skin:'default',lastFire:0},
     deagle: {owned:false,ammo:0,  res:0,   kills:0,skin:'default',lastFire:0},
     compact:{owned:false,ammo:0,  res:0,   kills:0,skin:'default',lastFire:0},
+    boomerang:{owned:false,       kills:0, skin:'default',lastFire:0,cd:0},
     knife:  {owned:true,          kills:0, skin:'default',lastFire:0,cd:0},
     sledge: {owned:false,         kills:0, skin:'default',lastFire:0,cd:0},
   },
   held:'pistol',
   heldPrimary:'smg', heldSecondary:'pistol', heldKnife:'knife',
   usedCodes:[],
-  unlocked:{smg:['default'],shotgun:['default'],sniper:['default'],pistol:['default'],revolver:['default'],deagle:['default'],compact:['default'],knife:['default'],sledge:['default']},
+  unlocked:{smg:['default'],shotgun:['default'],sniper:['default'],pistol:['default'],revolver:['default'],deagle:['default'],compact:['default'],boomerang:['default'],knife:['default'],sledge:['default']},
   zombies:[],totalKills:0,
   wave:0,waveActive:false,waveKilled:0,waveSize:0,spawnQueue:0,spawnTimer:0,
   invSlot:'primary',
   unlockQueue:[],showingUnlock:false,
   autoFire:null,
+  utils:{
+    grenade:  {cd:0, maxCd:30000, active:false, owned:false, price:500},
+    stun:     {cd:0, maxCd:45000, active:false, owned:false, price:750},
+    drone:    {cd:0, maxCd:90000, active:false, owned:false, price:10000, mesh:null},
+  },
 };
 
 // ══ THREE SETUP ══
@@ -1847,6 +1909,238 @@ function mkSniper(c1,c2){
   return g;
 }
 
+function mkBoomerang(c1,c2,spikes){
+  const g=new THREE.Group();
+  const wingM=mWood(c1), edgeM=mMetal(c2), darkM=mph(0x0a0a0a,20);
+  const spikeM=mMetal(0xdddddd);
+
+  // Helper: build one boomerang wing as a tapered flat arm
+  function mkWing(ang){
+    const wg=new THREE.Group();
+    // Main body (thick at root, tapers to tip)
+    const body=new THREE.Mesh(new THREE.BoxGeometry(0.045,0.012,0.22),wingM);
+    body.position.set(0,0,-0.09); wg.add(body);
+    // Taper section
+    const mid=new THREE.Mesh(new THREE.BoxGeometry(0.034,0.010,0.08),wingM);
+    mid.position.set(0,0,-0.24); wg.add(mid);
+    // Tip
+    const tip=new THREE.Mesh(new THREE.ConeGeometry(0.014,0.045,5),wingM);
+    tip.rotation.x=Math.PI/2; tip.position.set(0,0,-0.3); wg.add(tip);
+    // Top edge bevel (aerodynamic lift edge)
+    const bev=new THREE.Mesh(new THREE.BoxGeometry(0.047,0.005,0.28),edgeM);
+    bev.position.set(0,0.009,-0.1); wg.add(bev);
+    // Leading edge highlight
+    const le=new THREE.Mesh(new THREE.BoxGeometry(0.004,0.014,0.28),mBrt(0xdddddd));
+    le.position.set(-0.025,0,-0.1); wg.add(le);
+    // Wood grain lines
+    for(let i=0;i<3;i++){
+      const grain=new THREE.Mesh(new THREE.BoxGeometry(0.002,0.013,0.2),darkM);
+      grain.position.set(-0.01+i*0.01,0,-0.1); wg.add(grain);
+    }
+    if(spikes){
+      // 3 metal spike cones along the top edge
+      [0.0,-0.1,-0.2].forEach(sz=>{
+        const sp=new THREE.Mesh(new THREE.ConeGeometry(0.011,0.055,4),spikeM);
+        sp.position.set(0,0.04,sz); wg.add(sp);
+        // Spike base ring
+        const br=new THREE.Mesh(new THREE.CylinderGeometry(0.013,0.013,0.008,6),edgeM);
+        br.position.set(0,0.015,sz); wg.add(br);
+      });
+    }
+    wg.rotation.y=ang;
+    g.add(wg);
+  }
+
+  // Two wings at ~115 degrees apart
+  mkWing(Math.PI*0.18);   // wing A — forward-left
+  mkWing(-Math.PI*0.82);  // wing B — back-right
+
+  // Centre hub / grip knob where arms meet
+  const hub=new THREE.Mesh(new THREE.CylinderGeometry(0.022,0.022,0.016,8),edgeM);
+  hub.rotation.x=Math.PI/2; g.add(hub);
+  const hubFace=new THREE.Mesh(new THREE.CylinderGeometry(0.016,0.016,0.004,8),mBrt(c2));
+  hubFace.rotation.x=Math.PI/2; hubFace.position.set(0,0,0.01); g.add(hubFace);
+  if(spikes){
+    // Spike on hub top
+    const cs=new THREE.Mesh(new THREE.ConeGeometry(0.016,0.06,5),spikeM);
+    cs.position.y=0.04; g.add(cs);
+  }
+  return g;
+}
+function mkSniper_EarlyAccess(){
+  const g=new THREE.Group();
+  // Material palette
+  const goldM   =new THREE.MeshPhongMaterial({color:0xffd700,shininess:200,specular:new THREE.Color(0xffffff)});
+  const deepGold =new THREE.MeshPhongMaterial({color:0xb8860b,shininess:160,specular:new THREE.Color(0xffd700)});
+  const fireOrange=new THREE.MeshPhongMaterial({color:0xff4400,shininess:80,emissive:new THREE.Color(0xff2200).multiplyScalar(0.3)});
+  const fireYellow=new THREE.MeshPhongMaterial({color:0xffaa00,shininess:80,emissive:new THREE.Color(0xff8800).multiplyScalar(0.25)});
+  const blackM   =new THREE.MeshPhongMaterial({color:0x050505,shininess:220,specular:new THREE.Color(0xffd700)});
+  const rubyM    =new THREE.MeshBasicMaterial({color:0xff0033});
+  const sapphireM=new THREE.MeshBasicMaterial({color:0x0044ff});
+  const emeraldM =new THREE.MeshBasicMaterial({color:0x00dd44});
+  const glowM    =new THREE.MeshBasicMaterial({color:0xffd700});
+  const ivoryM   =new THREE.MeshPhongMaterial({color:0xf5f0dc,shininess:60});
+  const chromM   =new THREE.MeshPhongMaterial({color:0xeeeeff,shininess:250,specular:new THREE.Color(0xffffff)});
+
+  // ── BARREL — polished black with gold fluting rings ──
+  const brlPts=[[0,0],[0.023,0],[0.023,0.01],[0.019,0.03],[0.019,0.52],[0.021,0.54],[0.021,0.56]];
+  const brl=mkBarrel(brlPts,14,blackM,0,0.016,-0.62); g.add(brl);
+  // Gold crown muzzle brake with 3 jewels
+  const mb=new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.026,0.06,12),goldM);mb.rotation.x=Math.PI/2;mb.position.set(0,0.016,-0.84);g.add(mb);
+  const mbTip=new THREE.Mesh(new THREE.CylinderGeometry(0.038,0.032,0.012,6),goldM);mbTip.rotation.x=Math.PI/2;mbTip.position.set(0,0.016,-0.87);g.add(mbTip);
+  // Crown points on muzzle
+  for(let i=0;i<6;i++){
+    const pt=new THREE.Mesh(new THREE.ConeGeometry(0.006,0.025,4),goldM);
+    pt.position.set(Math.cos(i/6*Math.PI*2)*0.035,0.016+Math.sin(i/6*Math.PI*2)*0.035,-0.875);g.add(pt);
+  }
+  // Gold flute rings on barrel
+  for(let i=0;i<7;i++){
+    const ring=new THREE.Mesh(new THREE.CylinderGeometry(0.022,0.022,0.018,12),i%2===0?goldM:deepGold);
+    ring.rotation.x=Math.PI/2;ring.position.set(0,0.016,-0.12-i*0.1);g.add(ring);
+  }
+  // Fire engraving lines along barrel (orange+gold alternating)
+  for(let i=0;i<5;i++){
+    const fl=new THREE.Mesh(new THREE.BoxGeometry(0.003,0.003,0.48),i%2===0?fireOrange:fireYellow);
+    fl.rotation.x=Math.PI/2;fl.position.set(Math.cos(i/5*Math.PI*2)*0.02,0.016+Math.sin(i/5*Math.PI*2)*0.02,-0.44);g.add(fl);
+  }
+
+  // ── RECEIVER — deep black with ornate gold side panels ──
+  const rcv=new THREE.Mesh(new THREE.BoxGeometry(0.068,0.080,0.34),blackM);g.add(rcv);
+  // Left engraved panel (sunrise pattern)
+  const lp=new THREE.Mesh(new THREE.BoxGeometry(0.004,0.062,0.28),deepGold);lp.position.set(-0.036,0,0);g.add(lp);
+  // Sun rays on side panel
+  for(let i=0;i<7;i++){
+    const ray=new THREE.Mesh(new THREE.BoxGeometry(0.003,0.04,0.004),goldM);
+    ray.position.set(-0.04,0,-0.08+i*0.027);ray.rotation.z=(i-3)*0.18;g.add(ray);
+  }
+  // Right side mirrored
+  const rp=lp.clone();rp.position.x=0.036;g.add(rp);
+  // Gold chamfer edges
+  [[0.036,0.044,0.34],[0.036,-0.044,0.34],[-0.036,0.044,0.34],[-0.036,-0.044,0.34]].forEach(([x,y,z])=>{
+    const ed=new THREE.Mesh(new THREE.BoxGeometry(0.004,0.004,z),goldM);ed.position.set(x,y,0);g.add(ed);
+  });
+  // Jewel row along top of receiver (ruby, emerald, sapphire, ruby, emerald)
+  [[0,-0.12],[0,-0.04],[0,0.04],[0,0.12],[0,0.20]].forEach(([_,jz],ji)=>{
+    const gem=new THREE.Mesh(new THREE.OctahedronGeometry?new THREE.SphereGeometry(0.012,6,4):new THREE.CylinderGeometry(0.012,0.012,0.006,6),[rubyM,emeraldM,sapphireM,rubyM,emeraldM][ji]);
+    gem.position.set(0,0.046,jz);g.add(gem);
+    // Gold bezel around gem
+    const bz=new THREE.Mesh(new THREE.CylinderGeometry(0.015,0.015,0.006,8),goldM);bz.position.set(0,0.044,jz);g.add(bz);
+  });
+  // "★ EARLY ACCESS ★" engraving effect (three gold bars to simulate text)
+  [0,-0.018,0.018].forEach(ey=>{
+    const bar=new THREE.Mesh(new THREE.BoxGeometry(0.066,0.003,0.12),deepGold);bar.position.set(0,ey,-0.08);g.add(bar);
+  });
+  // Ejection port with gold trim
+  const ep=new THREE.Mesh(new THREE.BoxGeometry(0.005,0.036,0.09),blackM);ep.position.set(0.036,0.003,-0.018);g.add(ep);
+  const epTrim=new THREE.Mesh(new THREE.BoxGeometry(0.004,0.040,0.094),goldM);epTrim.position.set(0.037,0.003,-0.018);g.add(epTrim);
+
+  // ── BOLT HANDLE — golden knurled ball ──
+  const boltBase=new THREE.Mesh(new THREE.CylinderGeometry(0.016,0.016,0.045,10),goldM);boltBase.rotation.z=Math.PI/2;boltBase.position.set(0.055,0.015,0.04);g.add(boltBase);
+  const boltRod=new THREE.Mesh(new THREE.CylinderGeometry(0.009,0.009,0.06,8),goldM);boltRod.rotation.z=Math.PI/2;boltRod.position.set(0.083,0.015,0.04);g.add(boltRod);
+  const boltBall=new THREE.Mesh(new THREE.SphereGeometry(0.024,12,10),goldM);boltBall.position.set(0.11,0.015,0.04);g.add(boltBall);
+  // Knurl lines on ball
+  for(let i=0;i<8;i++){
+    const kl=new THREE.Mesh(new THREE.CylinderGeometry(0.001,0.001,0.05,4),blackM);
+    kl.rotation.z=i/8*Math.PI;kl.position.copy(boltBall.position);g.add(kl);
+  }
+  // Ruby on top of bolt ball
+  const boltRuby=new THREE.Mesh(new THREE.SphereGeometry(0.009,6,4),rubyM);boltRuby.position.set(0.11,0.04,0.04);g.add(boltRuby);
+  boltBase.userData.boltHandle=true; boltRod.userData.boltHandle=true; boltBall.userData.boltHandle=true;
+
+  // ── SCOPE RAIL — gold with sunrise engravings ──
+  const rail=new THREE.Mesh(new THREE.BoxGeometry(0.018,0.009,0.30),deepGold);rail.position.set(0,0.044,0.01);g.add(rail);
+  for(let i=0;i<7;i++){const t=new THREE.Mesh(new THREE.BoxGeometry(0.020,0.004,0.005),goldM);t.position.set(0,0.047,-0.1+i*0.042);g.add(t);}
+  // Scope rings — wide ornate gold rings
+  [-0.08,0.11].forEach(rz=>{
+    const ring=new THREE.Mesh(new THREE.BoxGeometry(0.034,0.038,0.028),deepGold);ring.position.set(0,0.062,rz);g.add(ring);
+    const ringTrim=new THREE.Mesh(new THREE.BoxGeometry(0.038,0.004,0.030),goldM);ringTrim.position.set(0,0.083,rz);g.add(ringTrim);
+    // Clamp bolts (gold hex-heads)
+    [0.016,-0.016].forEach(bx=>{
+      const bolt=new THREE.Mesh(new THREE.CylinderGeometry(0.006,0.006,0.016,6),goldM);bolt.position.set(bx,0.077,rz);g.add(bolt);
+    });
+  });
+
+  // ── SCOPE BODY — black tube with gold sunrise band ──
+  const scopeBody=new THREE.Mesh(new THREE.CylinderGeometry(0.024,0.024,0.34,14),blackM);scopeBody.rotation.x=Math.PI/2;scopeBody.position.set(0,0.084,0.01);g.add(scopeBody);
+  // Gold sunrise band at mid-scope
+  const sunBand=new THREE.Mesh(new THREE.CylinderGeometry(0.026,0.026,0.025,14),goldM);sunBand.rotation.x=Math.PI/2;sunBand.position.set(0,0.084,0.02);g.add(sunBand);
+  // Fire pattern on scope body
+  for(let i=0;i<6;i++){
+    const flame=new THREE.Mesh(new THREE.BoxGeometry(0.003,0.008+Math.sin(i)*0.004,0.04),i%2===0?fireOrange:fireYellow);
+    flame.rotation.x=Math.PI/2;flame.position.set(Math.cos(i/6*Math.PI*2)*0.025,0.084+Math.sin(i/6*Math.PI*2)*0.025,-0.08+i*0.03);g.add(flame);
+  }
+  // Objective bell — gold crowned front
+  const objBell=new THREE.Mesh(new THREE.CylinderGeometry(0.034,0.024,0.065,14),blackM);objBell.rotation.x=Math.PI/2;objBell.position.set(0,0.084,-0.195);g.add(objBell);
+  const objRim=new THREE.Mesh(new THREE.CylinderGeometry(0.038,0.034,0.01,14),goldM);objRim.rotation.x=Math.PI/2;objRim.position.set(0,0.084,-0.23);g.add(objRim);
+  // Ocular bell — gold trim
+  const ocuBell=new THREE.Mesh(new THREE.CylinderGeometry(0.028,0.024,0.048,14),blackM);ocuBell.rotation.x=Math.PI/2;ocuBell.position.set(0,0.084,0.20);g.add(ocuBell);
+  const ocuRim=new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.028,0.012,14),goldM);ocuRim.rotation.x=Math.PI/2;ocuRim.position.set(0,0.084,0.23);g.add(ocuRim);
+  // Turrets — golden jeweled knobs
+  const elevT=new THREE.Mesh(new THREE.CylinderGeometry(0.015,0.015,0.032,10),deepGold);elevT.position.set(0,0.112,0.04);g.add(elevT);
+  const elevCap=new THREE.Mesh(new THREE.SphereGeometry(0.016,8,6),goldM);elevCap.position.set(0,0.131,0.04);g.add(elevCap);
+  const eCrown=new THREE.Mesh(new THREE.SphereGeometry(0.007,6,4),sapphireM);eCrown.position.set(0,0.145,0.04);g.add(eCrown);
+  const windT=new THREE.Mesh(new THREE.CylinderGeometry(0.015,0.015,0.032,10),deepGold);windT.rotation.z=Math.PI/2;windT.position.set(0.052,0.084,0.04);g.add(windT);
+  const windCap=new THREE.Mesh(new THREE.SphereGeometry(0.016,8,6),goldM);windCap.position.set(0.068,0.084,0.04);g.add(windCap);
+  const wCrown=new THREE.Mesh(new THREE.SphereGeometry(0.007,6,4),emeraldM);wCrown.position.set(0.082,0.084,0.04);g.add(wCrown);
+  // Gold lens with fire glow
+  const lens=new THREE.Mesh(new THREE.CylinderGeometry(0.023,0.023,0.008,14),new THREE.MeshBasicMaterial({color:0xff8800,transparent:true,opacity:0.6}));lens.rotation.x=Math.PI/2;lens.position.set(0,0.084,-0.228);g.add(lens);
+  const lensGlow=new THREE.Mesh(new THREE.CylinderGeometry(0.020,0.020,0.004,14),new THREE.MeshBasicMaterial({color:0xffdd00,transparent:true,opacity:0.4}));lensGlow.rotation.x=Math.PI/2;lensGlow.position.set(0,0.084,-0.232);g.add(lensGlow);
+
+  // ── TRIGGER GROUP — gold plated ──
+  const tg=new THREE.Mesh(new THREE.TorusGeometry(0.026,0.007,6,16,Math.PI),goldM);tg.rotation.x=Math.PI/2;tg.position.set(0,-0.044,0.08);g.add(tg);
+  const trig=new THREE.Mesh(new THREE.BoxGeometry(0.008,0.028,0.012),deepGold);trig.position.set(0,-0.031,0.062);trig.rotation.x=0.3;g.add(trig);
+  const tgPlate=new THREE.Mesh(new THREE.BoxGeometry(0.070,0.010,0.15),blackM);tgPlate.position.set(0,-0.048,0.07);g.add(tgPlate);
+  const tgTrim=new THREE.Mesh(new THREE.BoxGeometry(0.072,0.004,0.152),goldM);tgTrim.position.set(0,-0.052,0.07);g.add(tgTrim);
+
+  // ── PISTOL GRIP — ivory with gold fire inlay ──
+  const gr=new THREE.Mesh(new THREE.BoxGeometry(0.052,0.12,0.078),ivoryM);gr.position.set(0,-0.098,0.1);gr.rotation.x=0.15;g.add(gr);
+  // Fire inlay strips on grip
+  for(let i=0;i<4;i++){
+    const fi=new THREE.Mesh(new THREE.BoxGeometry(0.004,0.1,0.005),i%2===0?fireOrange:goldM);fi.position.set(-0.018+i*0.012,-0.095,0.14);fi.rotation.x=0.15;g.add(fi);
+  }
+  // Gold grip cap
+  const gc=new THREE.Mesh(new THREE.BoxGeometry(0.054,0.014,0.082),goldM);gc.position.set(0,-0.157,0.1);gc.rotation.x=0.15;g.add(gc);
+  // Sapphire stud on grip
+  const gstud=new THREE.Mesh(new THREE.SphereGeometry(0.009,6,4),sapphireM);gstud.position.set(0.028,-0.11,0.14);g.add(gstud);
+
+  // ── STOCK — black with gold and fire pattern ──
+  const stk=new THREE.Mesh(new THREE.BoxGeometry(0.054,0.098,0.44),blackM);stk.position.set(0,-0.001,0.33);g.add(stk);
+  // Cheekpiece — ivory inlay
+  const ck=new THREE.Mesh(new THREE.BoxGeometry(0.050,0.04,0.22),ivoryM);ck.position.set(0,0.062,0.30);g.add(ck);
+  // Fire cascade on stock side
+  for(let i=0;i<8;i++){
+    const flame=new THREE.Mesh(new THREE.BoxGeometry(0.004,0.055-i*0.004,0.022),i%3===0?fireOrange:i%3===1?fireYellow:goldM);
+    flame.position.set(0.03,0.015,-0.04+i*0.065);g.add(flame);
+  }
+  // Gold side panel on stock
+  const sidePanel=new THREE.Mesh(new THREE.BoxGeometry(0.003,0.07,0.38),deepGold);sidePanel.position.set(0.03,0.01,0.33);g.add(sidePanel);
+  // Gold plate on opposite side
+  const sidePanelR=sidePanel.clone();sidePanelR.position.x=-0.03;g.add(sidePanelR);
+  // Star inlay on stock
+  const starBase=new THREE.Mesh(new THREE.CylinderGeometry(0.018,0.018,0.003,5),goldM);starBase.position.set(0.032,0.01,0.2);g.add(starBase);
+  const starGem=new THREE.Mesh(new THREE.SphereGeometry(0.01,6,4),rubyM);starGem.position.set(0.032,0.014,0.2);g.add(starGem);
+  // Rubber butt pad with gold edge
+  const butt=new THREE.Mesh(new THREE.BoxGeometry(0.054,0.11,0.02),new THREE.MeshPhongMaterial({color:0x111111,shininess:20}));butt.position.set(0,0,0.545);g.add(butt);
+  const buttEdge=new THREE.Mesh(new THREE.BoxGeometry(0.058,0.114,0.006),goldM);buttEdge.position.set(0,0,0.55);g.add(buttEdge);
+
+  // ── BIPOD — ornate folded, gold-tipped ──
+  [-0.024,0.024].forEach(bx=>{
+    const leg=new THREE.Mesh(new THREE.BoxGeometry(0.011,0.12,0.011),deepGold);leg.position.set(bx,-0.042,-0.3);leg.rotation.x=0.25;g.add(leg);
+    const foot=new THREE.Mesh(new THREE.BoxGeometry(0.011,0.016,0.028),goldM);foot.position.set(bx,-0.099,-0.274);g.add(foot);
+    const tip=new THREE.Mesh(new THREE.SphereGeometry(0.009,6,4),rubyM);tip.position.set(bx,-0.111,-0.272);g.add(tip);
+  });
+  const bipBase=new THREE.Mesh(new THREE.BoxGeometry(0.060,0.014,0.024),deepGold);bipBase.position.set(0,0.018,-0.3);g.add(bipBase);
+
+  // ── MAG — black with gold floor ──
+  const mag=new THREE.Mesh(new THREE.BoxGeometry(0.042,0.068,0.092),blackM);mag.position.set(0,-0.070,-0.038);g.add(mag);
+  const magFloor=new THREE.Mesh(new THREE.BoxGeometry(0.046,0.012,0.096),goldM);magFloor.position.set(0,-0.102,-0.038);g.add(magFloor);
+
+  // ── FRONT SLING SWIVEL — gold ──
+  const sw=new THREE.Mesh(new THREE.TorusGeometry(0.016,0.005,5,12),goldM);sw.rotation.y=Math.PI/2;sw.position.set(0,-0.044,-0.36);g.add(sw);
+
+  return g;
+}
+
 function getMesh(wid,skinId){
   const def=WDEFS[wid],skin=def.skins.find(s=>s.id===skinId)||def.skins[0];
   const [c1,c2]=skin.colors;
@@ -1863,10 +2157,12 @@ function getMesh(wid,skinId){
   if(wid==='knife')   return mkKnife(skin.model||'std',c1,c2);
   if(wid==='smg')     return mkSMG(c1,c2);
   if(wid==='shotgun') return mkShotgun(c1,c2);
+  if(wid==='sniper'&&skinId==='early') return mkSniper_EarlyAccess();
   if(wid==='sniper')  return mkSniper(c1,c2);
   if(wid==='revolver')return mkRevolver(c1,c2);
   if(wid==='deagle')  return mkDeagle(c1,c2);
   if(wid==='compact') return mkCompact(c1,c2);
+  if(wid==='boomerang'){const sk=def.skins.find(s=>s.id===skinId)||def.skins[0];return mkBoomerang(c1,c2,sk.hasSpikes);}
   if(wid==='sledge')  return mkSledge(c1,c2);
 }
 function rebuildWeapon(){
@@ -2214,6 +2510,7 @@ function tickZombies(dt){
     const dist=Math.sqrt(dx*dx+dz*dz);
     z.rotation.y=Math.atan2(dx,dz);
     z.children.forEach(c=>{if(c.userData.bar)c.lookAt(camera.position);});
+    if(z.userData.stunT>0) continue; // stun grenade — frozen
     if(dist>0.9){
       const sp=z.userData.speed*dt*0.001;
       let nx=z.position.x+dx/dist*sp;
@@ -2318,6 +2615,12 @@ function shoot(){
       exitScope();
       setTimeout(()=>{ if(S.held==='sniper'&&S.screen==='game') enterScope(); }, BOLT_DUR+120);
     }
+  } else if(def.type==='thrown'){
+    // Boomerang throw
+    if(boomerangActive){notify('Boomerang still in flight!');return;}
+    if(ws.cd>0) return;
+    ws.lastFire=now;
+    throwBoomerang();
   } else {
     // Melee — use per-weapon cooldown
     const meleeCd=def.cooldown||1500;
@@ -2372,12 +2675,13 @@ function startInspect(){
   const wid=S.held;
 
   // Per-weapon duration
-  if(wid==='smg')     inspectDur=3200; // mag check takes longer
+  if(wid==='smg')         inspectDur=3200;
   else if(wid==='sledge') inspectDur=2800;
-  else if(wid==='shotgun') inspectDur=2600;
-  else if(wid==='sniper')  inspectDur=3000;
-  else if(wid==='knife')   inspectDur=2200;
-  else                     inspectDur=2400;
+  else if(wid==='shotgun')inspectDur=2600;
+  else if(wid==='sniper') inspectDur=3000;
+  else if(wid==='boomerang')inspectDur=2400;
+  else if(wid==='knife')  inspectDur=2200;
+  else                    inspectDur=2400;
 
   // Exit scope when inspecting
   if(scoped) exitScope();
@@ -2786,6 +3090,44 @@ function tickInspect(now){
       weaponGroup.position.y=lerp(-0.24,-0.32,easeOut(p));
     }
 
+  // ─── BOOMERANG ────────────────────────────────────────────────────────────
+  // Spin on finger, toss up, wobble in air, catch
+  } else if(wid==='boomerang'){
+    if(raw<0.22){
+      // Bring out and show face-on — tilt toward camera
+      const p=raw/0.22;
+      weaponGroup.rotation.x=lerp(0,-0.4,easeOut(p));
+      weaponGroup.rotation.z=lerp(0,-0.3,easeOut(p));
+      weaponGroup.position.y=lerp(-0.32,-0.18,easeOut(p));
+    } else if(raw<0.5){
+      // Spin fast on flat axis (spin on Z like a real boomerang demo)
+      const p=(raw-0.22)/0.28;
+      weaponGroup.rotation.z=-0.3+p*Math.PI*4;
+      weaponGroup.rotation.x=-0.4+Math.sin(p*Math.PI)*0.15;
+      weaponGroup.position.y=-0.18+Math.sin(p*Math.PI)*0.04;
+    } else if(raw<0.7){
+      // Toss up – leave hand, arc upward while spinning
+      const p=(raw-0.5)/0.2;
+      weaponGroup.position.y=lerp(-0.18,-0.18+0.22*Math.sin(p*Math.PI),p);
+      weaponGroup.position.z=lerp(-0.48,-0.62,easeOut(p));
+      weaponGroup.rotation.z=-0.3+Math.PI*4+p*Math.PI*3;
+      weaponGroup.rotation.x=lerp(-0.4,0.2,easeOut(p));
+    } else if(raw<0.88){
+      // Fall back, still spinning
+      const p=(raw-0.7)/0.18;
+      weaponGroup.position.y=lerp(-0.04,-0.32,easeIn(p));
+      weaponGroup.position.z=lerp(-0.62,-0.48,easeOut(p));
+      weaponGroup.rotation.z=-0.3+Math.PI*7+p*Math.PI*2;
+      weaponGroup.rotation.x=lerp(0.2,0,easeOut(p));
+    } else {
+      // Catch – settle back
+      const p=(raw-0.88)/0.12;
+      weaponGroup.rotation.z=lerp(weaponGroup.rotation.z,0.1,easeOut(p));
+      weaponGroup.rotation.x=lerp(0,0,p);
+      weaponGroup.position.y=-0.32;
+      weaponGroup.position.z=-0.48;
+    }
+
   // ─── PISTOL / REVOLVER / DEAGLE / COMPACT / DEFAULT ──────────────────────
   // Chamber check: tilt to look at ejection port, rack slide, return
   } else {
@@ -2900,6 +3242,9 @@ document.addEventListener('keydown',e=>{
   if(e.code==='KeyF')startInspect();
   if(e.code==='KeyH')useKit();
   if(e.code==='KeyR')doReload();
+  if(e.code==='KeyZ')useGrenade();
+  if(e.code==='KeyX')useStun();
+  if(e.code==='KeyC')useDrone();
   if(e.code==='Space'&&S.screen==='game'&&onGround){velY=JUMP_VEL;onGround=false;}
 });
 document.addEventListener('keyup',e=>keys[e.code]=false);
@@ -2941,7 +3286,11 @@ document.addEventListener('mousedown',e=>{
   if(e.button===2){ enterScope(); return; }
   if(e.button!==0)return;
   shoot();
-  if(WDEFS[S.held].fireMs<200&&WDEFS[S.held].type==='gun'){clearInterval(S.autoFire);S.autoFire=setInterval(()=>{if(S.screen==='game')shoot();else clearInterval(S.autoFire);},WDEFS[S.held].fireMs);}
+  const def_=WDEFS[S.held];
+  if(def_.type==='gun'&&def_.fireMs<250){
+    clearInterval(S.autoFire);
+    S.autoFire=setInterval(()=>{if(S.screen==='game')shoot();else clearInterval(S.autoFire);},def_.fireMs+5);
+  }
 });
 document.addEventListener('mouseup',e=>{
   if(e.button===0)clearInterval(S.autoFire);
@@ -3042,7 +3391,118 @@ let velY=0, onGround=true;
 let stamina=STAM_MAX, stamDepleted=false;
 let reloading=false, reloadTimer=0, reloadWid='';
 let boltAnimating=false, boltT0=0;
-const BOLT_DUR=900; // ms for bolt cycle animation
+const BOLT_DUR=900;
+
+// ── BOOMERANG FLIGHT SYSTEM ──
+let boomerangActive=false, boomerangT0=0, boomerangDur=1800;
+let boomerangMesh=null;
+let boomerangStartPos=null, boomerangFwd=null, boomerangRgt=null;
+let boomerangHitOut=new Set(), boomerangHitIn=new Set();
+const BOOMERANG_DMG=25;   // 25 dmg × 4 hits = 100hp kill
+
+function throwBoomerang(){
+  if(boomerangActive) return;
+  const ws=S.weapons['boomerang'];
+  if(ws.cd>0) return; // still on cooldown
+
+  // Build a world-space boomerang mesh
+  const skin=WDEFS.boomerang.skins.find(s=>s.id===ws.skin)||WDEFS.boomerang.skins[0];
+  boomerangMesh=mkBoomerang(skin.colors[0],skin.colors[1],skin.hasSpikes);
+  boomerangMesh.scale.setScalar(1.0);
+  scene.add(boomerangMesh);
+
+  // Record throw context
+  boomerangStartPos=new THREE.Vector3().copy(camera.position);
+  boomerangFwd=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));
+  boomerangRgt=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));
+  boomerangActive=true;
+  boomerangT0=performance.now();
+  boomerangHitOut.clear();
+  boomerangHitIn.clear();
+
+  soundBoomerang();
+  // Show throw animation on weapon in hand
+  weaponGroup.visible=false;
+}
+
+function tickBoomerang(now){
+  if(!boomerangActive) return;
+  const raw=Math.min((now-boomerangT0)/boomerangDur,1);
+
+  // Real boomerang path: elongated ellipse in forward/right plane
+  // starts at player, sweeps forward→right→back→left→returns
+  // Parametric ellipse centered 2.5 units ahead:
+  //   fwdOffset = 2.5*(1 - cos(t))  → 0 at t=0, peaks at 5 ahead at t=π, returns to 0
+  //   rgtOffset = 1.5*sin(t)        → curves right on out, left on return
+  const angle=raw*Math.PI*2;
+  const fwdOffset=2.5*(1-Math.cos(angle));
+  const rgtOffset=1.5*Math.sin(angle);
+
+  const bx=boomerangStartPos.x + boomerangFwd.x*fwdOffset + boomerangRgt.x*rgtOffset;
+  const bz=boomerangStartPos.z + boomerangFwd.z*fwdOffset + boomerangRgt.z*rgtOffset;
+  // Height: rises slightly mid-flight then drops back
+  const by=boomerangStartPos.y + Math.sin(raw*Math.PI)*0.8 - 0.1;
+
+  if(boomerangMesh){
+    boomerangMesh.position.set(bx,by,bz);
+    boomerangMesh.rotation.y=raw*Math.PI*14;
+    boomerangMesh.rotation.x=0.3; // tilted forward like real boomerang in flight
+    boomerangMesh.rotation.z=Math.sin(angle)*0.15; // slight wobble
+  }
+
+  // Flat XZ hit detection
+  for(const z of S.zombies){
+    if(z.userData.dead) continue;
+    const dx=bx-z.position.x, dz=bz-z.position.z;
+    if(Math.sqrt(dx*dx+dz*dz)<1.2){
+      const phase=raw<0.5?boomerangHitOut:boomerangHitIn;
+      if(!phase.has(z)){
+        phase.add(z);
+        z.userData.hp-=BOOMERANG_DMG;
+        flashZombie(z);
+        if(z.userData.hp<=0) killZ_boomerang(z);
+      }
+    }
+  }
+
+  // Return to hand
+  if(raw>=1){
+    if(boomerangMesh){scene.remove(boomerangMesh);boomerangMesh=null;}
+    boomerangActive=false;
+    weaponGroup.visible=true;
+    // Short cooldown after catch
+    S.weapons['boomerang'].cd=400;
+    hitMarkerShow_b();
+  }
+}
+
+function flashZombie(z){
+  z.children.forEach(c=>{
+    if(c.material&&!c.userData.hitbox&&!c.userData.bar){
+      const oc=c.material.color&&c.material.color.getHex();
+      if(oc!=null){c.material.color.set(0xffffff);setTimeout(()=>{if(c.material)c.material.color.setHex(oc);},75);}
+    }
+  });
+  const bar=z.children.find(c=>c.userData.bar);
+  if(bar){const p=Math.max(0,z.userData.hp/z.userData.maxHp);bar.scale.x=p;bar.position.x=-(1-p)*0.31;bar.material.color.setHex(p>0.5?bar.material.color.getHex():p>0.25?0xffaa00:0xff2222);}
+  hitMark(false);
+}
+
+function killZ_boomerang(z){
+  if(z.userData.dead) return;
+  z.userData.dead=true;
+  S.weapons['boomerang'].kills++;
+  S.totalKills++;
+  S.credits+=8;
+  updateHUD();
+  checkUnlock('boomerang');
+}
+
+function hitMarkerShow_b(){
+  const h=document.getElementById('hitMarker');
+  h.style.opacity='1';clearTimeout(h._t);h._t=setTimeout(()=>h.style.opacity='0',110);
+}
+ // ms for bolt cycle animation
 
 function resolveCollision(px,pz,playerY){
   // Clamp to arena
@@ -3069,6 +3529,229 @@ function resolveCollision(px,pz,playerY){
   }
   return [px,pz];
 }
+
+// ══ UTILITIES ══
+const UTIL_DEFS={
+  grenade:{ name:'Frag Grenade', icon:'💣', desc:'Explosive blast. Kills normal zombies instantly, heavy damage to brutes.', key:'Z', maxCd:30000 },
+  stun:   { name:'Stun Grenade', icon:'💥', desc:'Blinds and freezes all zombies within 8 units for 2 seconds.', key:'X', maxCd:45000 },
+  drone:  { name:'Combat Drone', icon:'🚁', desc:'Auto-shooting drone orbits you, firing at nearby zombies for 15 seconds.', key:'C', maxCd:90000 },
+};
+
+// Grenade explosion
+function useGrenade(){
+  const u=S.utils.grenade;
+  if(!u.owned){notify('Frag Grenade not owned! Buy in Shop.');return;}
+  if(u.cd>0){notify('Grenade on cooldown!');return;}
+  u.cd=u.maxCd;
+  // Throw a physical grenade mesh
+  const gMesh=new THREE.Group();
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.06,0.18,8),new THREE.MeshLambertMaterial({color:0x226622}));
+  gMesh.add(body);
+  const pin=new THREE.Mesh(new THREE.TorusGeometry(0.04,0.008,4,8),new THREE.MeshLambertMaterial({color:0xcccc44}));
+  pin.rotation.x=Math.PI/2; pin.position.y=0.1; gMesh.add(pin);
+  // Spawn slightly above camera, throw forward
+  gMesh.position.copy(camera.position);
+  gMesh.position.y-=0.1;
+  const throwFwd=new THREE.Vector3(-Math.sin(yaw),0.25,-Math.cos(yaw)).normalize();
+  scene.add(gMesh);
+  // Animate throw over 2 seconds
+  const t0=performance.now();
+  const startPos=gMesh.position.clone();
+  const endPos=startPos.clone().addScaledVector(throwFwd,7);
+  endPos.y=startPos.y;
+  function animGrenade(){
+    const p=Math.min((performance.now()-t0)/2000,1);
+    gMesh.position.x=startPos.x+throwFwd.x*7*p;
+    gMesh.position.z=startPos.z+throwFwd.z*7*p;
+    gMesh.position.y=startPos.y+Math.sin(p*Math.PI)*2.5;
+    gMesh.rotation.x+=0.15;
+    if(p<1){requestAnimationFrame(animGrenade);}
+    else {
+      // Explode at landing position
+      const ex=gMesh.position.clone();
+      scene.remove(gMesh);
+      const fl=new THREE.PointLight(0xff6600,12,14);fl.position.copy(ex);scene.add(fl);
+      setTimeout(()=>scene.remove(fl),250);
+      soundGrenade();
+      let hit=0;
+      S.zombies.forEach(z=>{
+        if(z.userData.dead)return;
+        const dx=ex.x-z.position.x, dz=ex.z-z.position.z;
+        if(Math.sqrt(dx*dx+dz*dz)<6){
+          const dmg=z.userData.type==='brute'?120:z.userData.maxHp;
+          z.userData.hp-=dmg; flashZombie(z);
+          if(z.userData.hp<=0){z.userData.dead=true;S.totalKills++;S.credits+=10;hit++;updateHUD();}
+        }
+      });
+      notify(hit?'💣 GRENADE — '+hit+' kills!':'💣 Grenade exploded!');
+    }
+  }
+  requestAnimationFrame(animGrenade);
+  notify('💣 Grenade thrown!');
+}
+
+// Stun grenade
+function useStun(){
+  const u=S.utils.stun;
+  if(!u.owned){notify('Stun Grenade not owned! Buy in Shop.');return;}
+  if(u.cd>0){notify('Stun on cooldown!');return;}
+  u.cd=u.maxCd;
+  // Throw stun grenade
+  const sMesh=new THREE.Group();
+  const sbody=new THREE.Mesh(new THREE.CylinderGeometry(0.065,0.055,0.16,8),new THREE.MeshLambertMaterial({color:0x334466}));
+  sMesh.add(sbody);
+  const sband=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.07,0.03,8),new THREE.MeshLambertMaterial({color:0xffdd00}));
+  sband.position.y=0.04; sMesh.add(sband);
+  sMesh.position.copy(camera.position); sMesh.position.y-=0.1;
+  const throwFwd=new THREE.Vector3(-Math.sin(yaw),0.2,-Math.cos(yaw)).normalize();
+  scene.add(sMesh);
+  const t0=performance.now();
+  const startPos=sMesh.position.clone();
+  function animStun(){
+    const p=Math.min((performance.now()-t0)/2000,1);
+    sMesh.position.x=startPos.x+throwFwd.x*6*p;
+    sMesh.position.z=startPos.z+throwFwd.z*6*p;
+    sMesh.position.y=startPos.y+Math.sin(p*Math.PI)*2.0;
+    sMesh.rotation.z+=0.12;
+    if(p<1){requestAnimationFrame(animStun);}
+    else {
+      const ex=sMesh.position.clone();
+      scene.remove(sMesh);
+      const fl=new THREE.PointLight(0xffffff,10,12);fl.position.copy(ex);scene.add(fl);
+      setTimeout(()=>scene.remove(fl),180);
+      soundStun();
+      let stunned=0;
+      S.zombies.forEach(z=>{
+        if(z.userData.dead)return;
+        const dx=ex.x-z.position.x, dz=ex.z-z.position.z;
+        if(Math.sqrt(dx*dx+dz*dz)<8){z.userData.stunT=(z.userData.stunT||0)+2000;stunned++;}
+      });
+      notify('💥 STUN — '+stunned+' zombies frozen!');
+    }
+  }
+  requestAnimationFrame(animStun);
+  notify('💥 Stun thrown!');
+}
+
+// Drone system
+let droneAngle=0;
+const DRONE_ORBIT_R=2.2, DRONE_HEIGHT=0.8, DRONE_FIRE_MS=180;
+let droneFireTimer=0, droneLifeTimer=0;
+const DRONE_LIFE=15000;
+
+function useDrone(){
+  const u=S.utils.drone;
+  if(!u.owned){notify('Combat Drone not owned! Buy in Shop.');return;}
+  if(u.cd>0){notify('Drone on cooldown!');return;}
+  if(u.active){notify('Drone already active!');return;}
+  u.cd=u.maxCd; u.active=true; droneLifeTimer=0; droneFireTimer=0; droneAngle=0;
+  // Build drone mesh
+  const g=new THREE.Group();
+  const bodyM=new THREE.MeshLambertMaterial({color:0x222244});
+  const propM=new THREE.MeshLambertMaterial({color:0x334466});
+  const gunM =new THREE.MeshLambertMaterial({color:0x888888});
+  // Body
+  const body=new THREE.Mesh(new THREE.BoxGeometry(0.22,0.07,0.22),bodyM); g.add(body);
+  // 4 arms
+  [[0.18,0],[0,-0.18],[-0.18,0],[0,0.18]].forEach(([ax,az])=>{
+    const arm=new THREE.Mesh(new THREE.BoxGeometry(0.18,0.02,0.04),propM);
+    arm.position.set(ax,0,az); g.add(arm);
+    // Propeller
+    const prop=new THREE.Mesh(new THREE.BoxGeometry(0.1,0.008,0.018),bodyM);
+    prop.position.set(ax,0.03,az); g.add(prop);
+    prop.userData.prop=true;
+  });
+  // Gun underneath
+  const gun=new THREE.Mesh(new THREE.CylinderGeometry(0.012,0.012,0.12,6),gunM);
+  gun.rotation.x=Math.PI/2; gun.position.set(0,-0.055,-0.08); g.add(gun);
+  // LED light
+  const led=new THREE.Mesh(new THREE.SphereGeometry(0.015,5,4),new THREE.MeshBasicMaterial({color:0x00ff44}));
+  led.position.set(0,0.04,0); g.add(led);
+  scene.add(g);
+  u.mesh=g;
+  notify('🚁 Drone deployed! 15 seconds active.');
+}
+
+function tickDrone(dt,now){
+  const u=S.utils.drone;
+  if(!u.active||!u.mesh) return;
+  droneLifeTimer+=dt;
+  if(droneLifeTimer>=DRONE_LIFE){
+    scene.remove(u.mesh); u.mesh=null; u.active=false;
+    notify('🚁 Drone returned.');
+    return;
+  }
+  // Orbit player
+  droneAngle+=dt*0.003;
+  const dx=Math.cos(droneAngle)*DRONE_ORBIT_R;
+  const dz=Math.sin(droneAngle)*DRONE_ORBIT_R;
+  u.mesh.position.set(
+    camera.position.x+dx,
+    camera.position.y+DRONE_HEIGHT+Math.sin(now*0.003)*0.06,
+    camera.position.z+dz
+  );
+  u.mesh.rotation.y=-droneAngle;
+  // Spin props
+  u.mesh.children.forEach(c=>{if(c.userData.prop)c.rotation.y+=dt*0.05;});
+  // Auto-fire at nearest zombie within 10 units
+  droneFireTimer+=dt;
+  if(droneFireTimer>=DRONE_FIRE_MS){
+    droneFireTimer=0;
+    let nearest=null, nearDist=10;
+    S.zombies.forEach(z=>{
+      if(z.userData.dead)return;
+      const d=u.mesh.position.distanceTo(z.position);
+      if(d<nearDist){nearDist=d;nearest=z;}
+    });
+    if(nearest){
+      // Flash muzzle
+      const mfl=new THREE.PointLight(0xff9900,4,3);
+      mfl.position.copy(u.mesh.position); scene.add(mfl);
+      setTimeout(()=>scene.remove(mfl),35);
+      nearest.userData.hp-=10; // 10 hits to kill
+      flashZombie(nearest);
+      if(nearest.userData.hp<=0){
+        nearest.userData.dead=true;S.totalKills++;S.credits+=8;updateHUD();
+      }
+    }
+  }
+}
+
+function tickUtilities(dt,now){
+  // Cool down all utilities
+  Object.keys(S.utils).forEach(k=>{
+    if(S.utils[k].cd>0) S.utils[k].cd=Math.max(0,S.utils[k].cd-dt);
+  });
+  // Tick stun on zombies
+  S.zombies.forEach(z=>{
+    if(z.userData.stunT>0){
+      z.userData.stunT=Math.max(0,z.userData.stunT-dt);
+    }
+  });
+  tickDrone(dt,now);
+}
+
+function soundGrenade(){
+  const ctx=getAudio(),n=ctx.currentTime;
+  const buf=ctx.createBuffer(1,ctx.sampleRate*0.5,ctx.sampleRate);
+  const d=buf.getChannelData(0);
+  for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,1.5)*1.2;
+  const src=ctx.createBufferSource();src.buffer=buf;
+  const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.setValueAtTime(2000,n);lp.frequency.exponentialRampToValueAtTime(100,n+0.5);
+  const g=ctx.createGain();g.gain.setValueAtTime(2.5,n);g.gain.exponentialRampToValueAtTime(0.001,n+0.5);
+  src.connect(lp);lp.connect(g);g.connect(ctx.destination);src.start(n);
+  const o=ctx.createOscillator();o.frequency.setValueAtTime(60,n);o.frequency.exponentialRampToValueAtTime(20,n+0.3);
+  const og=ctx.createGain();og.gain.setValueAtTime(1.5,n);og.gain.exponentialRampToValueAtTime(0.001,n+0.3);
+  o.connect(og);og.connect(ctx.destination);o.start(n);o.stop(n+0.3);
+}
+function soundStun(){
+  const ctx=getAudio(),n=ctx.currentTime;
+  const o=ctx.createOscillator();o.type='sine';o.frequency.setValueAtTime(3000,n);o.frequency.exponentialRampToValueAtTime(200,n+0.3);
+  const g=ctx.createGain();g.gain.setValueAtTime(0.8,n);g.gain.exponentialRampToValueAtTime(0.001,n+0.3);
+  o.connect(g);g.connect(ctx.destination);o.start(n);o.stop(n+0.3);
+}
+
+window.useGrenade=useGrenade; window.useStun=useStun; window.useDrone=useDrone;
 
 function loop(ts){
   requestAnimationFrame(loop);
@@ -3127,7 +3810,8 @@ function loop(ts){
       weaponGroup.position.x=0.28+Math.sin(hbob)*0.008;
     }
 
-    tickInspect(ts); tickBolt(ts); tickZombies(dt);tickWave(dt); tickDecals(ts);
+    tickInspect(ts); tickBolt(ts); tickBoomerang(ts); tickZombies(dt);tickWave(dt); tickDecals(ts); tickUtilities(dt,ts);
+    updateUtilHUD();
 
     // ── Melee cooldown bar / Sniper bolt bar ──
     const def=WDEFS[S.held];
@@ -3141,6 +3825,20 @@ function loop(ts){
         bar.style.opacity='1';
         fill.style.width=(ws.cd/meleeCd*100)+'%';
         if(ws.cd<=0) bar.style.opacity='0';
+      }
+    } else if(def.type==='thrown'){
+      // Tick boomerang catch cooldown
+      if(ws.cd>0) ws.cd=Math.max(0,ws.cd-dt);
+      if(boomerangActive){
+        const elapsed=performance.now()-boomerangT0;
+        const pct=Math.max(0,1-elapsed/boomerangDur);
+        const bar=document.getElementById('knifeCoolBar');
+        const fill=document.getElementById('knifeCoolFill');
+        bar.style.opacity='1';
+        fill.style.width=(pct*100)+'%';
+        fill.style.background='linear-gradient(90deg,#ff8800,#ffdd00)';
+      } else {
+        document.getElementById('knifeCoolBar').style.opacity='0';
       }
     } else if(S.held==='sniper'&&boltAnimating){
       // Show bolt-cycle progress bar under crosshair
@@ -3191,20 +3889,49 @@ function updateHUD(){
   document.getElementById('hpText').textContent=Math.ceil(hp);
   document.getElementById('hudVign').style.opacity=hp<30?'0.9':'0';
   if(def.type==='gun'){document.getElementById('hudAmmoBlock').style.display='block';document.getElementById('ammoCur').textContent=ws.ammo;document.getElementById('ammoRes').textContent='/ '+ws.res;}
+  else if(def.type==='thrown'){
+    document.getElementById('hudAmmoBlock').style.display='block';
+    document.getElementById('ammoCur').textContent=boomerangActive?'↗':'●';
+    document.getElementById('ammoRes').textContent=boomerangActive?'IN FLIGHT':'READY';
+  }
   else document.getElementById('hudAmmoBlock').style.display='none';
-  // Live skin progress bar
-  const nextSkin=def.skins.find(s=>!S.unlocked[wid].includes(s.id));
+  // Live skin progress bar — show kills progress and kill counts
+  const nextSkin=def.skins.find(s=>!S.unlocked[wid].includes(s.id)&&!s.secret);
   const prog=document.getElementById('hudSkinProg');
   if(nextSkin){
     const prevKills=def.skins.reduce((mx,s)=>S.unlocked[wid].includes(s.id)?Math.max(mx,s.kills):mx,0);
     const pct=prevKills===nextSkin.kills?0:Math.min(1,(ws.kills-prevKills)/(nextSkin.kills-prevKills));
     document.getElementById('hudSpFill').style.width=(pct*100).toFixed(1)+'%';
     document.getElementById('hudSpLabel').textContent=nextSkin.name.toUpperCase();
-    document.getElementById('hudSpPct').textContent=Math.round(pct*100)+'%';
+    document.getElementById('hudSpPct').textContent=ws.kills+'/'+nextSkin.kills;
     prog.style.display='flex';
   } else {
-    prog.style.display='none'; // all skins unlocked
+    prog.style.display='none';
   }
+  updateUtilHUD();
+}
+
+function updateUtilHUD(){
+  const defs=[
+    {uid:'grenade', fillId:'hudUtilGrenFill', labelId:'hudUtilGrenLabel', rowId:'hudUtilGrenade'},
+    {uid:'stun',    fillId:'hudUtilStunFill', labelId:'hudUtilStunLabel', rowId:'hudUtilStun'},
+    {uid:'drone',   fillId:'hudUtilDroneFill',labelId:'hudUtilDroneLabel',rowId:'hudUtilDrone'},
+  ];
+  defs.forEach(({uid,fillId,labelId,rowId})=>{
+    const u=S.utils[uid];
+    const row=document.getElementById(rowId);
+    if(!row) return;
+    if(!u.owned){ row.className='hud-util-row util-not-owned'; document.getElementById(fillId).style.width='0%'; document.getElementById(labelId).textContent='-'; return; }
+    row.className='hud-util-row';
+    const ready=u.cd<=0;
+    const pct=ready?100:((u.maxCd-u.cd)/u.maxCd*100);
+    const fill=document.getElementById(fillId);
+    fill.style.width=pct+'%';
+    fill.style.background=ready?'linear-gradient(90deg,#44ff88,#00cc44)':'linear-gradient(90deg,#ff8800,#ffcc00)';
+    const label=document.getElementById(labelId);
+    if(u.uid==='drone'&&u.active) label.textContent='LIVE';
+    else label.textContent=ready?'RDY':Math.ceil(u.cd/1000)+'s';
+  });
 }
 
 // ══ SKIN UNLOCK ══
@@ -3212,6 +3939,7 @@ function checkUnlock(wid){
   const kills=S.weapons[wid].kills;
   WDEFS[wid].skins.forEach(sk=>{
     if(sk.id==='default')return;
+    if(sk.secret)return; // secret skins are code-only
     if(!S.unlocked[wid].includes(sk.id)&&kills>=sk.kills){S.unlocked[wid].push(sk.id);S.credits+=SKIN_BONUS;S.unlockQueue.push({wid,skin:sk});}
   });
   if(!S.showingUnlock&&S.unlockQueue.length)showNextUnlock();
@@ -3291,7 +4019,9 @@ function hideEl(id){document.getElementById(id).classList.remove('show');}
 function startGame(){
   S.zombies.forEach(z=>scene.remove(z));S.zombies.length=0;
   S.health=100;S.screen='game';S.wave=0;S.waveActive=false;S.totalKills=0;
-  S.held='pistol';S.heldSecondary='pistol';
+  S.held=S.heldSecondary; // start holding the active secondary
+  // Preserve secondary selection but fall back to pistol if not owned
+  if(!S.weapons[S.heldSecondary]||!S.weapons[S.heldSecondary].owned) S.heldSecondary='pistol';
   // Preserve knife selection but fall back to 'knife' if selected weapon isn't owned
   if(!S.weapons[S.heldKnife]||!S.weapons[S.heldKnife].owned) S.heldKnife='knife';
   // Preserve primary selection but fall back if selected weapon isn't owned
@@ -3303,6 +4033,11 @@ function startGame(){
   yaw=0;pitch=0;hbob=0;lastT=performance.now();
   velY=0;onGround=true;stamina=STAM_MAX;stamDepleted=false;reloading=false;reloadTimer=0;
   boltAnimating=false; scoped=false;
+  // Reset utility cooldowns/active but keep owned
+  Object.keys(S.utils).forEach(k=>{ S.utils[k].cd=0; S.utils[k].active=false; if(S.utils[k].mesh){scene.remove(S.utils[k].mesh);S.utils[k].mesh=null;} });
+  // Clean up any in-flight boomerang
+  if(boomerangMesh){scene.remove(boomerangMesh);boomerangMesh=null;}
+  boomerangActive=false;
   document.getElementById('scopeOverlay').style.display='none';
   document.querySelector('.crosshair').style.display='block';
   // Reset per-weapon timers
@@ -3331,6 +4066,8 @@ function backToMenu(){
   document.getElementById('hud').style.display='none';
   showEl('menuScreen');document.getElementById('menuCredits').textContent=S.credits;
   if(document.pointerLockElement)document.exitPointerLock();
+  // Auto-save progress on return to menu
+  try{ saveGame(); } catch(e){}
 }
 
 // ══ SHOP ══
@@ -3349,7 +4086,7 @@ function renderShop(){
   const sg=document.getElementById('shopSupplies');sg.innerHTML='';
   Object.keys(WDEFS).forEach(wid=>{
     const def=WDEFS[wid],ws=S.weapons[wid];
-    if(!ws||!ws.owned||def.type==='melee')return;
+    if(!ws||!ws.owned||def.type==='melee'||def.type==='thrown')return;
     const c=document.createElement('div');c.className='shop-card';
     c.innerHTML=`<div class="icon">AMO</div><h3>${def.name} Ammo</h3><div class="desc">+${def.boxAmt} rounds</div><div class="price">CREDITS: ${def.boxCost}</div><button class="btn-buy" ${S.credits>=def.boxCost?'':'disabled'} onclick="buyAmmo('${wid}')">BUY</button>`;
     sg.appendChild(c);
@@ -3357,6 +4094,19 @@ function renderShop(){
   const hc=document.createElement('div');hc.className='shop-card';
   hc.innerHTML=`<div class="icon">MED</div><h3>Heal Kit</h3><div class="desc">+${HEAL_AMT} HP (H key)</div><div class="price">CREDITS: ${HEAL_COST}</div><button class="btn-buy" ${S.credits>=HEAL_COST?'':'disabled'} onclick="buyKit()">BUY</button>`;
   sg.appendChild(hc);
+  // ── Utilities ──
+  const ug=document.getElementById('shopUtils');ug.innerHTML='';
+  const utilMeta={
+    grenade:{icon:'💣',name:'Frag Grenade',desc:'Explosive blast. 6-unit radius. Z key.',cdLabel:'30s cooldown'},
+    stun:   {icon:'💥',name:'Stun Grenade',desc:'Freezes nearby zombies 2 sec. X key.',cdLabel:'45s cooldown'},
+    drone:  {icon:'🚁',name:'Combat Drone',desc:'Auto-shooting drone, 15s active. C key.',cdLabel:'90s cooldown'},
+  };
+  Object.keys(utilMeta).forEach(uid=>{
+    const u=S.utils[uid], m=utilMeta[uid];
+    const c=document.createElement('div');c.className='shop-card';
+    c.innerHTML=`<div class="icon" style="font-size:28px">${m.icon}</div><h3>${m.name}</h3><div class="desc">${m.desc}<br><span style="color:#666">${m.cdLabel}</span></div><div class="price">CREDITS: ${u.price}</div>${u.owned?'<div class="owned-badge">OWNED</div>':`<button class="btn-buy" ${S.credits>=u.price?'':'disabled'} onclick="buyUtil('${uid}')">BUY</button>`}`;
+    ug.appendChild(c);
+  });
 }
 window.buyWeapon=wid=>{
   const def=WDEFS[wid];if(S.credits<def.price)return;
@@ -3367,6 +4117,13 @@ window.buyWeapon=wid=>{
   renderShop();document.getElementById('menuCredits').textContent=S.credits;notify(def.name+' purchased & set active!');
 };
 window.buyAmmo=wid=>{const def=WDEFS[wid];if(S.credits<def.boxCost)return;S.credits-=def.boxCost;S.weapons[wid].res+=def.boxAmt;renderShop();document.getElementById('menuCredits').textContent=S.credits;notify('+'+def.boxAmt+' ammo');};
+window.buyUtil=uid=>{
+  const u=S.utils[uid];
+  if(S.credits<u.price)return;
+  S.credits-=u.price; u.owned=true;
+  renderShop(); document.getElementById('menuCredits').textContent=S.credits;
+  notify(uid.charAt(0).toUpperCase()+uid.slice(1)+' unlocked!');
+};
 window.buyKit=()=>{if(S.credits<HEAL_COST)return;S.credits-=HEAL_COST;S.kits++;renderShop();document.getElementById('menuCredits').textContent=S.credits;notify('Heal kit added ('+S.kits+' total)');};
 
 // ══ CODES ══
@@ -3380,7 +4137,18 @@ function redeemCode(){
   if(!code){msg.innerHTML='<div class="code-msg-err">Invalid code.</div>';return;}
   S.usedCodes.push(v);document.getElementById('codeInput').value='';
   if(code.type==='credits')S.credits+=code.amount;
-  else if(code.type==='devmode'){Object.keys(S.weapons).forEach(wid=>{if(!WDEFS[wid])return;S.weapons[wid].owned=true;if(WDEFS[wid].type==='gun'){S.weapons[wid].ammo=WDEFS[wid].startAmmo;S.weapons[wid].res=WDEFS[wid].resAmmo*3;}WDEFS[wid].skins.forEach(sk=>{if(!S.unlocked[wid].includes(sk.id))S.unlocked[wid].push(sk.id);});});}
+  else if(code.type==='secretskin'){
+    if(!S.unlocked[code.wid]) S.unlocked[code.wid]=[];
+    if(!S.unlocked[code.wid].includes(code.skinId)){
+      S.unlocked[code.wid].push(code.skinId);
+      // If player already owns the weapon, auto-equip the skin
+      if(S.weapons[code.wid]&&S.weapons[code.wid].owned){
+        S.weapons[code.wid].skin=code.skinId;
+      }
+      // Do NOT grant weapon ownership — player must still buy it
+    }
+  }
+  else if(code.type==='devmode'){Object.keys(S.weapons).forEach(wid=>{if(!WDEFS[wid])return;S.weapons[wid].owned=true;if(WDEFS[wid].type==='gun'){S.weapons[wid].ammo=WDEFS[wid].startAmmo;S.weapons[wid].res=WDEFS[wid].resAmmo*3;}WDEFS[wid].skins.forEach(sk=>{if(!S.unlocked[wid].includes(sk.id))S.unlocked[wid].push(sk.id);});});Object.keys(S.utils).forEach(uid=>{S.utils[uid].owned=true;});}
   msg.innerHTML='<div class="code-msg-ok">'+code.msg+'</div>';
   document.getElementById('menuCredits').textContent=S.credits;renderShop();renderInventory();
 }
@@ -3388,6 +4156,16 @@ function redeemCode(){
 // ══ INVENTORY ══
 function renderInventory(){
   const slot=S.invSlot||'primary';
+  const weapList=document.getElementById('invWeaponList');
+  const utilPanel=document.getElementById('utilityPanel');
+  if(slot==='utility'){
+    weapList.style.display='none';
+    utilPanel.style.display='block';
+    renderUtilityPanel();
+    return;
+  }
+  weapList.style.display='block';
+  utilPanel.style.display='none';
   const container=document.getElementById('invWeaponList');
   if(!container) return;
   container.innerHTML='';
@@ -3423,13 +4201,16 @@ function renderInventory(){
     // Skin list
     def.skins.forEach(skin=>{
       const unlocked=S.unlocked[wid].includes(skin.id),equipped=ws.skin===skin.id;
+      // Secret skins: only show if unlocked, otherwise hidden entirely
+      if(skin.secret&&!unlocked) return;
       const row=document.createElement('div');
       row.className='skin-row'+(equipped?' sk-equipped':'')+(unlocked?'':' sk-locked');
       const h1='#'+skin.colors[0].toString(16).padStart(6,'0');
       const h2='#'+skin.colors[1].toString(16).padStart(6,'0');
+      const rarityLabel=skin.secret?'<span style="background:linear-gradient(90deg,#ffd700,#ff4400);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900">★ SECRET</span>':skin.rarity.toUpperCase();
       row.innerHTML='<div class="skin-thumb" style="background:linear-gradient(135deg,'+h1+','+h2+')">'+(unlocked?skin.emoji:'?')+'</div>'
-        +'<div class="skin-info"><div class="srarity" style="color:'+RC[skin.rarity]+'">'+skin.rarity+'</div>'
-        +'<div class="sname" style="color:'+RC[skin.rarity]+'">'+skin.name+'</div>'
+        +'<div class="skin-info"><div class="srarity" style="color:'+RC[skin.rarity]+'">'+rarityLabel+'</div>'
+        +'<div class="sname" style="color:'+RC[skin.rarity]+'">'+(skin.secret?'<span style="background:linear-gradient(90deg,#ffd700,#ff4400);-webkit-background-clip:text;-webkit-text-fill-color:transparent">'+skin.name+'</span>':skin.name)+'</div>'
         +'<div class="sstatus">'+(equipped?'✅ EQUIPPED':unlocked?'UNLOCKED':'🔒 '+skin.kills+' kills')+'</div></div>'
         +(unlocked?'<div class="skin-actions"><button class="btn-view-sk" onclick="openPreview(\''+wid+'\',\''+skin.id+'\')">VIEW</button>'+(equipped?'':'<button class="btn-equip-sm" onclick="equipSkin(\''+wid+'\',\''+skin.id+'\')">EQUIP</button>')+'</div>':'');
       container.appendChild(row);
@@ -3437,6 +4218,36 @@ function renderInventory(){
     if(wi<wids.length-1){
       const hr=document.createElement('hr');hr.style.cssText='border:none;border-top:1px solid rgba(255,255,255,.05);margin:14px 0';container.appendChild(hr);
     }
+  });
+}
+function renderUtilityPanel(){
+  const panel=document.getElementById('utilityPanel');
+  panel.innerHTML='';
+  const items=[
+    {id:'grenade', icon:'💣', name:'Frag Grenade', desc:'Explodes 2s after throw. 6-unit radius. Kills normal zombies, 120 dmg to brutes.', key:'Z', cd:S.utils.grenade.cd, maxCd:S.utils.grenade.maxCd, owned:S.utils.grenade.owned, price:S.utils.grenade.price},
+    {id:'stun',    icon:'💥', name:'Stun Grenade', desc:'Freezes all zombies within 8 units for 2 seconds after landing.', key:'X', cd:S.utils.stun.cd, maxCd:S.utils.stun.maxCd, owned:S.utils.stun.owned, price:S.utils.stun.price},
+    {id:'drone',   icon:'🚁', name:'Combat Drone', desc:'Auto-targeting drone active for 15 seconds. 10 shots per kill.', key:'C', cd:S.utils.drone.cd, maxCd:S.utils.drone.maxCd, owned:S.utils.drone.owned, price:S.utils.drone.price},
+  ];
+  items.forEach(({id,icon,name,desc,key,cd,maxCd,owned,price})=>{
+    const ready=owned&&cd<=0;
+    const pct=!owned?0:ready?100:((maxCd-cd)/maxCd*100);
+    const secLeft=ready?0:Math.ceil(cd/1000);
+    const card=document.createElement('div'); card.className='util-card';
+    const statusHtml=!owned
+      ?`<div style="color:#554422;font-family:'Space Mono',monospace;font-size:10px;margin-top:4px">NOT OWNED · Buy in Shop for ${price} credits</div>`
+      :`<div class="util-cd-row">
+          <div class="util-cd-bar-bg"><div class="util-cd-bar-fill" style="width:${pct}%;background:${ready?'linear-gradient(90deg,#44ff88,#00cc44)':'linear-gradient(90deg,#ff8800,#ffdd00)'}"></div></div>
+          <div class="util-cd-label">${ready?'<span style="color:#44ff88">READY</span>':secLeft+'s'}</div>
+        </div>
+        <div class="util-keybind">Press <b style="color:#aaa">${key}</b> in-game to use</div>`;
+    card.innerHTML=`
+      <div class="util-icon" style="opacity:${owned?1:0.35}">${icon}</div>
+      <div class="util-info">
+        <div class="util-name" style="color:${owned?(ready?'#eee':'#888'):'#443322'}">${name}</div>
+        <div class="util-desc">${desc}</div>
+        ${statusHtml}
+      </div>`;
+    panel.appendChild(card);
   });
 }
 function renderSkins(){renderInventory();}
@@ -3629,6 +4440,23 @@ function soundSniper(){
   const g2=ctx.createGain(); g2.gain.setValueAtTime(1.5,now); g2.gain.exponentialRampToValueAtTime(0.001,now+0.06);
   src2.connect(hp); hp.connect(g2); g2.connect(ctx.destination); src2.start(now);
 }
+function soundBoomerang(){
+  const ctx=getAudio(), now=ctx.currentTime;
+  // Whooshing swoosh: amplitude-modulated noise with pitch sweep
+  const buf=ctx.createBuffer(1,ctx.sampleRate*0.4,ctx.sampleRate);
+  const d=buf.getChannelData(0);
+  for(let i=0;i<d.length;i++){
+    const t=i/d.length;
+    const env=Math.sin(t*Math.PI)*0.9;
+    d[i]=(Math.random()*2-1)*env;
+  }
+  const src=ctx.createBufferSource(); src.buffer=buf;
+  const bp=ctx.createBiquadFilter(); bp.type='bandpass';
+  bp.frequency.setValueAtTime(800,now); bp.frequency.linearRampToValueAtTime(3200,now+0.2); bp.frequency.linearRampToValueAtTime(600,now+0.4);
+  bp.Q.value=3;
+  const gain=ctx.createGain(); gain.gain.setValueAtTime(0.7,now); gain.gain.exponentialRampToValueAtTime(0.001,now+0.4);
+  src.connect(bp); bp.connect(gain); gain.connect(ctx.destination); src.start(now);
+}
 function playGunSound(wid){
   if(wid==='pistol')soundPistol();
   else if(wid==='smg')soundSMG();
@@ -3639,6 +4467,110 @@ function playGunSound(wid){
   else if(wid==='compact')soundCompact();
   else soundPistol();
 }
+// ══ SAVE SYSTEM ══
+const SAVE_KEY='zombieslayer_save_v1';
+
+function saveGame(){
+  const save={
+    credits:S.credits,
+    kits:S.kits,
+    weapons:{},
+    unlocked:S.unlocked,
+    heldPrimary:S.heldPrimary,
+    heldSecondary:S.heldSecondary,
+    heldKnife:S.heldKnife,
+    utils:{
+      grenade:{owned:S.utils.grenade.owned},
+      stun:{owned:S.utils.stun.owned},
+      drone:{owned:S.utils.drone.owned},
+    },
+    savedAt:Date.now(),
+  };
+  // Save each weapon's owned/ammo/res/kills/skin state
+  Object.keys(S.weapons).forEach(wid=>{
+    const ws=S.weapons[wid];
+    save.weapons[wid]={owned:ws.owned,kills:ws.kills,skin:ws.skin,ammo:ws.ammo||0,res:ws.res||0};
+  });
+  try{
+    localStorage.setItem(SAVE_KEY,JSON.stringify(save));
+    const d=new Date(save.savedAt);
+    const timeStr=d.toLocaleDateString()+' '+d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    document.getElementById('saveStatus').textContent='Saved at '+timeStr;
+    document.getElementById('saveStatus').style.color='#44ff88';
+    notify('Game saved!');
+  } catch(e){
+    document.getElementById('saveStatus').textContent='Save failed (storage unavailable)';
+    document.getElementById('saveStatus').style.color='#ff4444';
+  }
+}
+
+function loadGame(){
+  try{
+    const raw=localStorage.getItem(SAVE_KEY);
+    if(!raw){ document.getElementById('saveStatus').textContent='No save found.'; document.getElementById('saveStatus').style.color='#ff8844'; return; }
+    const save=JSON.parse(raw);
+    // Restore state
+    S.credits=save.credits||0;
+    S.kits=save.kits||0;
+    S.heldPrimary=save.heldPrimary||'smg';
+    S.heldSecondary=save.heldSecondary||'pistol';
+    S.heldKnife=save.heldKnife||'knife';
+    S.unlocked=save.unlocked||S.unlocked;
+    // Restore weapons
+    Object.keys(save.weapons||{}).forEach(wid=>{
+      if(!S.weapons[wid]) return;
+      const ws=save.weapons[wid];
+      S.weapons[wid].owned=ws.owned||false;
+      S.weapons[wid].kills=ws.kills||0;
+      S.weapons[wid].skin=ws.skin||'default';
+      if(ws.ammo!==undefined) S.weapons[wid].ammo=ws.ammo;
+      if(ws.res!==undefined)  S.weapons[wid].res=ws.res;
+    });
+    // Restore utilities
+    if(save.utils){
+      Object.keys(save.utils).forEach(uid=>{
+        if(S.utils[uid]) S.utils[uid].owned=save.utils[uid].owned||false;
+      });
+    }
+    // Update menu display
+    document.getElementById('menuCredits').textContent=S.credits;
+    renderShop(); renderInventory();
+    const d=new Date(save.savedAt||0);
+    const timeStr=d.toLocaleDateString()+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('saveStatus').textContent='Loaded save from '+timeStr;
+    document.getElementById('saveStatus').style.color='#88ccff';
+    notify('Save loaded!');
+  } catch(e){
+    document.getElementById('saveStatus').textContent='Load failed: corrupt save.';
+    document.getElementById('saveStatus').style.color='#ff4444';
+  }
+}
+
+function clearSave(){
+  if(!confirm('Delete your saved progress? This cannot be undone.')) return;
+  localStorage.removeItem(SAVE_KEY);
+  document.getElementById('saveStatus').textContent='Save deleted.';
+  document.getElementById('saveStatus').style.color='#ff6666';
+  notify('Save cleared.');
+}
+
+window.saveGame=saveGame; window.loadGame=loadGame; window.clearSave=clearSave;
+
+// Auto-load on startup if save exists
+(function(){
+  try{
+    const raw=localStorage.getItem(SAVE_KEY);
+    if(raw){
+      const save=JSON.parse(raw);
+      const d=new Date(save.savedAt||0);
+      const timeStr=d.toLocaleDateString()+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+      document.getElementById('saveStatus').textContent='Save found from '+timeStr+' — click LOAD to restore';
+      document.getElementById('saveStatus').style.color='#88ccff';
+    }
+  } catch(e){}
+})();
+
+
 buildMap();
 initDecals();
 rebuildWeapon();
