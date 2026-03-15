@@ -64,6 +64,18 @@ body{overflow:hidden;background:#000;font-family:'Rajdhani',sans-serif;user-sele
 .btn-buy:disabled{background:#2a2a2a;color:#555;cursor:not-allowed;}
 .btn-save{padding:7px 18px;background:rgba(255,180,0,0.1);border:1px solid rgba(255,180,0,0.3);border-radius:4px;color:#ffcc44;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;cursor:pointer;transition:all .2s;}
 .btn-save:hover{background:rgba(255,180,0,0.2);border-color:rgba(255,180,0,0.6);}
+.diff-btn{padding:8px 18px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:4px;color:#666;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;cursor:pointer;transition:all .2s;}
+.diff-btn:hover{color:#ccc;border-color:rgba(255,255,255,0.2);}
+.diff-btn.active{background:rgba(255,100,0,0.15);border-color:rgba(255,100,0,0.5);color:#ff8040;}
+.diff-impossible{background:rgba(180,0,0,0.1) !important;border-color:rgba(255,0,0,0.25) !important;color:#cc3333 !important;}
+.diff-impossible.active{background:rgba(220,0,0,0.25) !important;border-color:rgba(255,50,50,0.7) !important;color:#ff4444 !important;}
+.god-toggle{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:6px;cursor:pointer;transition:all .18s;user-select:none;}
+.god-toggle:hover{background:rgba(255,215,0,0.06);border-color:rgba(255,215,0,0.2);}
+.god-toggle.on{background:rgba(255,215,0,0.1);border-color:rgba(255,215,0,0.4);}
+.god-toggle-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;}
+.god-toggle-desc{font-family:'Space Mono',monospace;font-size:9px;color:#555;margin-top:2px;}
+.god-toggle-dot{width:12px;height:12px;border-radius:50%;background:#333;border:1px solid #555;flex-shrink:0;transition:background .2s;}
+.god-toggle.on .god-toggle-dot{background:#ffd700;border-color:#ffd700;box-shadow:0 0 6px rgba(255,215,0,0.6);}
 .codes-wrap{max-width:420px;margin:20px auto 0;}
 .codes-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:4px;color:#eee;margin-bottom:4px;}
 .codes-sub{font-size:11px;color:#444;font-family:'Space Mono',monospace;margin-bottom:20px;}
@@ -201,6 +213,14 @@ body{overflow:hidden;background:#000;font-family:'Rajdhani',sans-serif;user-sele
     </div>
     <div class="tab-content active" id="tabMain">
       <div class="main-play-area">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:3px;color:#555;margin-bottom:12px;">SELECT DIFFICULTY</div>
+        <div id="difficultyPicker" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:10px;">
+          <button class="diff-btn active" data-diff="easy"   onclick="selectDiff('easy')">EASY</button>
+          <button class="diff-btn"        data-diff="medium" onclick="selectDiff('medium')">MEDIUM</button>
+          <button class="diff-btn"        data-diff="hard"   onclick="selectDiff('hard')">HARD</button>
+          <button class="diff-btn diff-impossible" data-diff="impossible" onclick="selectDiff('impossible')">IMPOSSIBLE</button>
+        </div>
+        <div id="diffDesc" style="font-family:'Space Mono',monospace;font-size:10px;color:#666;margin-bottom:12px;text-align:center;min-height:28px;line-height:1.7;"></div>
         <button class="btn-play" id="btnPlay">PLAY</button>
         <div style="display:flex;gap:10px;margin-top:14px;justify-content:center;">
           <button class="btn-save" id="btnSave" onclick="saveGame()">💾 SAVE</button>
@@ -369,6 +389,26 @@ body{overflow:hidden;background:#000;font-family:'Rajdhani',sans-serif;user-sele
   </div>
 </div>
 
+<!-- GOD POWERS MENU -->
+<div id="godMenu" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:25;align-items:center;justify-content:center;" onclick="event.stopPropagation()" onmousedown="event.stopPropagation()">
+  <div style="background:#06080f;border:1px solid rgba(255,215,0,0.3);border-radius:10px;padding:28px 36px;min-width:320px;box-shadow:0 0 40px rgba(255,215,0,0.15);">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:4px;color:#ffd700;text-align:center;margin-bottom:6px;">⚡ GOD POWERS</div>
+    <div style="font-family:'Space Mono',monospace;font-size:9px;color:#555;text-align:center;margin-bottom:20px;letter-spacing:2px;">TAB to close · Active cheats shown in gold</div>
+    <div id="godPowersList" style="display:flex;flex-direction:column;gap:10px;"></div>
+    <div style="margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.05);">
+      <div style="font-family:'Space Mono',monospace;font-size:9px;color:#444;margin-bottom:8px;">SPEED</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <input type="range" id="godSpeedSlider" min="1" max="5" step="0.1" value="1" style="flex:1;accent-color:#ffd700;" oninput="updateGodSpeed(this.value)">
+        <span id="godSpeedVal" style="font-family:'Space Mono',monospace;font-size:10px;color:#ffd700;min-width:35px;">1.0×</span>
+      </div>
+      <div style="font-family:'Space Mono',monospace;font-size:9px;color:#444;margin-top:8px;margin-bottom:4px;">STAMINA</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <input type="range" id="godStamSlider" min="0.5" max="5" step="0.1" value="1" style="flex:1;accent-color:#ffd700;" oninput="updateGodStam(this.value)">
+        <span id="godStamVal" style="font-family:'Space Mono',monospace;font-size:10px;color:#ffd700;min-width:35px;">1.0×</span>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- PAUSE -->
 <div id="pauseMenu" class="overlay">
   <h2>PAUSED</h2>
@@ -485,7 +525,7 @@ const WDEFS={
 };
 const WAVES=[5,10,22,45,90];
 const HEAL_COST=75,HEAL_AMT=50,SKIN_BONUS=50;
-const CODES={'free1000':{type:'credits',amount:1000,msg:'+1000 CREDITS!'},'Dev':{type:'devmode',msg:'ALL UNLOCKED!'},'Early!':{type:'secretskin',wid:'sniper',skinId:'early',msg:'★ SECRET SKIN UNLOCKED: Early Access Sniper!'}};
+const CODES={'free1000':{type:'credits',amount:1000,msg:'+1000 CREDITS!'},'Dev':{type:'devmode',msg:'ALL UNLOCKED!'},'Early!':{type:'secretskin',wid:'sniper',skinId:'early',msg:'★ SECRET SKIN UNLOCKED: Early Access Sniper!'},'Godpowers':{type:'godpowers',msg:'⚡ GOD POWERS UNLOCKED! Press TAB in-game.'}};
 
 // ══ STATE ══
 const S={
@@ -509,6 +549,7 @@ const S={
   zombies:[],totalKills:0,
   wave:0,waveActive:false,waveKilled:0,waveSize:0,spawnQueue:0,spawnTimer:0,
   invSlot:'primary',
+  difficulty:'easy',
   unlockQueue:[],showingUnlock:false,
   autoFire:null,
   utils:{
@@ -2202,9 +2243,31 @@ function tickWave(dt){
     const interval=Math.max(250,900-S.wave*40);
     if(S.spawnTimer>=interval){S.spawnTimer=0;spawnZombie();S.spawnQueue--;}
   }
-  if(S.spawnQueue===0&&S.zombies.filter(z=>!z.userData.dead).length===0){
+  const alive=S.zombies.filter(z=>!z.userData.dead);
+  // While boss is alive treat as waveActive so game doesn't loop
+  if(bossSpawned&&alive.some(z=>z.userData.type==='boss')) return;
+  if(S.spawnQueue===0&&alive.length===0){
     S.waveActive=false;
-    setTimeout(()=>{if(S.screen==='game')startWave();},3500);
+    const diff=DIFFICULTIES[S.difficulty]||DIFFICULTIES.easy;
+    // Check if this was the final wave
+    if(S.wave>=diff.maxWave){
+      // Impossible: spawn boss after final wave if not yet spawned
+      if(S.difficulty==='impossible'&&!bossSpawned){
+        setTimeout(()=>{if(S.screen==='game'){spawnBoss();S.waveActive=true;S.spawnQueue=0;}},2000);
+      } else {
+        // Victory!
+        setTimeout(()=>{
+          if(S.screen==='game'){
+            S.credits+=diff.reward;
+            updateHUD();
+            notify('🏆 VICTORY! +'+diff.reward+' credits!');
+            setTimeout(()=>{if(S.screen==='game')gameOver();},3000);
+          }
+        },1500);
+      }
+    } else {
+      setTimeout(()=>{if(S.screen==='game')startWave();},3500);
+    }
   }
 }
 
@@ -2318,7 +2381,7 @@ function spawnZombie(){
   } else if(type==='runner'){
     // ── RUNNER: emaciated, hunched, tattered, cyan eyes, skeletal ──
     g.userData.maxHp=50; g.userData.hp=50;
-    g.userData.speed=Math.min(3.4+S.wave*0.1+Math.random()*0.6,7.0);
+    g.userData.speed=Math.min(5.2+S.wave*0.1+Math.random()*0.6,9.0);
     g.userData.dmg=5;
     const skinM =new THREE.MeshLambertMaterial({color:0x2244aa});
     const darkM =new THREE.MeshLambertMaterial({color:0x112266});
@@ -2559,20 +2622,37 @@ function hitZombie(z,wid,isHead){
   });
   const bar=z.children.find(c=>c.userData.bar);
   if(bar){const p=Math.max(0,z.userData.hp/z.userData.maxHp);bar.scale.x=p;bar.position.x=-(1-p)*0.31;bar.material.color.setHex(p>0.5?bar.material.color.getHex():p>0.25?0xffaa00:0xff2222);}
-  const cred=z.userData.type==='brute'?30:z.userData.type==='runner'?5:8;
-  if(z.userData.hp<=0){z.userData.dead=true;S.weapons[wid].kills++;S.totalKills++;S.credits+=isHead?cred*2:cred;updateHUD();hitMark(isHead);checkUnlock(wid);}
+  const cred=z.userData.type==='boss'?250:z.userData.type==='brute'?30:z.userData.type==='runner'?5:8;
+  if(z.userData.hp<=0){
+    z.userData.dead=true;
+    S.weapons[wid].kills++;S.totalKills++;
+    S.credits+=isHead?cred*2:cred;
+    updateHUD();hitMark(isHead);checkUnlock(wid);
+    if(z.userData.type==='boss'){
+      // Boss dead = impossible mode victory
+      notify('☠ BOSS DEFEATED!');
+      const diff=DIFFICULTIES.impossible;
+      setTimeout(()=>{
+        if(S.screen==='game'){S.credits+=diff.reward;updateHUD();notify('🏆 IMPOSSIBLE CLEARED! +'+diff.reward+' credits!');setTimeout(()=>{if(S.screen==='game')gameOver();},3000);}
+      },1200);
+    }
+  }
   else if(isHead) showHeadshot();
 }
 
 // ══ SHOOTING ══
 function shoot(){
-  if(reloading)return;
-  if(boltAnimating)return; // can't shoot during bolt cycle
+  if(reloading&&!GOD.noCooldown)return;
+  if(boltAnimating&&!GOD.noCooldown)return;
   const wid=S.held,def=WDEFS[wid],ws=S.weapons[wid];
   const now=performance.now();if(now-ws.lastFire<def.fireMs)return;ws.lastFire=now;
   if(def.type==='gun'){
-    if(ws.ammo<=0){notify('OUT OF AMMO - buy more in Shop');soundEmpty();return;}
-    ws.ammo--;updateHUD();playGunSound(wid);
+    if(ws.ammo<=0){
+      if(GOD.infAmmo){ws.ammo=def.startAmmo;}
+      else{notify('OUT OF AMMO - buy more in Shop');soundEmpty();return;}
+    }
+    ws.ammo--;if(GOD.infAmmo)ws.ammo=Math.max(ws.ammo,def.startAmmo);
+    updateHUD();playGunSound(wid);
     const fl=new THREE.PointLight(0xff9900,6,4);fl.position.set(0,0.05,-0.8);camera.add(fl);setTimeout(()=>camera.remove(fl),40);
     RAY.setFromCamera(new THREE.Vector2(0,0),camera);
     // Sniper hip-fire spread: only 5% chance of accurate shot when not scoped
@@ -2624,7 +2704,7 @@ function shoot(){
   } else {
     // Melee — use per-weapon cooldown
     const meleeCd=def.cooldown||1500;
-    if(ws.cd>0) return;
+    if(ws.cd>0&&!GOD.noCooldown) return;
     weaponGroup.rotation.x-=0.32;weaponGroup.rotation.y-=0.14;
     setTimeout(()=>{weaponGroup.rotation.x+=0.32;weaponGroup.rotation.y+=0.14;},150);
     soundKnife();
@@ -3225,15 +3305,23 @@ function tickBolt(now){
 
 
 const keys={};let yaw=0,pitch=0,locked=(('ontouchstart' in window)||navigator.maxTouchPoints>0),hbob=0,lastT=0;
+function isMobile(){return('ontouchstart' in window)||navigator.maxTouchPoints>0;}
 const SETTINGS={fov:72,sensitivity:1.0,brightness:100};
 function applySetting(key,val){
   if(key==='fov'){SETTINGS.fov=parseInt(val);camera.fov=SETTINGS.fov;camera.updateProjectionMatrix();document.getElementById('valFov').textContent=val+'°';}
   if(key==='sensitivity'){SETTINGS.sensitivity=parseFloat(val)/9;document.getElementById('valSens').textContent=(SETTINGS.sensitivity).toFixed(1)+'×';}
-  if(key==='brightness'){SETTINGS.brightness=parseInt(val);document.body.style.filter=val==100?'':'brightness('+val/100+')';document.getElementById('valBright').textContent=val+'%';}
+  if(key==='brightness'){
+    SETTINGS.brightness=parseInt(val);
+    const f=val==100?'':'brightness('+val/100+')';
+    document.getElementById('c').style.filter=f;
+    document.getElementById('hud').style.filter=f;
+    document.getElementById('valBright').textContent=val+'%';
+  }
 }
 window.applySetting=applySetting;
 document.addEventListener('keydown',e=>{
   keys[e.code]=true;
+  if(e.code==='Tab'){e.preventDefault();if(S.screen==='game'){if(godMenuOpen)closeGodMenu();else openGodMenu();}return;}
   if(S.screen==='paused'&&(e.code==='Escape'||e.code==='KeyP')){resume();return;}
   if(S.screen!=='game')return;
   if(e.code==='Digit1') swSlot('primary');
@@ -3270,10 +3358,11 @@ document.addEventListener('pointerlockchange',()=>{
     if(S.screen==='paused') resume();
   } else {
     // Lock lost — only pause if it was a genuine mid-game loss, not us requesting it
-    if(!lockRequested && S.screen==='game'){
+    // Also don't pause if god menu is open (TAB releases lock intentionally)
+    if(!lockRequested && !godMenuOpen && S.screen==='game'){
       setTimeout(()=>{
-        // Double-check after 80ms: if still no lock and still playing, pause
-        if(!locked && S.screen==='game') pause();
+        // Double-check after 80ms: if still no lock, not god menu, still playing → pause
+        if(!locked && !godMenuOpen && S.screen==='game') pause();
       }, 80);
     }
     lockRequested=false;
@@ -3760,14 +3849,16 @@ function loop(ts){
 
     // ── Sprint & stamina ──
     const wantSprint=keys['ShiftLeft']&&!stamDepleted;
+    const effStamMax=STAM_MAX*GOD.stamMult;
     if(wantSprint){
-      stamina=Math.max(0,stamina-STAM_DRAIN_RATE*dt);
-      if(stamina<=0){stamina=0;stamDepleted=true;}
+      if(!GOD.noCooldown){stamina=Math.max(0,stamina-STAM_DRAIN_RATE*dt);if(stamina<=0){stamina=0;stamDepleted=true;}}
     } else {
-      stamina=Math.min(STAM_MAX,stamina+STAM_REGEN_RATE*dt);
-      if(stamDepleted&&stamina>=STAM_MAX) stamDepleted=false;
+      stamina=Math.min(effStamMax,stamina+STAM_REGEN_RATE*dt*GOD.stamMult);
+      if(stamDepleted&&stamina>=effStamMax) stamDepleted=false;
     }
-    const spd=(wantSprint?0.009:0.005)*dt;
+    // Godmode: lock health at 100
+    if(GOD.godmode&&S.health<100){S.health=100;updateHUD();}
+    const spd=(wantSprint?0.009:0.005)*dt*GOD.speedMult;
     const stamPct=stamina/STAM_MAX;
     const sf=document.getElementById('stamFill');
     sf.style.width=(stamPct*100)+'%';
@@ -4015,10 +4106,148 @@ function openPreview(wid,skinId){
 function showEl(id){document.getElementById(id).classList.add('show');}
 function hideEl(id){document.getElementById(id).classList.remove('show');}
 
+// ══ DIFFICULTY ══
+const DIFFICULTIES={
+  easy:      {label:'EASY',       maxWave:5,  reward:750,  color:'#44cc44', desc:'5 waves · +750 credits on victory'},
+  medium:    {label:'MEDIUM',     maxWave:10, reward:1500, color:'#ffaa00', desc:'10 waves · +1500 credits on victory'},
+  hard:      {label:'HARD',       maxWave:15, reward:2500, color:'#ff6600', desc:'15 waves · +2500 credits on victory'},
+  impossible:{label:'IMPOSSIBLE', maxWave:20, reward:3750, color:'#ff2222', desc:'20 waves + BOSS · +3750 credits on victory'},
+};
+let S_DIFF='easy';
+
+function selectDiff(d){
+  S_DIFF=d;
+  document.querySelectorAll('.diff-btn').forEach(b=>b.classList.toggle('active',b.dataset.diff===d));
+  const dd=DIFFICULTIES[d];
+  document.getElementById('diffDesc').textContent=dd.desc;
+  document.getElementById('diffDesc').style.color=dd.color;
+}
+window.selectDiff=selectDiff;
+// Init desc on load
+setTimeout(()=>selectDiff('easy'),0);
+
+// ══ BOSS ZOMBIE ══
+let bossSpawned=false;
+function spawnBoss(){
+  bossSpawned=true;
+  const g=new THREE.Group();
+  g.userData={dead:false,type:'boss',hp:750,maxHp:750,speed:0.9,dmg:30,atkTimer:0,deathT:0,spawnAge:9999};
+  const skinM=new THREE.MeshLambertMaterial({color:0x660000});
+  const darkM=new THREE.MeshLambertMaterial({color:0x330000});
+  const boneM=new THREE.MeshLambertMaterial({color:0xccbbaa});
+  const eyeM =new THREE.MeshBasicMaterial({color:0xff0000});
+  const metalM=new THREE.MeshLambertMaterial({color:0x444444});
+  // Massive body
+  const body=new THREE.Mesh(new THREE.BoxGeometry(1.1,1.1,0.65),skinM);body.position.y=1.3;body.castShadow=true;g.add(body);
+  const belly=new THREE.Mesh(new THREE.BoxGeometry(0.9,0.5,0.72),darkM);belly.position.y=0.95;g.add(belly);
+  // Exposed spine
+  for(let i=0;i<6;i++){const s=new THREE.Mesh(new THREE.BoxGeometry(0.08,0.07,0.06),boneM);s.position.set(0,1.6-i*0.14,-0.33);g.add(s);}
+  // Neck & head
+  const neck=new THREE.Mesh(new THREE.CylinderGeometry(0.24,0.28,0.28,8),skinM);neck.position.y=2.0;g.add(neck);
+  const head=new THREE.Mesh(new THREE.BoxGeometry(0.72,0.68,0.66),darkM);head.position.y=2.52;head.castShadow=true;g.add(head);
+  // Glowing red eyes
+  [[-0.17,2.58,0.34],[0.17,2.58,0.34]].forEach(([x,y,z])=>{
+    const eye=new THREE.Mesh(new THREE.SphereGeometry(0.075,8,6),eyeM);eye.position.set(x,y,z);g.add(eye);
+    const glow=new THREE.Mesh(new THREE.SphereGeometry(0.12,8,6),new THREE.MeshBasicMaterial({color:0xff0000,transparent:true,opacity:0.2}));glow.position.set(x,y,z);g.add(glow);
+  });
+  // Horns
+  [[-0.24,2.86,0.0],[0.24,2.86,0.0]].forEach(([x,y,z],i)=>{
+    const horn=new THREE.Mesh(new THREE.ConeGeometry(0.06,0.32,6),boneM);horn.rotation.z=i===0?-0.4:0.4;horn.position.set(x,y,z);g.add(horn);
+  });
+  // Giant arms with bone spikes
+  [[-0.7,1.3],[ 0.7,1.3]].forEach(([ax],i)=>{
+    const arm=new THREE.Mesh(new THREE.BoxGeometry(0.32,1.05,0.36),skinM);arm.position.set(ax,1.3,0);arm.rotation.x=-0.3*(i===0?1:-1);arm.userData.l=i===0?'la':'ra';g.add(arm);
+    for(let s=0;s<3;s++){const sp=new THREE.Mesh(new THREE.ConeGeometry(0.04,0.2,5),boneM);sp.position.set(ax*(1.0),0.65-s*0.22,-0.04);sp.rotation.x=0.4;g.add(sp);}
+  });
+  // Legs
+  [[-0.26,0.45],[0.26,0.45]].forEach(([lx])=>{
+    const leg=new THREE.Mesh(new THREE.BoxGeometry(0.42,1.02,0.44),new THREE.MeshLambertMaterial({color:0x220000}));leg.position.set(lx,0.45,0);leg.userData.l=lx<0?'ll':'rl';g.add(leg);
+    const foot=new THREE.Mesh(new THREE.BoxGeometry(0.36,0.14,0.58),darkM);foot.position.set(lx,-0.03,0.1);g.add(foot);
+  });
+  // Chains across chest
+  for(let i=0;i<10;i++){
+    const link=new THREE.Mesh(new THREE.TorusGeometry(0.055,0.015,4,8),metalM);
+    link.rotation.y=i*Math.PI/5;link.position.set(Math.cos(i*Math.PI/5)*0.6,1.32,Math.sin(i*Math.PI/5)*0.38);g.add(link);
+  }
+  // Hitboxes
+  const hb=new THREE.Mesh(new THREE.BoxGeometry(1.15,1.9,0.75),new THREE.MeshBasicMaterial({visible:false}));hb.position.y=0.95;hb.userData.hitbox=true;hb.userData.isHead=false;g.add(hb);
+  const hbH=new THREE.Mesh(new THREE.BoxGeometry(0.76,0.72,0.70),new THREE.MeshBasicMaterial({visible:false}));hbH.position.y=2.52;hbH.userData.hitbox=true;hbH.userData.isHead=true;g.add(hbH);
+  // HP bar
+  const hpBg=new THREE.Mesh(new THREE.PlaneGeometry(1.4,0.12),new THREE.MeshBasicMaterial({color:0x1a1a1a}));hpBg.position.y=3.5;g.add(hpBg);
+  const hpFg=new THREE.Mesh(new THREE.PlaneGeometry(1.4,0.12),new THREE.MeshBasicMaterial({color:0xff0000}));hpFg.position.set(0,3.501,0.001);hpFg.userData.bar=true;g.add(hpFg);
+  // Spawn opposite side from player
+  g.position.set(0,0,-30);
+  scene.add(g);S.zombies.push(g);
+  notify('☠ THE BOSS AWAKENS!');
+}
+
+// ══ GOD POWERS ══
+const GOD={godmode:false,infAmmo:false,noCooldown:false, speedMult:1, stamMult:1, unlocked:false};
+let godMenuOpen=false;
+
+function openGodMenu(){
+  if(!GOD.unlocked){notify('Code not active.');return;}
+  if(S.screen!=='game') return;
+  godMenuOpen=true;
+  document.getElementById('godMenu').style.display='flex';
+  if(!isMobile()&&locked) document.exitPointerLock();
+  renderGodMenu();
+}
+function closeGodMenu(){
+  godMenuOpen=false;
+  document.getElementById('godMenu').style.display='none';
+  // Only re-lock on desktop — mobile never uses pointer lock
+  if(S.screen==='game'&&!isMobile()){lockRequested=true;cvs.requestPointerLock();}
+}
+function renderGodMenu(){
+  const list=document.getElementById('godPowersList');
+  list.innerHTML='';
+  const powers=[
+    {id:'godmode',   label:'GODMODE',      desc:'Infinite health — cannot die'},
+    {id:'infAmmo',   label:'INF AMMO',     desc:'Unlimited ammo, no reload needed'},
+    {id:'noCooldown',label:'NO COOLDOWN',  desc:'No weapon cooldowns or bolt delay'},
+  ];
+  powers.forEach(({id,label,desc})=>{
+    const on=GOD[id];
+    const el=document.createElement('div');
+    el.className='god-toggle'+(on?' on':'');
+    el.innerHTML=`
+      <div style="flex:1">
+        <div class="god-toggle-name" style="color:${on?'#ffd700':'#888'}">${label}</div>
+        <div class="god-toggle-desc">${desc}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+        <span style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:${on?'#44ff88':'#444'}">${on?'ON':'OFF'}</span>
+        <div class="god-toggle-dot"></div>
+      </div>`;
+    el.addEventListener('mousedown', e=>e.stopPropagation());
+    el.addEventListener('click', e=>{
+      e.stopPropagation();
+      e.preventDefault();
+      GOD[id]=!GOD[id];
+      renderGodMenu();
+    });
+    list.appendChild(el);
+  });
+}
+function updateGodSpeed(v){
+  GOD.speedMult=parseFloat(v);
+  document.getElementById('godSpeedVal').textContent=parseFloat(v).toFixed(1)+'×';
+}
+function updateGodStam(v){
+  GOD.stamMult=parseFloat(v);
+  document.getElementById('godStamVal').textContent=parseFloat(v).toFixed(1)+'×';
+}
+window.updateGodSpeed=updateGodSpeed; window.updateGodStam=updateGodStam;
+
 // ══ GAME FLOW ══
 function startGame(){
   S.zombies.forEach(z=>scene.remove(z));S.zombies.length=0;
   S.health=100;S.screen='game';S.wave=0;S.waveActive=false;S.totalKills=0;
+  S.difficulty=S_DIFF;
+  bossSpawned=false;
+  // Reset god power active states (keep unlocked)
+  GOD.godmode=false; GOD.infAmmo=false; GOD.noCooldown=false; GOD.speedMult=1; GOD.stamMult=1;
   S.held=S.heldSecondary; // start holding the active secondary
   // Preserve secondary selection but fall back to pistol if not owned
   if(!S.weapons[S.heldSecondary]||!S.weapons[S.heldSecondary].owned) S.heldSecondary='pistol';
@@ -4148,6 +4377,7 @@ function redeemCode(){
       // Do NOT grant weapon ownership — player must still buy it
     }
   }
+  else if(code.type==='godpowers'){ GOD.unlocked=true; }
   else if(code.type==='devmode'){Object.keys(S.weapons).forEach(wid=>{if(!WDEFS[wid])return;S.weapons[wid].owned=true;if(WDEFS[wid].type==='gun'){S.weapons[wid].ammo=WDEFS[wid].startAmmo;S.weapons[wid].res=WDEFS[wid].resAmmo*3;}WDEFS[wid].skins.forEach(sk=>{if(!S.unlocked[wid].includes(sk.id))S.unlocked[wid].push(sk.id);});});Object.keys(S.utils).forEach(uid=>{S.utils[uid].owned=true;});}
   msg.innerHTML='<div class="code-msg-ok">'+code.msg+'</div>';
   document.getElementById('menuCredits').textContent=S.credits;renderShop();renderInventory();
@@ -4642,6 +4872,7 @@ requestAnimationFrame(loop);
   <div id="mobWepLabel"></div>
   <!-- Pause -->
   <div class="mob-btn" id="btnPauseMob">⏸</div>
+  <div class="mob-btn" id="btnGodMob" style="right:66px;top:14px;width:44px;height:44px;font-size:13px;border-radius:8px;display:none;background:rgba(255,215,0,0.12);border-color:rgba(255,215,0,0.4);color:#ffd700;">⚡</div>
 </div>
 
 <script>
@@ -4791,6 +5022,14 @@ mobBtn('btnW3', ()=>{ if(S.screen==='game') swSlot('knife'); });
 mobBtn('btnPauseMob',
   ()=>{ if(S.screen==='game') pause(); else if(S.screen==='paused') resume(); }
 );
+// God Powers
+mobBtn('btnGodMob', ()=>{ if(S.screen==='game'){ if(godMenuOpen) closeGodMenu(); else openGodMenu(); } });
+
+// Show god button when unlocked
+setInterval(()=>{
+  const btn=document.getElementById('btnGodMob');
+  if(btn) btn.style.display=(typeof GOD!=='undefined'&&GOD.unlocked&&S.screen==='game')?'flex':'none';
+}, 300);
 
 // ── HOOK INTO GAME LOOP FOR JOYSTICK MOVEMENT ──
 // Patch the movement section by overriding keys with joystick values
