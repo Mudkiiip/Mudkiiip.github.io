@@ -477,6 +477,12 @@ const WDEFS={
     {id:'phantom', name:'Phantom Protocol', kills:50, colors:[0x0a0a1a,0x4400aa],rarity:'legendary',emoji:'P'},
     {id:'early',   name:'Early Access',     kills:0,  colors:[0xffd700,0xff4400],rarity:'secret',  emoji:'★', secret:true},
   ]},
+  lmg:{name:'M249 LMG',slot:'primary',type:'gun',price:5500,hitsToKill:8,fireMs:95,startAmmo:100,resAmmo:200,boxCost:90,boxAmt:100,skins:[
+    {id:'default',  name:'Default',         kills:0,  colors:[0x4a4a3a,0x2a2a1a],rarity:'common',   emoji:'?'},
+    {id:'desert',   name:'Desert Storm',    kills:15, colors:[0xc8a855,0x7a5a22],rarity:'rare',     emoji:'D'},
+    {id:'tiger',    name:'Tiger Stripe',    kills:30, colors:[0x2a4a2a,0x0a1a0a],rarity:'epic',     emoji:'T'},
+    {id:'plasma',   name:'Plasma Core',     kills:50, colors:[0x001a33,0x0088ff],rarity:'legendary',emoji:'P'},
+  ]},
   // ── SECONDARIES (slot 2) ──
   pistol:{name:'Pistol',slot:'secondary',type:'gun',hitsToKill:8,fireMs:480,startAmmo:30,resAmmo:90,boxCost:50,boxAmt:30,skins:[
     {id:'default',name:'Default',       kills:0,  colors:[0x888888,0x333333],rarity:'common',   emoji:'?'},
@@ -534,6 +540,7 @@ const S={
     smg:    {owned:false,ammo:0,  res:0,   kills:0,skin:'default',lastFire:0},
     shotgun:{owned:false,ammo:0,  res:0,   kills:0,skin:'default',lastFire:0},
     sniper: {owned:false,ammo:0,  res:0,   kills:0,skin:'default',lastFire:0},
+    lmg:    {owned:false,ammo:0,  res:0,   kills:0,skin:'default',lastFire:0},
     pistol: {owned:true, ammo:30, res:90,  kills:0,skin:'default',lastFire:0},
     revolver:{owned:false,ammo:0, res:0,   kills:0,skin:'default',lastFire:0},
     deagle: {owned:false,ammo:0,  res:0,   kills:0,skin:'default',lastFire:0},
@@ -545,7 +552,7 @@ const S={
   held:'pistol',
   heldPrimary:'smg', heldSecondary:'pistol', heldKnife:'knife',
   usedCodes:[],
-  unlocked:{smg:['default'],shotgun:['default'],sniper:['default'],pistol:['default'],revolver:['default'],deagle:['default'],compact:['default'],boomerang:['default'],knife:['default'],sledge:['default']},
+  unlocked:{smg:['default'],shotgun:['default'],sniper:['default'],lmg:['default'],pistol:['default'],revolver:['default'],deagle:['default'],compact:['default'],boomerang:['default'],knife:['default'],sledge:['default']},
   zombies:[],totalKills:0,
   wave:0,waveActive:false,waveKilled:0,waveSize:0,spawnQueue:0,spawnTimer:0,
   invSlot:'primary',
@@ -586,6 +593,10 @@ const bl=new THREE.PointLight(0x2244ff,0.6,50);bl.position.set(0,4,0);scene.add(
 
 let weaponGroup=new THREE.Group();
 camera.add(weaponGroup);
+
+// ── Player hands (visible first-person arms) ──
+
+
 
 // ══ MAP ══
 function mkMesh(geo,color,rx,ry,rz){
@@ -1101,8 +1112,9 @@ function mkKnife(model,c1,c2){
     // Tanto flat (secondary bevel near tip, forms the tanto angle)
     const tanto=new THREE.Mesh(new THREE.BoxGeometry(0.02,0.006,0.07),bladeM); tanto.position.set(0,0.01,-0.225); tanto.rotation.x=-0.25; g.add(tanto);
     const tantoEdge=new THREE.Mesh(new THREE.BoxGeometry(0.018,0.002,0.065),edgeM); tantoEdge.position.set(0,0.008,-0.225); tantoEdge.rotation.x=-0.25; g.add(tantoEdge);
-    // Tanto tip
-    const tip=new THREE.Mesh(new THREE.ConeGeometry(0.009,0.035,4),bladeM); tip.rotation.x=Math.PI/2; tip.rotation.z=Math.PI/4; tip.position.set(0,0.01,-0.264); g.add(tip);
+    // Tanto tip - clean taper boxes
+    const tantoTip1=new THREE.Mesh(new THREE.BoxGeometry(0.016,0.006,0.04),bladeM); tantoTip1.position.set(0,0.01,-0.255); tantoTip1.rotation.x=-0.3; g.add(tantoTip1);
+    const tantoTip2=new THREE.Mesh(new THREE.BoxGeometry(0.008,0.004,0.022),bladeM); tantoTip2.position.set(0,0.008,-0.272); tantoTip2.rotation.x=-0.5; g.add(tantoTip2);
     // Blood groove / fuller
     const full=new THREE.Mesh(new THREE.BoxGeometry(0.005,0.003,0.24),mph(new THREE.Color(c2).addScalar(0.3).getHex(),140)); full.position.set(0,0.014,-0.075); g.add(full);
     // Spine ridge
@@ -1134,9 +1146,10 @@ function mkKnife(model,c1,c2){
     const bld=new THREE.Mesh(new THREE.BoxGeometry(0.024,0.007,0.31),bladeM); bld.position.set(0,0.012,-0.08); g.add(bld);
     // Hollow grind (bright edge bevel)
     const bev=new THREE.Mesh(new THREE.BoxGeometry(0.022,0.002,0.28),edgeM); bev.position.set(0,0.008,-0.076); g.add(bev);
-    // Drop point tip
+    // Drop point tip - tapered box, no gaps
     const tipRamp=new THREE.Mesh(new THREE.BoxGeometry(0.022,0.007,0.075),bladeM); tipRamp.position.set(0,0.012,-0.243); tipRamp.rotation.x=0.28; g.add(tipRamp);
-    const tip=new THREE.Mesh(new THREE.ConeGeometry(0.01,0.052,5),bladeM); tip.rotation.x=Math.PI/2; tip.rotation.z=Math.PI*0.2; tip.position.set(0,0.012,-0.275); g.add(tip);
+    const tipRamp2=new THREE.Mesh(new THREE.BoxGeometry(0.014,0.007,0.055),bladeM); tipRamp2.position.set(0,0.009,-0.272); tipRamp2.rotation.x=0.5; g.add(tipRamp2);
+    const tipPoint=new THREE.Mesh(new THREE.BoxGeometry(0.006,0.005,0.022),bladeM); tipPoint.position.set(0,0.007,-0.295); tipPoint.rotation.x=0.7; g.add(tipPoint);
     // Fuller groove
     const full=new THREE.Mesh(new THREE.BoxGeometry(0.005,0.003,0.25),mph(0xdddddd,140)); full.position.set(0,0.015,-0.073); g.add(full);
     // Spine
@@ -2182,6 +2195,74 @@ function mkSniper_EarlyAccess(){
   return g;
 }
 
+function mkLMG(c1,c2){
+  const g=new THREE.Group();
+  const rcvM=mDark(c1), hndM=mPoly(c2), metM=mMetal(0x888888), dM=mph(0x0a0a0a,20), rubM=mph(0x111111,8);
+  // ── Heavy barrel (longer and thicker than SMG) ──
+  const brlPts=[[0,0],[0.028,0],[0.028,0.01],[0.024,0.03],[0.024,0.55],[0.026,0.57]];
+  const brl=mkBarrel(brlPts,12,mDark(c1),0,0.02,-0.56); g.add(brl);
+  // Bipod (folds under barrel)
+  [-0.032,0.032].forEach(bx=>{
+    const leg=new THREE.Mesh(new THREE.BoxGeometry(0.01,0.1,0.01),metM);leg.position.set(bx,-0.04,-0.38);leg.rotation.x=0.2;g.add(leg);
+    const foot=new THREE.Mesh(new THREE.BoxGeometry(0.01,0.012,0.022),metM);foot.position.set(bx,-0.09,-0.36);g.add(foot);
+  });
+  const bipBase=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.012,0.02),metM);bipBase.position.set(0,0.012,-0.38);g.add(bipBase);
+  // Flash hider (pronged)
+  const fh=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.024,0.04,6),metM);fh.rotation.x=Math.PI/2;fh.position.set(0,0.02,-0.84);g.add(fh);
+  for(let i=0;i<4;i++){
+    const prong=new THREE.Mesh(new THREE.BoxGeometry(0.007,0.022,0.004),metM);prong.position.set(Math.cos(i*Math.PI/2)*0.02,0.02+Math.sin(i*Math.PI/2)*0.02,-0.862);g.add(prong);
+  }
+  // Heat shield over barrel
+  const shield=new THREE.Mesh(new THREE.BoxGeometry(0.068,0.022,0.44),dM);shield.position.set(0,0.034,-0.38);g.add(shield);
+  // Shield slots
+  for(let i=0;i<6;i++){
+    const sl=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.01,0.02),dM);sl.position.set(0,0.046,-0.18+i*0.065);g.add(sl);
+  }
+  // ── Receiver (chunky) ──
+  const rcv=new THREE.Mesh(new THREE.BoxGeometry(0.075,0.090,0.38),rcvM);g.add(rcv);
+  edge(g,0.004,0.004,0.38,0x444444,0.037,0.045,0);
+  edge(g,0.004,0.004,0.38,0x444444,-0.037,0.045,0);
+  // Ejection port
+  const ep=new THREE.Mesh(new THREE.BoxGeometry(0.006,0.038,0.1),dM);ep.position.set(0.038,0.005,0);g.add(ep);
+  // Charging handle (left side, large)
+  const ch=new THREE.Mesh(new THREE.BoxGeometry(0.028,0.018,0.032),metM);ch.position.set(-0.05,0.02,0.06);g.add(ch);
+  // Top rail
+  const rail=new THREE.Mesh(new THREE.BoxGeometry(0.018,0.009,0.32),mMetal(0x222222));rail.position.set(0,0.05,0.01);g.add(rail);
+  for(let i=0;i<8;i++){const t=new THREE.Mesh(new THREE.BoxGeometry(0.020,0.004,0.004),dM);t.position.set(0,0.053,-0.13+i*0.038);g.add(t);}
+  // Carry handle / sights
+  const carry=new THREE.Mesh(new THREE.BoxGeometry(0.014,0.055,0.2),metM);carry.position.set(0,0.085,0.05);g.add(carry);
+  // Front sight post
+  const fs=new THREE.Mesh(new THREE.BoxGeometry(0.008,0.026,0.008),metM);fs.position.set(0,0.075,-0.28);g.add(fs);
+  // ── Box magazine (large, 100 rounds) ──
+  const mag=new THREE.Mesh(new THREE.BoxGeometry(0.058,0.22,0.1),rcvM);mag.position.set(0,-0.15,0.02);g.add(mag);
+  const magFloor=new THREE.Mesh(new THREE.BoxGeometry(0.062,0.012,0.104),metM);magFloor.position.set(0,-0.26,0.02);g.add(magFloor);
+  // Mag window showing rounds
+  const magWin=new THREE.Mesh(new THREE.BoxGeometry(0.008,0.1,0.024),mph(0xcc8800,30));magWin.position.set(0.032,-0.16,0.02);g.add(magWin);
+  // Mag release
+  const mr=new THREE.Mesh(new THREE.BoxGeometry(0.01,0.02,0.016),metM);mr.position.set(0.04,-0.06,0.03);g.add(mr);
+  // ── Trigger group ──
+  const tg=new THREE.Mesh(new THREE.TorusGeometry(0.028,0.007,5,16,Math.PI),rcvM);tg.rotation.x=Math.PI/2;tg.position.set(0,-0.05,0.09);g.add(tg);
+  const trig=new THREE.Mesh(new THREE.BoxGeometry(0.008,0.03,0.012),metM);trig.position.set(0,-0.036,0.07);trig.rotation.x=0.25;g.add(trig);
+  const tgPlate=new THREE.Mesh(new THREE.BoxGeometry(0.078,0.010,0.16),rcvM);tgPlate.position.set(0,-0.052,0.09);g.add(tgPlate);
+  // ── Pistol grip ──
+  const gr=new THREE.Mesh(new THREE.BoxGeometry(0.055,0.14,0.095),hndM);gr.position.set(0,-0.115,0.12);gr.rotation.x=0.14;g.add(gr);
+  // Grip texture
+  [-0.028,0.028].forEach(sx=>{for(let i=0;i<5;i++){const r=new THREE.Mesh(new THREE.BoxGeometry(0.004,0.01,0.016),dM);r.position.set(sx,-0.06-i*0.02,0.12);r.rotation.x=0.14;g.add(r);}});
+  const gc=new THREE.Mesh(new THREE.BoxGeometry(0.057,0.014,0.1),rcvM);gc.position.set(0,-0.184,0.12);gc.rotation.x=0.14;g.add(gc);
+  // ── Buttstock (solid, heavy) ──
+  const stk=new THREE.Mesh(new THREE.BoxGeometry(0.064,0.105,0.3),hndM);stk.position.set(0,0.006,0.34);g.add(stk);
+  // Cheekweld
+  const ck=new THREE.Mesh(new THREE.BoxGeometry(0.062,0.028,0.18),hndM);ck.position.set(0,0.063,0.32);g.add(ck);
+  // Sling loop
+  const sl=new THREE.Mesh(new THREE.TorusGeometry(0.014,0.005,5,12),metM);sl.rotation.y=Math.PI/2;sl.position.set(0,-0.046,-0.38);g.add(sl);
+  // Buttplate
+  const bp=new THREE.Mesh(new THREE.BoxGeometry(0.064,0.112,0.018),rubM);bp.position.set(0,0.006,0.5);g.add(bp);
+  // Foregrip (vertical grip under barrel)
+  const fg=new THREE.Mesh(new THREE.CylinderGeometry(0.016,0.014,0.1,8),hndM);fg.position.set(0,-0.07,-0.22);g.add(fg);
+  const fgCap=new THREE.Mesh(new THREE.SphereGeometry(0.015,8,6),hndM);fgCap.position.set(0,-0.12,-0.22);g.add(fgCap);
+  return g;
+}
+
 function getMesh(wid,skinId){
   const def=WDEFS[wid],skin=def.skins.find(s=>s.id===skinId)||def.skins[0];
   const [c1,c2]=skin.colors;
@@ -2200,6 +2281,7 @@ function getMesh(wid,skinId){
   if(wid==='shotgun') return mkShotgun(c1,c2);
   if(wid==='sniper'&&skinId==='early') return mkSniper_EarlyAccess();
   if(wid==='sniper')  return mkSniper(c1,c2);
+  if(wid==='lmg')     return mkLMG(c1,c2);
   if(wid==='revolver')return mkRevolver(c1,c2);
   if(wid==='deagle')  return mkDeagle(c1,c2);
   if(wid==='compact') return mkCompact(c1,c2);
@@ -2348,23 +2430,23 @@ function spawnZombie(){
     // Ear/lobe remnants
     const earL=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.08,0.06),darkM);earL.position.set(-0.31,1.9,0.04);g.add(earL);
     // Arms - thick, one normal one mutated bigger
-    const lA=new THREE.Mesh(new THREE.BoxGeometry(0.22,0.78,0.26),skinM);lA.position.set(-0.55,1.08,0.02);lA.rotation.x=-0.35;lA.userData.l='la';g.add(lA);
+    const lA=new THREE.Mesh(new THREE.BoxGeometry(0.22,0.78,0.26),skinM);lA.position.set(-0.46,1.08,0.02);lA.rotation.x=-0.35;lA.userData.l='la';g.add(lA);
     // Exposed forearm bone on left arm
-    const lBone=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.3,0.04),boneM);lBone.position.set(-0.55,0.72,0.06);g.add(lBone);
+    const lBone=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.3,0.04),boneM);lBone.position.set(-0.46,0.72,0.06);lBone.userData.l='la';g.add(lBone);
     // Mutated right arm - larger
-    const rA=new THREE.Mesh(new THREE.BoxGeometry(0.30,0.92,0.32),skinM);rA.position.set(0.58,1.05,0.02);rA.rotation.x=-0.25;rA.userData.l='ra';g.add(rA);
+    const rA=new THREE.Mesh(new THREE.BoxGeometry(0.30,0.92,0.32),skinM);rA.position.set(0.50,1.05,0.02);rA.rotation.x=-0.25;rA.userData.l='ra';g.add(rA);
     // Massive right fist
-    const rFist=new THREE.Mesh(new THREE.BoxGeometry(0.28,0.24,0.26),rottM);rFist.position.set(0.58,0.5,-0.12);g.add(rFist);
+    const rFist=new THREE.Mesh(new THREE.BoxGeometry(0.28,0.24,0.26),rottM);rFist.position.set(0.50,0.5,-0.12);rFist.userData.l='ra';g.add(rFist);
     // Finger claws on right fist
     for(let i=0;i<4;i++){
-      const claw=new THREE.Mesh(new THREE.ConeGeometry(0.025,0.09,4),boneM);claw.position.set(0.44+i*0.06,0.38,-0.22);claw.rotation.x=0.5;g.add(claw);
+      const claw=new THREE.Mesh(new THREE.ConeGeometry(0.025,0.09,4),boneM);claw.position.set(0.36+i*0.06,0.38,-0.22);claw.rotation.x=0.5;claw.userData.l='ra';g.add(claw);
     }
     // Legs - massive, torn pants
     const lL=new THREE.Mesh(new THREE.BoxGeometry(0.32,0.82,0.32),clothM);lL.position.set(-0.2,0.38,0);lL.userData.l='ll';g.add(lL);
     const rL=lL.clone();rL.position.x=0.2;rL.userData.l='rl';g.add(rL);
-    // Bare feet (no shoes)
-    [-0.2,0.2].forEach(fx=>{
-      const foot=new THREE.Mesh(new THREE.BoxGeometry(0.2,0.1,0.32),skinM);foot.position.set(fx,-0.04,0.06);g.add(foot);
+    // Bare feet (no shoes) - tag to animate with legs
+    [-0.2,0.2].forEach((fx,fi)=>{
+      const foot=new THREE.Mesh(new THREE.BoxGeometry(0.2,0.1,0.32),skinM);foot.position.set(fx,-0.04,0.06);foot.userData.l=fi===0?'ll':'rl';g.add(foot);
     });
     // Chain around torso
     for(let i=0;i<8;i++){
@@ -2424,27 +2506,27 @@ function spawnZombie(){
       const t=new THREE.Mesh(new THREE.BoxGeometry(0.028,0.038,0.018),boneM);t.position.set(-0.056+i*0.028,1.27,0.13);g.add(t);
     }
     // Long thin arms outstretched (reaching)
-    const lA=new THREE.Mesh(new THREE.BoxGeometry(0.09,0.44,0.12),skinM);lA.position.set(-0.26,0.82,0.04);lA.rotation.set(-0.7,0,-0.15);lA.userData.l='la';g.add(lA);
-    const lFore=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.36,0.09),boneM);lFore.position.set(-0.32,0.56,-0.1);lFore.rotation.set(-0.9,0,-0.1);g.add(lFore);
+    const lA=new THREE.Mesh(new THREE.BoxGeometry(0.09,0.44,0.12),skinM);lA.position.set(-0.20,0.82,0.04);lA.rotation.set(-0.7,0,-0.15);lA.userData.l='la';g.add(lA);
+    const lFore=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.36,0.09),boneM);lFore.position.set(-0.25,0.56,-0.1);lFore.rotation.set(-0.9,0,-0.1);lFore.userData.l='la';g.add(lFore);
     // Claw hand left
     for(let i=0;i<3;i++){
-      const f=new THREE.Mesh(new THREE.ConeGeometry(0.016,0.065,4),boneM);f.position.set(-0.28+i*0.02,0.32,-0.22);f.rotation.x=0.9;g.add(f);
+      const f=new THREE.Mesh(new THREE.ConeGeometry(0.016,0.065,4),boneM);f.position.set(-0.22+i*0.02,0.32,-0.22);f.rotation.x=0.9;f.userData.l='la';g.add(f);
     }
-    const rA=new THREE.Mesh(new THREE.BoxGeometry(0.09,0.44,0.12),skinM);rA.position.set(0.26,0.82,0.04);rA.rotation.set(-0.7,0,0.15);rA.userData.l='ra';g.add(rA);
-    const rFore=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.36,0.09),boneM);rFore.position.set(0.32,0.56,-0.1);rFore.rotation.set(-0.9,0,0.1);g.add(rFore);
+    const rA=new THREE.Mesh(new THREE.BoxGeometry(0.09,0.44,0.12),skinM);rA.position.set(0.20,0.82,0.04);rA.rotation.set(-0.7,0,0.15);rA.userData.l='ra';g.add(rA);
+    const rFore=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.36,0.09),boneM);rFore.position.set(0.25,0.56,-0.1);rFore.rotation.set(-0.9,0,0.1);rFore.userData.l='ra';g.add(rFore);
     for(let i=0;i<3;i++){
-      const f=new THREE.Mesh(new THREE.ConeGeometry(0.016,0.065,4),boneM);f.position.set(0.24+i*0.02,0.32,-0.22);f.rotation.x=0.9;g.add(f);
+      const f=new THREE.Mesh(new THREE.ConeGeometry(0.016,0.065,4),boneM);f.position.set(0.18+i*0.02,0.32,-0.22);f.rotation.x=0.9;f.userData.l='ra';g.add(f);
     }
     // Legs - sprint crouch position look via pants
     const lL=new THREE.Mesh(new THREE.BoxGeometry(0.13,0.46,0.15),clothM);lL.position.set(-0.09,0.26,0);lL.userData.l='ll';g.add(lL);
     const rL=lL.clone();rL.position.x=0.09;rL.userData.l='rl';g.add(rL);
-    // Bare bone lower leg
-    [-0.09,0.09].forEach(lx=>{
-      const shin=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.2,0.07),boneM);shin.position.set(lx,0.05,0.01);g.add(shin);
+    // Bare bone lower leg - tag with legs
+    [-0.09,0.09].forEach((lx,li)=>{
+      const shin=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.2,0.07),boneM);shin.position.set(lx,0.05,0.01);shin.userData.l=li===0?'ll':'rl';g.add(shin);
     });
-    // Torn rags hanging off legs
+    // Torn rags hanging off legs - split left/right
     for(let i=0;i<3;i++){
-      const r=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.15,0.01),clothM);r.position.set(-0.06+i*0.06,0.18,0.08);r.rotation.x=0.15*(i-1);g.add(r);
+      const r=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.15,0.01),clothM);r.position.set(-0.06+i*0.06,0.18,0.08);r.rotation.x=0.15*(i-1);r.userData.l=i<2?'ll':'rl';g.add(r);
     }
     // Hitboxes
     const hb=new THREE.Mesh(new THREE.BoxGeometry(0.4,1.1,0.32),new THREE.MeshBasicMaterial({visible:false}));hb.position.y=0.55;hb.userData.hitbox=true;hb.userData.isHead=false;g.add(hb);
@@ -2513,36 +2595,34 @@ function spawnZombie(){
       const ear=new THREE.Mesh(new THREE.BoxGeometry(0.025,0.055,0.05),skinM);ear.position.set(ex,1.59,0.01);g.add(ear);
     });
     // Arms with torn sleeves
-    const lA=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.55,0.18),clothM);lA.position.set(-0.35,0.97,0.02);lA.rotation.x=-0.5;lA.userData.l='la';g.add(lA);
-    // Torn sleeve end
-    const lSleeve=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.04,0.18),new THREE.MeshLambertMaterial({color:0x1a1a1a}));lSleeve.position.set(-0.35,0.68,0.1);lSleeve.rotation.x=-0.5;g.add(lSleeve);
-    // Bare forearm
-    const lFore=new THREE.Mesh(new THREE.BoxGeometry(0.1,0.24,0.13),skinM);lFore.position.set(-0.35,0.52,0.17);lFore.rotation.x=-0.5;g.add(lFore);
-    // Forearm vein
-    const lVein=new THREE.Mesh(new THREE.BoxGeometry(0.006,0.22,0.005),new THREE.MeshLambertMaterial({color:0x004400}));lVein.position.set(-0.36,0.52,0.22);lVein.rotation.x=-0.5;g.add(lVein);
-    const rA=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.55,0.18),clothM);rA.position.set(0.35,0.97,0.02);rA.rotation.x=-0.5;rA.userData.l='ra';g.add(rA);
-    const rSleeve=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.04,0.18),new THREE.MeshLambertMaterial({color:0x1a1a1a}));rSleeve.position.set(0.35,0.68,0.1);rSleeve.rotation.x=-0.5;g.add(rSleeve);
-    const rFore=new THREE.Mesh(new THREE.BoxGeometry(0.1,0.24,0.13),skinM);rFore.position.set(0.35,0.52,0.17);rFore.rotation.x=-0.5;g.add(rFore);
-    // Hand claws
-    [-0.35,0.35].forEach((hx,hi)=>{
+    const lA=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.55,0.18),clothM);lA.position.set(-0.28,0.97,0.02);lA.rotation.x=-0.5;lA.userData.l='la';g.add(lA);
+    const lSleeve=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.04,0.18),new THREE.MeshLambertMaterial({color:0x1a1a1a}));lSleeve.position.set(-0.28,0.68,0.1);lSleeve.rotation.x=-0.5;lSleeve.userData.l='la';g.add(lSleeve);
+    const lFore=new THREE.Mesh(new THREE.BoxGeometry(0.1,0.24,0.13),skinM);lFore.position.set(-0.28,0.52,0.17);lFore.rotation.x=-0.5;lFore.userData.l='la';g.add(lFore);
+    const lVein=new THREE.Mesh(new THREE.BoxGeometry(0.006,0.22,0.005),new THREE.MeshLambertMaterial({color:0x004400}));lVein.position.set(-0.29,0.52,0.22);lVein.rotation.x=-0.5;lVein.userData.l='la';g.add(lVein);
+    const rA=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.55,0.18),clothM);rA.position.set(0.28,0.97,0.02);rA.rotation.x=-0.5;rA.userData.l='ra';g.add(rA);
+    const rSleeve=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.04,0.18),new THREE.MeshLambertMaterial({color:0x1a1a1a}));rSleeve.position.set(0.28,0.68,0.1);rSleeve.rotation.x=-0.5;rSleeve.userData.l='ra';g.add(rSleeve);
+    const rFore=new THREE.Mesh(new THREE.BoxGeometry(0.1,0.24,0.13),skinM);rFore.position.set(0.28,0.52,0.17);rFore.rotation.x=-0.5;rFore.userData.l='ra';g.add(rFore);
+    // Hand claws - tag to arm side
+    [-0.28,0.28].forEach((hx,hi)=>{
+      const side=hi===0?'la':'ra';
       for(let f=0;f<4;f++){
-        const fi=new THREE.Mesh(new THREE.BoxGeometry(0.022,0.07,0.018),skinM);fi.position.set(hx-0.033+f*0.022,0.36,0.3+(hi===0?0.03:0.03));fi.rotation.x=0.7;g.add(fi);
-        const fc=new THREE.Mesh(new THREE.ConeGeometry(0.01,0.03,4),boneM);fc.position.set(hx-0.033+f*0.022,0.295,0.32+(hi===0?0.04:0.04));fc.rotation.x=0.7;g.add(fc);
+        const fi=new THREE.Mesh(new THREE.BoxGeometry(0.022,0.07,0.018),skinM);fi.position.set(hx-0.033+f*0.022,0.36,0.3+0.03);fi.rotation.x=0.7;fi.userData.l=side;g.add(fi);
+        const fc=new THREE.Mesh(new THREE.ConeGeometry(0.01,0.03,4),boneM);fc.position.set(hx-0.033+f*0.022,0.295,0.32+0.04);fc.rotation.x=0.7;fc.userData.l=side;g.add(fc);
       }
     });
     // Pants (jeans / trousers)
     const pantsL=new THREE.Mesh(new THREE.BoxGeometry(0.2,0.58,0.22),clothM2);pantsL.position.set(-0.12,0.33,0);pantsL.userData.l='ll';g.add(pantsL);
     const pantsR=pantsL.clone();pantsR.position.x=0.12;pantsR.userData.l='rl';g.add(pantsR);
-    // Belt
+    // Belt (on torso, no animation)
     const belt=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.045,0.32),new THREE.MeshLambertMaterial({color:0x3a2800}));belt.position.y=0.64;g.add(belt);
     const buckle=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.055,0.01),boneM);buckle.position.set(0,0.64,0.162);g.add(buckle);
-    // Torn trouser leg
-    const ragL=new THREE.Mesh(new THREE.BoxGeometry(0.18,0.08,0.01),clothM2);ragL.position.set(-0.12,0.07,0.11);ragL.rotation.x=0.2;g.add(ragL);
-    // Shoes (one on, one off - classic zombie look)
-    const shoeR=new THREE.Mesh(new THREE.BoxGeometry(0.18,0.1,0.28),new THREE.MeshLambertMaterial({color:0x2a1a08}));shoeR.position.set(0.12,-0.02,0.04);g.add(shoeR);
-    // Bare foot left (stumpy)
-    const footL=new THREE.Mesh(new THREE.BoxGeometry(0.16,0.08,0.22),skinM);footL.position.set(-0.12,-0.02,0.03);g.add(footL);
-    const toeL=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.05,0.06),skinM);toeL.position.set(-0.12,-0.04,0.14);g.add(toeL);
+    // Torn trouser leg rag (moves with left leg)
+    const ragL=new THREE.Mesh(new THREE.BoxGeometry(0.18,0.08,0.01),clothM2);ragL.position.set(-0.12,0.07,0.11);ragL.rotation.x=0.2;ragL.userData.l='ll';g.add(ragL);
+    // Shoe right (moves with right leg)
+    const shoeR=new THREE.Mesh(new THREE.BoxGeometry(0.18,0.1,0.28),new THREE.MeshLambertMaterial({color:0x2a1a08}));shoeR.position.set(0.12,-0.02,0.04);shoeR.userData.l='rl';g.add(shoeR);
+    // Bare foot left (moves with left leg)
+    const footL=new THREE.Mesh(new THREE.BoxGeometry(0.16,0.08,0.22),skinM);footL.position.set(-0.12,-0.02,0.03);footL.userData.l='ll';g.add(footL);
+    const toeL=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.05,0.06),skinM);toeL.position.set(-0.12,-0.04,0.14);toeL.userData.l='ll';g.add(toeL);
     // Hitboxes
     const hb=new THREE.Mesh(new THREE.BoxGeometry(0.56,1.35,0.58),new THREE.MeshBasicMaterial({visible:false}));hb.position.y=0.67;hb.userData.hitbox=true;hb.userData.isHead=false;g.add(hb);
     const hbH=new THREE.Mesh(new THREE.BoxGeometry(0.38,0.38,0.34),new THREE.MeshBasicMaterial({visible:false}));hbH.position.y=1.58;hbH.userData.hitbox=true;hbH.userData.isHead=true;g.add(hbH);
@@ -2985,76 +3065,55 @@ function tickInspect(now){
   // Phase 0.65–0.8: re-insert mag with firm push
   // Phase 0.8–1.0: tilt gun back up, rack the charging handle
   } else if(wid==='smg'){
+    // Store left hand default pos/rot for restore
     if(raw<0.18){
-      // Tilt the SMG to the side to access the mag well
       const p=raw/0.18;
       weaponGroup.rotation.z=lerp(0, 0.55, easeInOut(p));
       weaponGroup.rotation.y=lerp(0.1,-0.2, easeInOut(p));
       weaponGroup.position.y=lerp(-0.32,-0.42,easeInOut(p));
     } else if(raw<0.35){
-      // Mag ejects — make it visible and animate it down
       const p=(raw-0.18)/0.17;
       if(inspectMag){
         inspectMag.visible=true;
-        // Start at the mag well position (approx) and drop down
-        inspectMag.position.set(
-          lerp(0.3, 0.32, p),
-          lerp(-0.42,-0.42-0.28*easeIn(p), p),
-          lerp(-0.48,-0.36,p)
-        );
-        inspectMag.rotation.z=lerp(0, 0.55+0.05, p);
-        inspectMag.rotation.x=lerp(0, 0.1, p);
+        inspectMag.position.set(lerp(0.3,0.32,p),lerp(-0.42,-0.42-0.28*easeIn(p),p),lerp(-0.48,-0.36,p));
+        inspectMag.rotation.z=lerp(0,0.55+0.05,p);
+        inspectMag.rotation.x=lerp(0,0.1,p);
       }
       weaponGroup.rotation.z=0.55;
       weaponGroup.rotation.y=-0.2;
       weaponGroup.position.y=-0.42;
     } else if(raw<0.62){
-      // Hold mag up and examine — tilt it to see the rounds
       const p=(raw-0.35)/0.27;
       if(inspectMag){
         inspectMag.visible=true;
-        // Float mag up to eye level
-        inspectMag.position.set(
-          lerp(0.32, 0.15, easeOut(p)),
-          lerp(-0.42-0.28, -0.08, easeOut(p)),
-          lerp(-0.36,-0.62, easeOut(p))
-        );
-        // Tilt mag to show bullets at top
-        inspectMag.rotation.x=lerp(0.1, -0.6, easeInOut(p));
-        inspectMag.rotation.z=lerp(0.6, 0.2, easeOut(p));
-        inspectMag.rotation.y=lerp(0, 0.3, easeOut(p));
+        inspectMag.position.set(lerp(0.32,0.15,easeOut(p)),lerp(-0.42-0.28,-0.08,easeOut(p)),lerp(-0.36,-0.62,easeOut(p)));
+        inspectMag.rotation.x=lerp(0.1,-0.6,easeInOut(p));
+        inspectMag.rotation.z=lerp(0.6,0.2,easeOut(p));
+        inspectMag.rotation.y=lerp(0,0.3,easeOut(p));
       }
-      // Gun just held to the side
-      weaponGroup.rotation.z=lerp(0.55, 0.45, easeInOut(p));
+      weaponGroup.rotation.z=lerp(0.55,0.45,easeInOut(p));
       weaponGroup.rotation.y=lerp(-0.2,-0.3,easeInOut(p));
     } else if(raw<0.78){
-      // Re-insert mag — bring it back down to mag well with a solid click
       const p=(raw-0.62)/0.16;
       if(inspectMag){
         inspectMag.visible=true;
-        inspectMag.position.set(
-          lerp(0.15, 0.30, easeIn(p)),
-          lerp(-0.08, -0.42, easeIn(p)),
-          lerp(-0.62,-0.48,easeIn(p))
-        );
-        inspectMag.rotation.x=lerp(-0.6, 0.0, easeIn(p));
+        inspectMag.position.set(lerp(0.15,0.30,easeIn(p)),lerp(-0.08,-0.42,easeIn(p)),lerp(-0.62,-0.48,easeIn(p)));
+        inspectMag.rotation.x=lerp(-0.6,0.0,easeIn(p));
         inspectMag.rotation.z=lerp(0.2,0.55,easeIn(p));
         inspectMag.rotation.y=lerp(0.3,0,easeIn(p));
       }
       weaponGroup.rotation.z=lerp(0.45,0.55,p);
     } else if(raw<0.9){
-      // Hide mag (now back in gun), tilt gun back up
       const p=(raw-0.78)/0.12;
       if(inspectMag){ inspectMag.visible=false; }
-      weaponGroup.rotation.z=lerp(0.55, 0, easeOut(p));
-      weaponGroup.rotation.y=lerp(-0.2, 0.1, easeOut(p));
+      weaponGroup.rotation.z=lerp(0.55,0,easeOut(p));
+      weaponGroup.rotation.y=lerp(-0.2,0.1,easeOut(p));
       weaponGroup.position.y=lerp(-0.42,-0.32,easeOut(p));
     } else {
-      // Rack the charging handle — quick forward-back snap on X
       const p=(raw-0.9)/0.1;
       if(inspectMag){ inspectMag.visible=false; }
-      weaponGroup.rotation.z=lerp(0, 0.1, easeOut(p));
-      weaponGroup.position.z=-0.48+Math.sin(p*Math.PI)*0.04; // forward-back racking motion
+      weaponGroup.rotation.z=lerp(0,0.1,easeOut(p));
+      weaponGroup.position.z=-0.48+Math.sin(p*Math.PI)*0.04;
       weaponGroup.rotation.y=0.1;
       weaponGroup.position.y=-0.32;
     }
@@ -3351,17 +3410,14 @@ cvs.addEventListener('click',()=>{
   }
 });
 document.addEventListener('pointerlockchange',()=>{
+  if(isMobile()) return; // mobile manages locked directly, no pointer lock needed
   locked=document.pointerLockElement===cvs;
   if(locked){
     lockRequested=false;
-    // Re-entering lock while paused → resume
     if(S.screen==='paused') resume();
   } else {
-    // Lock lost — only pause if it was a genuine mid-game loss, not us requesting it
-    // Also don't pause if god menu is open (TAB releases lock intentionally)
     if(!lockRequested && !godMenuOpen && S.screen==='game'){
       setTimeout(()=>{
-        // Double-check after 80ms: if still no lock, not god menu, still playing → pause
         if(!locked && !godMenuOpen && S.screen==='game') pause();
       }, 80);
     }
@@ -3423,8 +3479,9 @@ function enterScope(){
   camera.fov=SCOPE_FOV; camera.updateProjectionMatrix();
   document.getElementById('scopeOverlay').style.display='block';
   document.querySelector('.crosshair').style.display='none';
-  // Hide the gun while scoped (realistic)
+  // Hide the gun and hands while scoped (realistic)
   weaponGroup.visible=false;
+  
   updateScopeReticle();
 }
 function exitScope(){
@@ -3434,7 +3491,7 @@ function exitScope(){
   document.getElementById('scopeOverlay').style.display='none';
   document.querySelector('.crosshair').style.display='block';
   weaponGroup.visible=true;
-}
+  }
 window.addEventListener('resize',()=>{ if(scoped) updateScopeReticle(); });
 function swSlot(slot){
   const ids=Object.keys(WDEFS).filter(id=>WDEFS[id].slot===slot&&S.weapons[id]&&S.weapons[id].owned);
@@ -3510,8 +3567,8 @@ function throwBoomerang(){
   boomerangHitIn.clear();
 
   soundBoomerang();
-  // Show throw animation on weapon in hand
   weaponGroup.visible=false;
+  
 }
 
 function tickBoomerang(now){
@@ -3559,7 +3616,7 @@ function tickBoomerang(now){
     if(boomerangMesh){scene.remove(boomerangMesh);boomerangMesh=null;}
     boomerangActive=false;
     weaponGroup.visible=true;
-    // Short cooldown after catch
+        // Short cooldown after catch
     S.weapons['boomerang'].cd=400;
     hitMarkerShow_b();
   }
