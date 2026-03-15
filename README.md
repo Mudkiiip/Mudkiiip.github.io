@@ -531,7 +531,7 @@ const WDEFS={
 };
 const WAVES=[5,10,22,45,90];
 const HEAL_COST=75,HEAL_AMT=50,SKIN_BONUS=50;
-const CODES={'free1000':{type:'credits',amount:1000,msg:'+1000 CREDITS!'},'Dev':{type:'devmode',msg:'ALL UNLOCKED!'},'Early!':{type:'secretskin',wid:'sniper',skinId:'early',msg:'★ SECRET SKIN UNLOCKED: Early Access Sniper!'},'Godpowers':{type:'godpowers',msg:'⚡ GOD POWERS UNLOCKED! Press TAB in-game.'}};
+const CODES={'free1000':{type:'credits',amount:1000,msg:'+1000 CREDITS!'},'Dev':{type:'devmode',msg:'ALL UNLOCKED!'},'Early!':{type:'secretskin',wid:'sniper',skinId:'early',msg:'★ SECRET SKIN UNLOCKED: Early Access Sniper!'},'Godpowers':{type:'godpowers',msg:'⚡ GOD POWERS UNLOCKED! Press TAB in-game.'},'Axel':{type:'fox',msg:'🦊 A WILD FOX APPEARED! Axel will now fight beside you forever!'}};
 
 // ══ STATE ══
 const S={
@@ -563,6 +563,7 @@ const S={
     grenade:  {cd:0, maxCd:30000, active:false, owned:false, price:500},
     stun:     {cd:0, maxCd:45000, active:false, owned:false, price:750},
     drone:    {cd:0, maxCd:90000, active:false, owned:false, price:10000, mesh:null},
+    fox:      {cd:0, maxCd:0, active:false, owned:false, price:0, mesh:null, secret:true},
   },
 };
 
@@ -3863,6 +3864,274 @@ function tickDrone(dt,now){
   }
 }
 
+// ══ FOX COMPANION (Axel) ══
+let foxAngle=0, foxWalkT=0, foxLaserTimer=0;
+const FOX_ORBIT_R=1.4, FOX_LASER_MS=320;
+
+function buildFoxMesh(){
+  const g=new THREE.Group();
+  const fur    =new THREE.MeshLambertMaterial({color:0xe05a10}); // vivid fox orange
+  const furDark=new THREE.MeshLambertMaterial({color:0xb83c00}); // darker orange-brown back
+  const white  =new THREE.MeshLambertMaterial({color:0xf5ede0}); // cream/white underbelly
+  const black  =new THREE.MeshLambertMaterial({color:0x111111}); // paws, ear tips, nose
+  const eyeM   =new THREE.MeshBasicMaterial({color:0x22dd44});   // bright green eyes
+  const pupilM =new THREE.MeshBasicMaterial({color:0x000000});
+  const noseM  =new THREE.MeshBasicMaterial({color:0x1a0808});
+  const packM  =new THREE.MeshLambertMaterial({color:0x334466}); // backpack body
+  const packAcc=new THREE.MeshLambertMaterial({color:0x556688});
+  const laserM =new THREE.MeshBasicMaterial({color:0x00ffcc});   // laser emitter glow
+
+  // ── Body (elongated, low to ground like a real fox) ──
+  const body=new THREE.Mesh(new THREE.BoxGeometry(0.18,0.18,0.38),fur);
+  body.position.set(0,0.25,0); g.add(body);
+  // Underbelly stripe
+  const belly=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.06,0.32),white);
+  belly.position.set(0,0.18,0.01); g.add(belly);
+  // Dark saddle on back
+  const saddle=new THREE.Mesh(new THREE.BoxGeometry(0.16,0.04,0.28),furDark);
+  saddle.position.set(0,0.34,0); g.add(saddle);
+
+  // ── Neck ──
+  const neck=new THREE.Mesh(new THREE.BoxGeometry(0.1,0.13,0.1),fur);
+  neck.position.set(0,0.3,-0.21); neck.rotation.x=0.35; g.add(neck);
+
+  // ── Head ──
+  const head=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.13,0.16),fur);
+  head.position.set(0,0.37,-0.32); g.add(head);
+  head.userData.foxHead=true;
+  // White cheek patches
+  [-0.045,0.045].forEach(hx=>{
+    const chk=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.06,0.04),white);
+    chk.position.set(hx,0.36,-0.37); g.add(chk);
+  });
+  // Forehead (slightly raised brow)
+  const fh=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.04,0.06),furDark);
+  fh.position.set(0,0.44,-0.3); g.add(fh);
+
+  // ── Muzzle (elongated fox snout) ──
+  const muzzle=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.06,0.1),white);
+  muzzle.position.set(0,0.33,-0.42); g.add(muzzle);
+  // Muzzle tip (slightly darker)
+  const muzzleTip=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.04,0.04),new THREE.MeshLambertMaterial({color:0xd4cbc0}));
+  muzzleTip.position.set(0,0.33,-0.47); g.add(muzzleTip);
+  // Nose (black, oval)
+  const nose=new THREE.Mesh(new THREE.BoxGeometry(0.04,0.03,0.02),noseM);
+  nose.position.set(0,0.36,-0.47); g.add(nose);
+  // Nostril dots
+  [-0.012,0.012].forEach(nx=>{
+    const nd=new THREE.Mesh(new THREE.SphereGeometry(0.007,4,3),new THREE.MeshBasicMaterial({color:0x080808}));
+    nd.position.set(nx,0.355,-0.478); g.add(nd);
+  });
+
+  // ── Eyes (big, bright, with pupil slit) ──
+  [[-0.046,0.39,-0.38],[0.046,0.39,-0.38]].forEach(([ex,ey,ez])=>{
+    const eyeWhite=new THREE.Mesh(new THREE.BoxGeometry(0.038,0.032,0.01),new THREE.MeshBasicMaterial({color:0xeeddcc}));
+    eyeWhite.position.set(ex,ey,ez); g.add(eyeWhite);
+    const eye=new THREE.Mesh(new THREE.SphereGeometry(0.016,8,6),eyeM);
+    eye.position.set(ex,ey,ez+0.003); g.add(eye);
+    // Vertical cat-like slit pupil
+    const pupil=new THREE.Mesh(new THREE.BoxGeometry(0.006,0.02,0.003),pupilM);
+    pupil.position.set(ex,ey,ez+0.018); g.add(pupil);
+    // Eye shine
+    const shine=new THREE.Mesh(new THREE.BoxGeometry(0.007,0.007,0.002),new THREE.MeshBasicMaterial({color:0xffffff}));
+    shine.position.set(ex+0.007,ey+0.007,ez+0.019); g.add(shine);
+  });
+
+  // ── Ears (tall, triangular, black-tipped) ──
+  [[-0.045,0],[0.045,0]].forEach(([earX,_])=>{
+    // Ear base (orange fur)
+    const earOuter=new THREE.Mesh(new THREE.ConeGeometry(0.032,0.1,4),fur);
+    earOuter.position.set(earX,0.5,-0.28); g.add(earOuter);
+    // Ear inner (cream)
+    const earInner=new THREE.Mesh(new THREE.ConeGeometry(0.018,0.072,4),white);
+    earInner.position.set(earX,0.5,-0.28); earInner.position.y+=0.01; g.add(earInner);
+    // Black ear tip
+    const earTip=new THREE.Mesh(new THREE.ConeGeometry(0.012,0.025,4),black);
+    earTip.position.set(earX,0.555,-0.28); g.add(earTip);
+  });
+
+  // ── Legs (4 legs with paws, walking stagger) ──
+  const legPositions=[
+    [-0.065,0,-0.12,'fl'], [0.065,0,-0.12,'fr'],
+    [-0.065,0, 0.12,'bl'], [0.065,0, 0.12,'br']
+  ];
+  legPositions.forEach(([lx,_,lz,lbl])=>{
+    const upper=new THREE.Mesh(new THREE.BoxGeometry(0.055,0.13,0.055),fur);
+    upper.position.set(lx,0.14,lz); upper.userData.foxLegUpper=lbl; g.add(upper);
+    const lower=new THREE.Mesh(new THREE.BoxGeometry(0.042,0.1,0.042),fur);
+    lower.position.set(lx,0.045,lz); lower.userData.foxLegLower=lbl; g.add(lower);
+    // Paw (dark/black)
+    const paw=new THREE.Mesh(new THREE.BoxGeometry(0.048,0.03,0.065),black);
+    paw.position.set(lx,-0.005,lz+0.01); g.add(paw);
+  });
+
+  // ── Tail (thick, bushy, white-tipped, curved upward) ──
+  // Segments that arc up and back
+  const tailSegs=[
+    [0,0.26, 0.21, 0.1, 0.08, fur],
+    [0,0.30, 0.30, 0.09,0.07, fur],
+    [0,0.34, 0.37, 0.08,0.065,furDark],
+    [0,0.36, 0.44, 0.07,0.055,furDark],
+    [0,0.35, 0.50, 0.065,0.05,white],
+    [0,0.32, 0.55, 0.055,0.04,white],
+  ];
+  tailSegs.forEach(([tx,ty,tz,tw,td,mat])=>{
+    const ts=new THREE.Mesh(new THREE.BoxGeometry(tw*1.4,tw,td*0.9),mat);
+    ts.position.set(tx,ty,tz); g.add(ts);
+  });
+  // Fluffy tail tip sphere
+  const tailTip=new THREE.Mesh(new THREE.SphereGeometry(0.055,8,6),white);
+  tailTip.position.set(0,0.29,0.59); g.add(tailTip);
+
+  // ── Backpack (laser cannon) ──
+  const pack=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.13,0.18),packM);
+  pack.position.set(0,0.38,0.09); g.add(pack);
+  // Pack side panels
+  [-0.072,0.072].forEach(px=>{
+    const panel=new THREE.Mesh(new THREE.BoxGeometry(0.01,0.11,0.16),packAcc);
+    panel.position.set(px,0.38,0.09); g.add(panel);
+  });
+  // Pack top strap bar
+  const strap=new THREE.Mesh(new THREE.BoxGeometry(0.16,0.025,0.04),black);
+  strap.position.set(0,0.45,0.01); g.add(strap);
+  // Laser cannon on top of pack
+  const cannon=new THREE.Mesh(new THREE.CylinderGeometry(0.025,0.03,0.16,8),packM);
+  cannon.rotation.x=Math.PI/2; cannon.position.set(0,0.47,0.03); g.add(cannon);
+  // Cannon barrel
+  const barrel=new THREE.Mesh(new THREE.CylinderGeometry(0.016,0.018,0.1,8),new THREE.MeshLambertMaterial({color:0x222233}));
+  barrel.rotation.x=Math.PI/2; barrel.position.set(0,0.47,-0.09); g.add(barrel);
+  // Laser emitter glow (tip of cannon)
+  const emitter=new THREE.Mesh(new THREE.SphereGeometry(0.018,8,6),laserM);
+  emitter.position.set(0,0.47,-0.145); emitter.userData.foxEmitter=true; g.add(emitter);
+  // Power cell indicator lights on pack
+  for(let i=0;i<3;i++){
+    const led=new THREE.Mesh(new THREE.BoxGeometry(0.02,0.02,0.01),new THREE.MeshBasicMaterial({color:[0x00ff44,0x00aaff,0xff6600][i]}));
+    led.position.set(-0.03+i*0.03,0.435,0.185); g.add(led);
+  }
+  // Small antenna on pack
+  const ant=new THREE.Mesh(new THREE.CylinderGeometry(0.005,0.005,0.07,4),packAcc);
+  ant.position.set(0.04,0.52,0.09); g.add(ant);
+  const antTip=new THREE.Mesh(new THREE.SphereGeometry(0.012,5,4),new THREE.MeshBasicMaterial({color:0xff2200}));
+  antTip.position.set(0.04,0.56,0.09); antTip.userData.foxAntenna=true; g.add(antTip);
+
+  // Name tag floating above
+  const nameTagBg=new THREE.Mesh(new THREE.PlaneGeometry(0.28,0.07),new THREE.MeshBasicMaterial({color:0x001122,transparent:true,opacity:0.75}));
+  nameTagBg.position.set(0,0.72,0); g.add(nameTagBg);
+  const nameTagTxt=new THREE.Mesh(new THREE.PlaneGeometry(0.24,0.05),new THREE.MeshBasicMaterial({color:0x00ffcc,transparent:true,opacity:0.9}));
+  nameTagTxt.position.set(0,0.72,0.001); g.add(nameTagTxt);
+
+  return g;
+}
+
+function spawnFox(){
+  const u=S.utils.fox;
+  if(u.mesh) return; // already exists
+  u.mesh=buildFoxMesh();
+  scene.add(u.mesh);
+  u.active=true;
+  foxAngle=Math.PI/2; foxWalkT=0; foxLaserTimer=0;
+}
+
+function tickFox(dt,now){
+  const u=S.utils.fox;
+  if(!u.active||!u.mesh) return;
+
+  foxAngle+=dt*0.0018; // gentle orbit around player
+  foxWalkT+=dt;
+
+  // Fox walks at player's side (right side, slightly behind)
+  const targetX=camera.position.x+Math.cos(foxAngle)*FOX_ORBIT_R;
+  const targetZ=camera.position.z+Math.sin(foxAngle)*FOX_ORBIT_R;
+  // Smooth follow
+  u.mesh.position.x+=(targetX-u.mesh.position.x)*0.12;
+  u.mesh.position.z+=(targetZ-u.mesh.position.z)*0.12;
+  u.mesh.position.y=GROUND_Y-1.75+0.02; // sit just on floor
+
+  // Fox faces direction of travel
+  const moveX=targetX-u.mesh.position.x, moveZ=targetZ-u.mesh.position.z;
+  if(Math.abs(moveX)+Math.abs(moveZ)>0.002){
+    const targetRot=Math.atan2(moveX,moveZ);
+    let dr=targetRot-u.mesh.rotation.y;
+    while(dr>Math.PI)dr-=Math.PI*2; while(dr<-Math.PI)dr+=Math.PI*2;
+    u.mesh.rotation.y+=dr*0.15;
+  }
+
+  // Leg walking animation (4-beat gait)
+  const walkSpeed=0.008, walkAmp=0.22;
+  u.mesh.children.forEach(c=>{
+    if(c.userData.foxLegUpper){
+      const phase={'fl':0,'br':0,'fr':Math.PI,'bl':Math.PI}[c.userData.foxLegUpper]||0;
+      c.rotation.x=Math.sin(foxWalkT*walkSpeed+phase)*walkAmp;
+    }
+    if(c.userData.foxLegLower){
+      const phase={'fl':0.5,'br':0.5,'fr':Math.PI+0.5,'bl':Math.PI+0.5}[c.userData.foxLegLower]||0;
+      c.rotation.x=Math.max(0,Math.sin(foxWalkT*walkSpeed+phase))*walkAmp*0.6;
+    }
+  });
+
+  // Tail gentle wag
+  u.mesh.children.forEach(c=>{
+    if(c.geometry&&c.geometry.type==='SphereGeometry'&&c.userData.foxEmitter===undefined&&c.userData.foxAntenna===undefined){
+      // tail tip bob
+    }
+  });
+
+  // Antenna LED blink
+  u.mesh.children.forEach(c=>{
+    if(c.userData.foxAntenna) c.material.color.setHex(Math.floor(now/300)%2===0?0xff2200:0xff8800);
+  });
+
+  // Emitter pulse
+  u.mesh.children.forEach(c=>{
+    if(c.userData.foxEmitter){
+      const pulse=0.7+0.3*Math.sin(now*0.01);
+      c.material.opacity=pulse;
+      c.material.transparent=true;
+    }
+  });
+
+  // ── Laser fire at nearest zombie (instant kill, any range) ──
+  foxLaserTimer+=dt;
+  if(foxLaserTimer>=FOX_LASER_MS){
+    foxLaserTimer=0;
+    let nearest=null, nearDist=Infinity;
+    S.zombies.forEach(z=>{
+      if(z.userData.dead)return;
+      const d=u.mesh.position.distanceTo(z.position);
+      if(d<nearDist){nearDist=d;nearest=z;}
+    });
+    if(nearest){
+      // Laser beam visual
+      const emitterPos=new THREE.Vector3();
+      u.mesh.children.forEach(c=>{ if(c.userData.foxEmitter) emitterPos.copy(c.getWorldPosition(new THREE.Vector3())); });
+      const targetPos=nearest.position.clone().add(new THREE.Vector3(0,0.8,0));
+      const dir=targetPos.clone().sub(emitterPos);
+      const len=dir.length();
+      const laserMat=new THREE.MeshBasicMaterial({color:0x00ffcc,transparent:true,opacity:0.85});
+      const laserGeo=new THREE.CylinderGeometry(0.012,0.012,len,5);
+      const laser=new THREE.Mesh(laserGeo,laserMat);
+      // Position at midpoint
+      laser.position.copy(emitterPos.clone().add(targetPos).multiplyScalar(0.5));
+      // Orient toward target
+      laser.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.normalize());
+      scene.add(laser);
+      // Bright flash on hit
+      const flash=new THREE.PointLight(0x00ffcc,8,4);
+      flash.position.copy(targetPos); scene.add(flash);
+      // Remove after short time
+      setTimeout(()=>{ scene.remove(laser); scene.remove(flash); },90);
+      // Instant kill
+      nearest.userData.hp=0;
+      nearest.userData.dead=true;
+      S.totalKills++;
+      const cred=nearest.userData.type==='brute'?30:nearest.userData.type==='runner'?5:8;
+      S.credits+=cred;
+      updateHUD();
+      flashZombie(nearest);
+    }
+  }
+}
+
 function tickUtilities(dt,now){
   // Cool down all utilities
   Object.keys(S.utils).forEach(k=>{
@@ -3875,6 +4144,7 @@ function tickUtilities(dt,now){
     }
   });
   tickDrone(dt,now);
+  tickFox(dt,now);
 }
 
 function soundGrenade(){
@@ -3897,7 +4167,7 @@ function soundStun(){
   o.connect(g);g.connect(ctx.destination);o.start(n);o.stop(n+0.3);
 }
 
-window.useGrenade=useGrenade; window.useStun=useStun; window.useDrone=useDrone;
+window.useGrenade=useGrenade; window.useStun=useStun; window.useDrone=useDrone; window.spawnFox=spawnFox;
 
 function loop(ts){
   requestAnimationFrame(loop);
@@ -4321,6 +4591,8 @@ function startGame(){
   boltAnimating=false; scoped=false;
   // Reset utility cooldowns/active but keep owned
   Object.keys(S.utils).forEach(k=>{ S.utils[k].cd=0; S.utils[k].active=false; if(S.utils[k].mesh){scene.remove(S.utils[k].mesh);S.utils[k].mesh=null;} });
+  // Respawn fox companion if unlocked
+  if(S.utils.fox.owned){ setTimeout(()=>{ spawnFox(); notify('🦊 Axel is with you!'); }, 1800); }
   // Clean up any in-flight boomerang
   if(boomerangMesh){scene.remove(boomerangMesh);boomerangMesh=null;}
   boomerangActive=false;
@@ -4435,6 +4707,7 @@ function redeemCode(){
     }
   }
   else if(code.type==='godpowers'){ GOD.unlocked=true; }
+  else if(code.type==='fox'){ S.utils.fox.owned=true; }
   else if(code.type==='devmode'){Object.keys(S.weapons).forEach(wid=>{if(!WDEFS[wid])return;S.weapons[wid].owned=true;if(WDEFS[wid].type==='gun'){S.weapons[wid].ammo=WDEFS[wid].startAmmo;S.weapons[wid].res=WDEFS[wid].resAmmo*3;}WDEFS[wid].skins.forEach(sk=>{if(!S.unlocked[wid].includes(sk.id))S.unlocked[wid].push(sk.id);});});Object.keys(S.utils).forEach(uid=>{S.utils[uid].owned=true;});}
   msg.innerHTML='<div class="code-msg-ok">'+code.msg+'</div>';
   document.getElementById('menuCredits').textContent=S.credits;renderShop();renderInventory();
