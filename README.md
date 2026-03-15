@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>ZombieSlayer</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Bebas+Neue&family=Space+Mono&display=swap');
@@ -2881,7 +2882,7 @@ function tickBolt(now){
 }
 
 
-const keys={};let yaw=0,pitch=0,locked=false,hbob=0,lastT=0;
+const keys={};let yaw=0,pitch=0,locked=(('ontouchstart' in window)||navigator.maxTouchPoints>0),hbob=0,lastT=0;
 const SETTINGS={fov:72,sensitivity:1.0,brightness:100};
 function applySetting(key,val){
   if(key==='fov'){SETTINGS.fov=parseInt(val);camera.fov=SETTINGS.fov;camera.updateProjectionMatrix();document.getElementById('valFov').textContent=val+'°';}
@@ -3094,10 +3095,20 @@ function loop(ts){
     const rgt=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));
     let mv=false;
     let nx=camera.position.x, nz=camera.position.z;
+    // Keyboard
     if(keys['KeyW']){nx+=fwd.x*spd;nz+=fwd.z*spd;mv=true;}
     if(keys['KeyS']){nx-=fwd.x*spd;nz-=fwd.z*spd;mv=true;}
     if(keys['KeyA']){nx-=rgt.x*spd;nz-=rgt.z*spd;mv=true;}
     if(keys['KeyD']){nx+=rgt.x*spd;nz+=rgt.z*spd;mv=true;}
+    // Virtual joystick (mobile)
+    if(window._getJoyFwd){
+      const jf=window._getJoyFwd(), jr=window._getJoyRgt();
+      if(Math.abs(jf)>0.05||Math.abs(jr)>0.05){
+        nx+=fwd.x*spd*jf+rgt.x*spd*jr;
+        nz+=fwd.z*spd*jf+rgt.z*spd*jr;
+        mv=true;
+      }
+    }
     [nx,nz]=resolveCollision(nx,nz,camera.position.y);
     camera.position.x=nx; camera.position.z=nz;
 
@@ -3632,6 +3643,271 @@ buildMap();
 initDecals();
 rebuildWeapon();
 requestAnimationFrame(loop);
+</script>
+<style>
+/* ── MOBILE CONTROLS ── */
+#mobileControls{display:none;position:fixed;inset:0;pointer-events:none;z-index:15;}
+@media (pointer:coarse),(max-width:900px){
+  #mobileControls{display:block;}
+  /* Hide keyboard hints on mobile */
+  .controls-hint{display:none;}
+  /* Larger tap targets for menu */
+  .nav-tab{padding:14px 20px;font-size:14px;}
+  .btn-play{font-size:22px;}
+}
+/* Joystick zone */
+#joyZone{position:absolute;left:16px;bottom:100px;width:130px;height:130px;pointer-events:all;touch-action:none;}
+#joyBase{position:absolute;inset:0;border-radius:50%;background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.18);}
+#joyKnob{position:absolute;width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,0.22);border:2px solid rgba(255,255,255,0.5);top:50%;left:50%;transform:translate(-50%,-50%);transition:none;}
+/* Look zone (right half of screen, invisible) */
+#lookZone{position:absolute;right:0;top:0;width:55%;height:100%;pointer-events:all;touch-action:none;}
+/* Action buttons */
+.mob-btn{position:absolute;border-radius:50%;background:rgba(20,20,30,0.65);border:2px solid rgba(255,255,255,0.25);color:#fff;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;display:flex;align-items:center;justify-content:center;pointer-events:all;touch-action:none;user-select:none;-webkit-user-select:none;transition:background .1s;}
+.mob-btn:active,.mob-btn.pressed{background:rgba(255,100,0,0.5);border-color:rgba(255,140,0,0.8);}
+/* Shoot button - big red, right side */
+#btnShoot{right:20px;bottom:110px;width:80px;height:80px;font-size:22px;background:rgba(180,20,20,0.7);border-color:rgba(255,60,60,0.6);}
+#btnShoot:active{background:rgba(255,40,40,0.8);}
+/* Jump */
+#btnJump{right:115px;bottom:110px;width:58px;height:58px;font-size:13px;}
+/* Scope (sniper ADS) */
+#btnScope{right:115px;bottom:178px;width:58px;height:58px;font-size:12px;display:none;}
+/* Reload */
+#btnReload{right:20px;bottom:202px;width:54px;height:54px;font-size:12px;}
+/* Heal */
+#btnHeal{right:85px;bottom:222px;width:50px;height:50px;font-size:12px;}
+/* Inspect */
+#btnInspect{right:148px;bottom:195px;width:46px;height:46px;font-size:11px;}
+/* Weapon slot buttons */
+#btnW1{left:160px;bottom:130px;width:46px;height:46px;font-size:12px;background:rgba(255,140,0,0.3);}
+#btnW2{left:214px;bottom:130px;width:46px;height:46px;font-size:12px;background:rgba(80,130,255,0.3);}
+#btnW3{left:268px;bottom:130px;width:46px;height:46px;font-size:12px;background:rgba(100,200,100,0.3);}
+/* Pause */
+#btnPauseMob{right:14px;top:14px;width:44px;height:44px;font-size:20px;border-radius:8px;}
+/* Weapon label strip */
+#mobWepLabel{position:absolute;left:155px;bottom:185px;pointer-events:none;color:rgba(255,180,80,0.85);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;line-height:1.8;}
+</style>
+
+<!-- MOBILE CONTROLS OVERLAY -->
+<div id="mobileControls">
+  <!-- Left: virtual joystick -->
+  <div id="joyZone">
+    <div id="joyBase"></div>
+    <div id="joyKnob"></div>
+  </div>
+  <!-- Right: invisible look drag zone (behind buttons) -->
+  <div id="lookZone"></div>
+  <!-- Action buttons -->
+  <div class="mob-btn" id="btnShoot">FIRE</div>
+  <div class="mob-btn" id="btnJump">JUMP</div>
+  <div class="mob-btn" id="btnScope">ADS</div>
+  <div class="mob-btn" id="btnReload">RELOAD</div>
+  <div class="mob-btn" id="btnHeal">HEAL</div>
+  <div class="mob-btn" id="btnInspect">INSP</div>
+  <!-- Weapon slots -->
+  <div class="mob-btn" id="btnW1">P1</div>
+  <div class="mob-btn" id="btnW2">P2</div>
+  <div class="mob-btn" id="btnW3">KNF</div>
+  <div id="mobWepLabel"></div>
+  <!-- Pause -->
+  <div class="mob-btn" id="btnPauseMob">⏸</div>
+</div>
+
+<script>
+(function(){
+// ── MOBILE DETECTION ──
+const isMobile=()=>(('ontouchstart' in window)||navigator.maxTouchPoints>0);
+
+// ── JOYSTICK STATE ──
+const joy={active:false,id:-1,cx:0,cy:0,dx:0,dy:0,max:48};
+let lookId=-1,lookLastX=0,lookLastY=0;
+let shootInterval=null;
+let scopeHeld=false;
+
+function showMobileControls(show){
+  document.getElementById('mobileControls').style.display=show?'block':'none';
+}
+
+// Only show mobile controls on touch devices
+if(isMobile()) showMobileControls(true);
+
+// ── HELPERS ──
+function updateJoyKnob(){
+  const knob=document.getElementById('joyKnob');
+  const dist=Math.sqrt(joy.dx*joy.dx+joy.dy*joy.dy);
+  const clamped=Math.min(dist,joy.max);
+  const angle=Math.atan2(joy.dy,joy.dx);
+  const kx=Math.cos(angle)*clamped;
+  const ky=Math.sin(angle)*clamped;
+  knob.style.transform=`translate(calc(-50% + ${kx}px), calc(-50% + ${ky}px))`;
+}
+
+function resetJoy(){
+  joy.active=false; joy.id=-1; joy.dx=0; joy.dy=0;
+  document.getElementById('joyKnob').style.transform='translate(-50%,-50%)';
+}
+
+// Expose joystick values to the game loop
+window._joyDx=()=>joy.active?joy.dx/joy.max:0;
+window._joyDy=()=>joy.active?joy.dy/joy.max:0;
+
+// ── JOYSTICK TOUCH ──
+const joyZone=document.getElementById('joyZone');
+joyZone.addEventListener('touchstart',e=>{
+  e.preventDefault();
+  if(joy.active) return;
+  const t=e.changedTouches[0];
+  const r=joyZone.getBoundingClientRect();
+  joy.active=true; joy.id=t.identifier;
+  joy.cx=r.left+r.width/2; joy.cy=r.top+r.height/2;
+  joy.dx=t.clientX-joy.cx; joy.dy=t.clientY-joy.cy;
+  updateJoyKnob();
+},{passive:false});
+
+joyZone.addEventListener('touchmove',e=>{
+  e.preventDefault();
+  for(const t of e.changedTouches){
+    if(t.identifier===joy.id){
+      joy.dx=t.clientX-joy.cx; joy.dy=t.clientY-joy.cy;
+      updateJoyKnob(); break;
+    }
+  }
+},{passive:false});
+
+joyZone.addEventListener('touchend',e=>{
+  e.preventDefault();
+  for(const t of e.changedTouches){ if(t.identifier===joy.id){ resetJoy(); break; } }
+},{passive:false});
+
+joyZone.addEventListener('touchcancel',e=>{ resetJoy(); },{passive:false});
+
+// ── LOOK ZONE TOUCH ──
+const lookZone=document.getElementById('lookZone');
+lookZone.addEventListener('touchstart',e=>{
+  e.preventDefault();
+  if(lookId!==-1) return;
+  const t=e.changedTouches[0];
+  lookId=t.identifier; lookLastX=t.clientX; lookLastY=t.clientY;
+},{passive:false});
+
+lookZone.addEventListener('touchmove',e=>{
+  e.preventDefault();
+  for(const t of e.changedTouches){
+    if(t.identifier===lookId){
+      const dx=t.clientX-lookLastX, dy=t.clientY-lookLastY;
+      lookLastX=t.clientX; lookLastY=t.clientY;
+      if(typeof yaw!=='undefined'&&S.screen==='game'){
+        yaw-=dx*0.003*SETTINGS.sensitivity;
+        pitch=Math.max(-1.3,Math.min(1.3,pitch-dy*0.003*SETTINGS.sensitivity));
+        camera.rotation.y=yaw; camera.rotation.x=pitch;
+      }
+      break;
+    }
+  }
+},{passive:false});
+
+lookZone.addEventListener('touchend',e=>{
+  e.preventDefault();
+  for(const t of e.changedTouches){ if(t.identifier===lookId){ lookId=-1; break; } }
+},{passive:false});
+lookZone.addEventListener('touchcancel',()=>{ lookId=-1; },{passive:false});
+
+// ── ACTION BUTTONS ──
+function mobBtn(id,down,up){
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('touchstart',e=>{ e.preventDefault(); e.stopPropagation(); el.classList.add('pressed'); if(down) down(); },{passive:false});
+  el.addEventListener('touchend',  e=>{ e.preventDefault(); e.stopPropagation(); el.classList.remove('pressed'); if(up) up(); },{passive:false});
+  el.addEventListener('touchcancel',e=>{ el.classList.remove('pressed'); if(up) up(); },{passive:false});
+}
+
+// Shoot: hold to auto-fire
+mobBtn('btnShoot',
+  ()=>{
+    if(S.screen!=='game') return;
+    shoot();
+    if(WDEFS[S.held].fireMs<300&&WDEFS[S.held].type==='gun'){
+      clearInterval(shootInterval);
+      shootInterval=setInterval(()=>{ if(S.screen==='game') shoot(); else clearInterval(shootInterval); }, WDEFS[S.held].fireMs);
+    }
+  },
+  ()=>clearInterval(shootInterval)
+);
+
+// Jump
+mobBtn('btnJump', ()=>{ if(S.screen==='game'&&onGround){ velY=JUMP_VEL; onGround=false; } });
+
+// Scope (ADS) — toggle on mobile
+mobBtn('btnScope',
+  ()=>{ if(S.screen!=='game') return; if(scoped) exitScope(); else enterScope(); }
+);
+
+// Reload
+mobBtn('btnReload', ()=>{ if(S.screen==='game') doReload(); });
+
+// Heal
+mobBtn('btnHeal', ()=>{ if(S.screen==='game') useKit(); });
+
+// Inspect
+mobBtn('btnInspect', ()=>{ if(S.screen==='game') startInspect(); });
+
+// Weapon slots
+mobBtn('btnW1', ()=>{ if(S.screen==='game') swSlot('primary'); });
+mobBtn('btnW2', ()=>{ if(S.screen==='game') swSlot('secondary'); });
+mobBtn('btnW3', ()=>{ if(S.screen==='game') swSlot('knife'); });
+
+// Pause
+mobBtn('btnPauseMob',
+  ()=>{ if(S.screen==='game') pause(); else if(S.screen==='paused') resume(); }
+);
+
+// ── HOOK INTO GAME LOOP FOR JOYSTICK MOVEMENT ──
+// Patch the movement section by overriding keys with joystick values
+const _origKeyCheck=window._joyMovePatched;
+if(!_origKeyCheck){
+  window._joyMovePatched=true;
+  // We inject joystick movement by updating a virtual axis each frame
+  // The game loop reads keys[], so we simulate them via _mobMove
+  window._mobMove={fwdBias:0,rgtBias:0};
+}
+
+// Update mob weapon labels
+function updateMobLabels(){
+  const p=Object.keys(WDEFS).filter(id=>WDEFS[id].slot==='primary'&&S.weapons[id]&&S.weapons[id].owned);
+  const s=Object.keys(WDEFS).filter(id=>WDEFS[id].slot==='secondary'&&S.weapons[id]&&S.weapons[id].owned);
+  document.getElementById('btnW1').textContent=p.length?WDEFS[S.heldPrimary]?.name.slice(0,3)||'P1':'P1';
+  document.getElementById('btnW2').textContent=WDEFS[S.heldSecondary]?.name.slice(0,3)||'P2';
+  document.getElementById('btnW3').textContent=WDEFS[S.heldKnife]?.name.slice(0,3)||'KNF';
+  // Show ADS button only for sniper
+  document.getElementById('btnScope').style.display=(S.held==='sniper'&&S.screen==='game')?'flex':'none';
+}
+setInterval(updateMobLabels, 200);
+
+// ── PREVENT DEFAULT TOUCH SCROLL ON GAME CANVAS ──
+document.getElementById('c').addEventListener('touchstart',e=>e.preventDefault(),{passive:false});
+document.getElementById('c').addEventListener('touchmove', e=>e.preventDefault(),{passive:false});
+
+// ── PATCH GAME LOOP MOVEMENT TO USE JOYSTICK ──
+// We store joystick deltas and the game loop reads them below
+window._getJoyFwd=()=>joy.active?-joy.dy/joy.max:0;
+window._getJoyRgt=()=>joy.active? joy.dx/joy.max:0;
+
+// On mobile we skip pointer lock entirely
+if(isMobile()){
+  // Override pointer lock to be a no-op
+  if(cvs && cvs.requestPointerLock){
+    const orig=cvs.requestPointerLock.bind(cvs);
+    cvs.requestPointerLock=()=>{
+      // On mobile: just set locked=true directly so game runs
+      locked=true;
+    };
+  }
+  // Ensure game starts without needing a click
+  document.addEventListener('touchstart',()=>{
+    if(S.screen==='game'&&!locked) locked=true;
+  },{once:false,passive:true});
+}
+
+})();
 </script>
 </body>
 </html>
