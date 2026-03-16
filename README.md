@@ -531,7 +531,7 @@ const WDEFS={
 };
 const WAVES=[5,10,22,45,90];
 const HEAL_COST=75,HEAL_AMT=50,SKIN_BONUS=50;
-const CODES={'free1000':{type:'credits',amount:1000,msg:'+1000 CREDITS!'},'Dev':{type:'devmode',msg:'ALL UNLOCKED!'},'Early!':{type:'secretskin',wid:'sniper',skinId:'early',msg:'★ SECRET SKIN UNLOCKED: Early Access Sniper!'},'Godpowers':{type:'godpowers',msg:'⚡ GOD POWERS UNLOCKED! Press TAB in-game.'},'Axel':{type:'fox',msg:'🦊 A WILD FOX APPEARED! Axel will now fight beside you forever!'}};
+const CODES={'free1000':{type:'credits',amount:1000,msg:'+1000 CREDITS!'},'Dev':{type:'devmode',msg:'ALL UNLOCKED!'},'Early!':{type:'secretskin',wid:'sniper',skinId:'early',msg:'★ SECRET SKIN UNLOCKED: Early Access Sniper!'},'Godpowers':{type:'godpowers',msg:'⚡ GOD POWERS UNLOCKED! Press TAB in-game.'},'Shadow':{type:'fox',msg:'🦊 A WILD FOX APPEARED! Shadow will now fight beside you forever!'}};
 
 // ══ STATE ══
 const S={
@@ -3864,7 +3864,7 @@ function tickDrone(dt,now){
   }
 }
 
-// ══ FOX COMPANION (Axel) ══
+// ══ FOX COMPANION (Shadow) ══
 let foxAngle=0, foxWalkT=0, foxLaserTimer=0;
 const FOX_ORBIT_R=1.4, FOX_LASER_MS=320;
 
@@ -4592,7 +4592,7 @@ function startGame(){
   // Reset utility cooldowns/active but keep owned
   Object.keys(S.utils).forEach(k=>{ S.utils[k].cd=0; S.utils[k].active=false; if(S.utils[k].mesh){scene.remove(S.utils[k].mesh);S.utils[k].mesh=null;} });
   // Respawn fox companion if unlocked
-  if(S.utils.fox.owned){ setTimeout(()=>{ spawnFox(); notify('🦊 Axel is with you!'); }, 1800); }
+  if(S.utils.fox.owned){ setTimeout(()=>{ spawnFox(); notify('🦊 Shadow is with you!'); }, 1800); }
   // Clean up any in-flight boomerang
   if(boomerangMesh){scene.remove(boomerangMesh);boomerangMesh=null;}
   boomerangActive=false;
