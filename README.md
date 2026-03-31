@@ -1,3 +1,4 @@
+[zombie-slayer (76).html](https://github.com/user-attachments/files/26390234/zombie-slayer.76.html)
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -210,6 +211,8 @@ body{overflow:hidden;background:#000;font-family:'Rajdhani',sans-serif;user-sele
       <button class="nav-tab" data-tab="codes">CODES</button>
       <button class="nav-tab" data-tab="inventory">INVENTORY</button>
       <button class="nav-tab" data-tab="settings">SETTINGS</button>
+      <button class="nav-tab" data-tab="multi" style="color:#44aaff">MULTI</button>
+      <button class="nav-tab" data-tab="battlepass" style="color:#ffaa00">★ PASS</button>
     </div>
     <div class="tab-content active" id="tabMain">
       <div class="main-play-area">
@@ -285,10 +288,69 @@ body{overflow:hidden;background:#000;font-family:'Rajdhani',sans-serif;user-sele
         </div>
       </div>
     </div>
+    <!-- MULTIPLAYER TAB -->
+    <div class="tab-content" id="tabMulti">
+      <div class="codes-wrap" style="max-width:480px">
+        <div class="codes-title" style="color:#44aaff;font-size:22px">MULTIPLAYER</div>
+        <div class="codes-sub" style="color:#336688">Co-op via peer-to-peer — no servers needed.</div>
+        <div id="mpStatus" style="font-family:'Space Mono',monospace;font-size:11px;color:#556677;margin-bottom:14px;min-height:16px;">⚪ Not connected</div>
+        <!-- HOST -->
+        <div style="background:rgba(0,100,200,0.07);border:1px solid rgba(60,140,255,0.18);border-radius:6px;padding:16px;margin-bottom:12px;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:#44aaff;margin-bottom:8px;">🏠 HOST A GAME</div>
+          <button class="btn-buy" id="btnMpHost" style="background:rgba(40,100,220,0.2);border-color:rgba(60,140,255,0.4);color:#88ccff;width:100%;padding:10px 0;">CREATE ROOM</button>
+          <div id="mpRoomDisplay" style="display:none;margin-top:10px;text-align:center;">
+            <div style="font-family:'Space Mono',monospace;font-size:9px;color:#446677;margin-bottom:4px;letter-spacing:2px;">YOUR ROOM ID — share with friend</div>
+            <div id="mpRoomId" style="font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:8px;color:#44aaff;cursor:pointer;user-select:all;" onclick="mpCopyRoom()" title="Click to copy">----</div>
+            <div style="font-family:'Space Mono',monospace;font-size:9px;color:#334455;margin-top:2px;">tap to copy</div>
+            <div id="mpPeerList" style="margin-top:8px;font-family:'Space Mono',monospace;font-size:10px;color:#446655;min-height:14px;"></div>
+          </div>
+        </div>
+        <!-- JOIN -->
+        <div style="background:rgba(0,180,100,0.07);border:1px solid rgba(60,200,120,0.18);border-radius:6px;padding:16px;margin-bottom:12px;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:#44cc88;margin-bottom:8px;">🔗 JOIN A GAME</div>
+          <div class="code-row" style="margin-bottom:0;">
+            <input type="text" class="code-input" id="mpJoinInput" placeholder="Room ID..." style="text-transform:uppercase;letter-spacing:3px;font-size:15px;text-align:center;" maxlength="6">
+            <button class="btn-buy" id="btnMpJoin" style="background:rgba(40,180,100,0.2);border-color:rgba(60,200,120,0.4);color:#88ffbb;white-space:nowrap;padding:0 16px;">JOIN</button>
+          </div>
+        </div>
+        <button class="btn-play" id="btnMpPlay" style="width:100%;display:none;background:linear-gradient(90deg,#0055aa,#0088ee);font-size:20px;padding:14px 0;">▶ START CO-OP</button>
+        <button class="btn-save" id="btnMpDisconnect" style="display:none;width:100%;margin-top:8px;background:rgba(200,40,40,0.1);border-color:rgba(200,40,40,0.3);color:#ff6666;">DISCONNECT</button>
+        <div id="mpMsg" style="margin-top:10px;font-family:'Space Mono',monospace;font-size:10px;color:#445566;min-height:14px;text-align:center;"></div>
+      </div>
+    </div>
+    <!-- BATTLE PASS TAB -->
+    <div class="tab-content" id="tabBattlepass">
+      <div style="max-width:600px;margin:0 auto">
+        <!-- Header -->
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:10px;flex-wrap:wrap">
+          <div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:4px;color:#ffaa00">★ BATTLE PASS</div>
+            <div style="font-family:'Space Mono',monospace;font-size:9px;color:#664400;letter-spacing:2px">50 LEVELS · 750 XP / LEVEL · DIMINISHING RETURNS</div>
+          </div>
+          <div id="bpPurchaseArea"></div>
+        </div>
+        <!-- XP bar -->
+        <div style="margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:10px;color:#886600;margin-bottom:3px">
+            <span id="bpLevelLabel">LEVEL 1</span><span id="bpXpLabel">0 / 750 XP</span>
+          </div>
+          <div style="background:rgba(255,255,255,0.04);border-radius:3px;height:9px;overflow:hidden;border:1px solid rgba(255,170,0,0.18)">
+            <div id="bpXpBar" style="height:100%;background:linear-gradient(90deg,#ff6600,#ffcc00);width:0%;transition:width .3s;border-radius:3px"></div>
+          </div>
+          <div id="bpDoublerBadge" style="display:none;font-family:'Space Mono',monospace;font-size:9px;color:#ffcc00;margin-top:3px;letter-spacing:1px">⚡ XP DOUBLER ACTIVE — <span id="bpDoublerAmt">0</span> XP remaining</div>
+        </div>
+        <!-- Column headers -->
+        <div style="display:grid;grid-template-columns:52px 1fr 1fr;gap:5px;margin-bottom:6px">
+          <div></div>
+          <div style="font-family:'Space Mono',monospace;font-size:9px;color:#555;letter-spacing:2px;text-align:center">FREE</div>
+          <div style="font-family:'Space Mono',monospace;font-size:9px;color:#886600;letter-spacing:2px;text-align:center">★ PREMIUM</div>
+        </div>
+        <!-- Reward rows -->
+        <div id="bpGrid" style="display:flex;flex-direction:column;gap:5px;max-height:340px;overflow-y:auto;padding-right:4px"></div>
+      </div>
+    </div>
   </div>
 </div>
-
-<!-- HUD -->
 <div id="hud">
   <div class="hud-vign" id="hudVign"></div>
   <div class="dmg-flash" id="dmgFlash"></div>
@@ -464,12 +526,12 @@ const WDEFS={
     {id:'cobalt', name:'Cobalt Blue',  kills:50, colors:[0x4169E1,0x000088],rarity:'epic',     emoji:'C'},
     {id:'atomic', name:'Void Reactor', kills:100,colors:[0x00ffee,0x000820],rarity:'legendary',emoji:'V'},
   ]},
-  shotgun:{name:'Shotgun',slot:'primary',type:'gun',price:2500,hitsToKill:1,fireMs:1100,startAmmo:8,resAmmo:24,boxCost:80,boxAmt:8,skins:[
+  shotgun:{name:'Shotgun',slot:'primary',type:'gun',price:2500,hitsToKill:2,fireMs:1100,startAmmo:8,resAmmo:24,boxCost:80,boxAmt:8,skins:[
     {id:'default',name:'Default',      kills:0,  colors:[0x8B4513,0x555555],rarity:'common',   emoji:'?'},
     {id:'tiger',  name:'Tiger Tooth',  kills:10, colors:[0xFF8C00,0x111111],rarity:'epic',     emoji:'T'},
     {id:'fade',   name:'Inferno',      kills:50, colors:[0xFF2200,0xFF8800],rarity:'legendary',emoji:'I'},
   ]},
-  sniper:{name:'Sniper',slot:'primary',type:'gun',price:4000,hitsToKill:1,fireMs:1000,startAmmo:5,resAmmo:15,boxCost:120,boxAmt:5,isBoltAction:true,skins:[
+  sniper:{name:'Sniper',slot:'primary',type:'gun',price:4000,hitsToKill:2,fireMs:1000,startAmmo:5,resAmmo:15,boxCost:120,boxAmt:5,isBoltAction:true,skins:[
     {id:'default', name:'Default',          kills:0,  colors:[0x3a3a3a,0x1a2a1a],rarity:'common',   emoji:'?'},
     {id:'arctic',  name:'Arctic Warfare',   kills:10, colors:[0xeeeeff,0x9ab0c8],rarity:'rare',     emoji:'A'},
     {id:'ghillie', name:'Ghillie Strike',   kills:20, colors:[0x3a5a1a,0x1a3008],rarity:'epic',     emoji:'G'},
@@ -528,10 +590,22 @@ const WDEFS={
     {id:'gold',   name:'Gold Rush',     kills:10, model:'sledge',      colors:[0xFFD700,0xAA5500],rarity:'epic',     emoji:'⭐'},
     {id:'void',   name:'Void Smash',    kills:15, model:'sledge_void', colors:[0x110022,0x8800FF],rarity:'legendary',emoji:'💜'},
   ]},
+  // ── BATTLE PASS WEAPONS (bpWeapon:true = obtained via pass, not shop) ──
+  omegaShotgun:{name:'Omega Shotgun',slot:'primary',type:'gun',price:0,hitsToKill:1,fireMs:950,startAmmo:10,resAmmo:30,boxCost:90,boxAmt:10,bpWeapon:true,skins:[
+    {id:'default',        name:'Omega Default',       kills:0,colors:[0x0a0010,0xaa00ff],rarity:'legendary',emoji:'💜'},
+    {id:'hellswrath_shot',name:'Hellswrath Shotgun',  kills:0,colors:[0x080008,0xff2200],rarity:'legendary',emoji:'🔥',hellChains:true,bpExclusive:true},
+  ]},
+  omegaSniper:{name:'Omega Sniper',slot:'primary',type:'gun',price:0,hitsToKill:0,fireMs:1000,startAmmo:5,resAmmo:15,boxCost:130,boxAmt:5,isBoltAction:true,bpWeapon:true,omegaSniper:true,skins:[
+    {id:'default',       name:'Omega Default',      kills:0,colors:[0x0a0010,0xaa00ff],rarity:'legendary',emoji:'💜'},
+    {id:'hellswrath_snip',name:'Hellswrath Sniper',  kills:0,colors:[0x080008,0xff2200],rarity:'legendary',emoji:'🔥',hellChains:true,bpExclusive:true},
+  ]},
+  hellswrath:{name:'Hellswrath',slot:'primary',type:'gun',price:0,hitsToKill:0,fireMs:900,startAmmo:8,resAmmo:24,boxCost:150,boxAmt:8,isBoltAction:true,bpWeapon:true,hellswrath:true,skins:[
+    {id:'default',name:'Hellswrath',kills:0,colors:[0x080008,0xff2200],rarity:'legendary',emoji:'🔥'},
+  ]},
 };
-const WAVES=[5,10,22,45,90];
+const WAVES=[3,6,10,18,32];
 const HEAL_COST=75,HEAL_AMT=50,SKIN_BONUS=50;
-const CODES={'free1000':{type:'credits',amount:1000,msg:'+1000 CREDITS!'},'Dev':{type:'devmode',msg:'ALL UNLOCKED!'},'Early!':{type:'secretskin',wid:'sniper',skinId:'early',msg:'★ SECRET SKIN UNLOCKED: Early Access Sniper!'},'Godpowers':{type:'godpowers',msg:'⚡ GOD POWERS UNLOCKED! Press TAB in-game.'},'Shadow':{type:'fox',msg:'🦊 A WILD FOX APPEARED! Shadow will now fight beside you forever!'}};
+const CODES={'free1000':{type:'credits',amount:1000,msg:'+1000 CREDITS!'},'Dev':{type:'devmode',msg:'ALL UNLOCKED!'},'Early!':{type:'secretskin',wid:'sniper',skinId:'early',msg:'★ SECRET SKIN UNLOCKED: Early Access Sniper!'},'Godpowers':{type:'godpowers',msg:'⚡ GOD POWERS UNLOCKED! Press TAB in-game.'},'Axel':{type:'fox',msg:'🦊 A WILD FOX APPEARED! Shadow will now fight beside you forever!'}};
 
 // ══ STATE ══
 const S={
@@ -548,11 +622,14 @@ const S={
     boomerang:{owned:false,       kills:0, skin:'default',lastFire:0,cd:0},
     knife:  {owned:true,          kills:0, skin:'default',lastFire:0,cd:0},
     sledge: {owned:false,         kills:0, skin:'default',lastFire:0,cd:0},
+    omegaShotgun:{owned:false,ammo:0,res:0,kills:0,skin:'default',lastFire:0},
+    omegaSniper: {owned:false,ammo:0,res:0,kills:0,skin:'default',lastFire:0},
+    hellswrath:  {owned:false,ammo:0,res:0,kills:0,skin:'default',lastFire:0},
   },
   held:'pistol',
   heldPrimary:'smg', heldSecondary:'pistol', heldKnife:'knife',
   usedCodes:[],
-  unlocked:{smg:['default'],shotgun:['default'],sniper:['default'],lmg:['default'],pistol:['default'],revolver:['default'],deagle:['default'],compact:['default'],boomerang:['default'],knife:['default'],sledge:['default']},
+  unlocked:{smg:['default'],shotgun:['default'],sniper:['default'],lmg:['default'],pistol:['default'],revolver:['default'],deagle:['default'],compact:['default'],boomerang:['default'],knife:['default'],sledge:['default'],omegaShotgun:['default'],omegaSniper:['default'],hellswrath:['default']},
   zombies:[],totalKills:0,
   wave:0,waveActive:false,waveKilled:0,waveSize:0,spawnQueue:0,spawnTimer:0,
   invSlot:'primary',
@@ -564,6 +641,13 @@ const S={
     stun:     {cd:0, maxCd:45000, active:false, owned:false, price:750},
     drone:    {cd:0, maxCd:90000, active:false, owned:false, price:10000, mesh:null},
     fox:      {cd:0, maxCd:0, active:false, owned:false, price:0, mesh:null, secret:true},
+  },
+  bp:{
+    owned:false,
+    xp:0, level:1,
+    xpDoubler:0,
+    claimedFree:[], claimedPaid:[],
+    killTimestamps:{normal:[],runner:[],brute:[]},
   },
 };
 
@@ -2264,8 +2348,317 @@ function mkLMG(c1,c2){
   return g;
 }
 
+// ── CHAIN PHYSICS HELPER ──
+// Attaches ragdoll chain links to a weapon group.
+// chainDefs: array of {x,y,z} anchor offsets on the gun body.
+// Each chain has N links that droop and sway with motion.
+function attachHellChains(g, chainDefs){
+  const chainM=new THREE.MeshLambertMaterial({color:0x333333});
+  const glowM=new THREE.MeshBasicMaterial({color:0xff3300,transparent:true,opacity:0.8});
+  chainDefs.forEach(function(def){
+    var links=[];
+    var N=def.n||7;
+    for(var i=0;i<N;i++){
+      // Alternate between dark chain link and ember glow link
+      var mat=i%3===2?glowM:chainM;
+      var link=new THREE.Mesh(new THREE.TorusGeometry(0.016,0.006,5,10),mat);
+      link.userData.chainLink=true;
+      link.userData.chainIdx=i;
+      link.userData.vel={x:0,y:0,z:0};
+      // Start position offset along chain
+      link.position.set(def.x, def.y - i*0.028, def.z);
+      g.add(link);
+      links.push(link);
+    }
+    // Mark first link as anchor
+    links[0].userData.anchor={x:def.x,y:def.y,z:def.z};
+    // Tag group with chain data for animation
+    if(!g.userData.hellChains) g.userData.hellChains=[];
+    g.userData.hellChains.push({links:links,anchor:def});
+  });
+}
+
+// Tick hell chains — call from weapon animation loop
+var _prevWeaponPos={x:0,y:0,z:0};
+function tickHellChains(dt){
+  if(!weaponGroup||!weaponGroup.userData.hellChains) return;
+  var GRAVITY=0.000012, DAMPING=0.82, LINK_LEN=0.028;
+  var velX=(weaponGroup.position.x-_prevWeaponPos.x)/Math.max(dt,1)*800;
+  var velY=(weaponGroup.position.y-_prevWeaponPos.y)/Math.max(dt,1)*800;
+  _prevWeaponPos.x=weaponGroup.position.x;
+  _prevWeaponPos.y=weaponGroup.position.y;
+  weaponGroup.userData.hellChains.forEach(function(chain){
+    var anchor=chain.anchor;
+    chain.links.forEach(function(link,i){
+      if(i===0){
+        link.position.set(anchor.x,anchor.y,anchor.z);
+        return;
+      }
+      var v=link.userData.vel;
+      // Apply gravity + weapon motion inertia
+      v.y -= GRAVITY*dt;
+      v.x -= velX*0.00004;
+      v.y -= velY*0.00002;
+      // Damping
+      v.x*=DAMPING; v.y*=DAMPING; v.z*=DAMPING;
+      link.position.x+=v.x*dt;
+      link.position.y+=v.y*dt;
+      link.position.z+=v.z*dt;
+      // Constrain to LINK_LEN from previous link
+      var prev=chain.links[i-1];
+      var dx=link.position.x-prev.position.x;
+      var dy=link.position.y-prev.position.y;
+      var dz=link.position.z-prev.position.z;
+      var dist=Math.sqrt(dx*dx+dy*dy+dz*dz)||0.001;
+      var scale=LINK_LEN/dist;
+      link.position.x=prev.position.x+dx*scale;
+      link.position.y=prev.position.y+dy*scale;
+      link.position.z=prev.position.z+dz*scale;
+      // Orient link along chain direction
+      if(i>0){
+        link.rotation.x=Math.atan2(dy,dz);
+        link.rotation.z=Math.atan2(dx,Math.sqrt(dy*dy+dz*dz));
+      }
+    });
+  });
+}
+
+// ── HELLSWRATH SHOTGUN SKIN (hell-themed Omega Shotgun) ──
+function mkOmegaShotgun_Hell(c1,c2){
+  const g=new THREE.Group();
+  const vdM=new THREE.MeshPhongMaterial({color:0x07000a,shininess:170,specular:new THREE.Color(0xff2200)});
+  const frM=new THREE.MeshPhongMaterial({color:0xcc2200,shininess:200,emissive:new THREE.Color(0xff1100).multiplyScalar(0.25)});
+  const emM=new THREE.MeshBasicMaterial({color:0xff6600,transparent:true,opacity:0.88});
+  const gdM=new THREE.MeshPhongMaterial({color:0xcc4400,shininess:220,specular:new THREE.Color(0xffaa00)});
+  const lvM=new THREE.MeshBasicMaterial({color:0xff3300,transparent:true,opacity:0.65});
+  // Receiver — void black with fire trim
+  var recv=new THREE.Mesh(new THREE.BoxGeometry(0.064,0.090,0.39),vdM);recv.position.set(0,0.008,0);g.add(recv);
+  // Side claw panels
+  [-0.033,0.033].forEach(function(px){
+    var pnl=new THREE.Mesh(new THREE.BoxGeometry(0.008,0.072,0.36),frM);pnl.position.set(px,0.008,0);g.add(pnl);
+    for(var i=0;i<3;i++){var cw=new THREE.Mesh(new THREE.ConeGeometry(0.007,0.036,4),gdM);cw.position.set(px,0.022-i*0.018,-0.12-i*0.036);cw.rotation.x=Math.PI/2;g.add(cw);}
+  });
+  // Pump with lava veins
+  var pump=new THREE.Mesh(new THREE.BoxGeometry(0.057,0.052,0.135),vdM);pump.position.set(0,-0.02,-0.1);g.add(pump);
+  var pvein=new THREE.Mesh(new THREE.BoxGeometry(0.059,0.008,0.12),emM);pvein.position.set(0,-0.009,-0.1);g.add(pvein);
+  // Barrel
+  var brl=new THREE.Mesh(new THREE.CylinderGeometry(0.027,0.031,0.36,8),vdM);brl.rotation.x=Math.PI/2;brl.position.set(0,0.022,-0.19);g.add(brl);
+  // Lava barrel cracks
+  for(var i=0;i<4;i++){var ck=new THREE.Mesh(new THREE.BoxGeometry(0.002,0.028,0.052),emM);ck.position.set(0.027,0.022,-0.1-i*0.075);ck.rotation.z=0.4*(i%2===0?1:-1);g.add(ck);}
+  // Muzzle — dragon mouth
+  var muz=new THREE.Mesh(new THREE.CylinderGeometry(0.039,0.027,0.040,5),frM);muz.rotation.x=Math.PI/2;muz.position.set(0,0.022,-0.385);g.add(muz);
+  var ft=new THREE.Mesh(new THREE.SphereGeometry(0.018,8,6),lvM);ft.position.set(0,0.022,-0.408);g.add(ft);
+  // Top rib with ember beads
+  var rib=new THREE.Mesh(new THREE.BoxGeometry(0.012,0.010,0.33),vdM);rib.position.set(0,0.057,0.01);g.add(rib);
+  for(var i=0;i<5;i++){var bd=new THREE.Mesh(new THREE.SphereGeometry(0.007,5,4),i%2===0?frM:emM);bd.position.set(0,0.064,-0.1+i*0.055);g.add(bd);}
+  // Scope rail / vents
+  for(var i=0;i<3;i++){var v=new THREE.Mesh(new THREE.BoxGeometry(0.066,0.009,0.044),vdM);v.position.set(0,0.053,-0.08+i*0.07);g.add(v);var gv=new THREE.Mesh(new THREE.BoxGeometry(0.062,0.005,0.036),emM);gv.position.set(0,0.057,-0.08+i*0.07);g.add(gv);}
+  // Grip
+  var grp=new THREE.Mesh(new THREE.BoxGeometry(0.048,0.157,0.098),vdM);grp.position.set(0,-0.073,0.127);grp.rotation.x=0.17;g.add(grp);
+  for(var i=0;i<4;i++){var rn=new THREE.Mesh(new THREE.BoxGeometry(0.050,0.004,0.078),frM);rn.position.set(0,-0.032-i*0.030,0.124);g.add(rn);}
+  var tg=new THREE.Mesh(new THREE.TorusGeometry(0.022,0.005,5,13,Math.PI),vdM);tg.rotation.x=Math.PI/2;tg.position.set(0,-0.019,0.069);g.add(tg);
+  var tr=new THREE.Mesh(new THREE.BoxGeometry(0.007,0.022,0.011),gdM);tr.position.set(0,-0.010,0.061);g.add(tr);
+  // Stock with demon wings
+  var stk=new THREE.Mesh(new THREE.BoxGeometry(0.052,0.072,0.225),vdM);stk.position.set(0,0.005,0.29);g.add(stk);
+  var wL=new THREE.Mesh(new THREE.BoxGeometry(0.009,0.086,0.17),frM);wL.position.set(-0.032,0.022,0.30);wL.rotation.z=0.27;g.add(wL);
+  var wR=wL.clone();wR.position.x=0.032;wR.rotation.z=-0.27;g.add(wR);
+  // Nameplate
+  var plate=new THREE.Mesh(new THREE.BoxGeometry(0.065,0.026,0.058),frM);plate.position.set(0,0.037,0.13);g.add(plate);
+  var pg=new THREE.Mesh(new THREE.BoxGeometry(0.061,0.018,0.053),lvM);pg.position.set(0,0.040,0.13);g.add(pg);
+  // Attach ragdoll chains at 3 anchor points
+  attachHellChains(g,[
+    {x:-0.04,y:-0.008,z:-0.15,n:8},
+    {x: 0.04,y:-0.008,z:-0.28,n:6},
+    {x: 0.00,y:-0.006,z: 0.22,n:7},
+  ]);
+  return g;
+}
+
+// ── HELLSWRATH SNIPER SKIN (hell-themed Omega Sniper) ──
+function mkOmegaSniper_Hell(c1,c2){
+  const g=new THREE.Group();
+  const vdM=new THREE.MeshPhongMaterial({color:0x07000a,shininess:160,specular:new THREE.Color(0xff2200)});
+  const frM=new THREE.MeshPhongMaterial({color:0xcc2200,shininess:200,emissive:new THREE.Color(0xff1100).multiplyScalar(0.26)});
+  const emM=new THREE.MeshBasicMaterial({color:0xff6600,transparent:true,opacity:0.88});
+  const gdM=new THREE.MeshPhongMaterial({color:0xcc4400,shininess:220,specular:new THREE.Color(0xffaa00)});
+  const lvM=new THREE.MeshBasicMaterial({color:0xff3300,transparent:true,opacity:0.65});
+  // Receiver
+  var recv=new THREE.Mesh(new THREE.BoxGeometry(0.056,0.074,0.54),vdM);recv.position.set(0,0,0);g.add(recv);
+  // Demon-claw side panels
+  [-0.029,0.029].forEach(function(px){
+    var pnl=new THREE.Mesh(new THREE.BoxGeometry(0.008,0.064,0.44),frM);pnl.position.set(px,0,0);g.add(pnl);
+    for(var i=0;i<3;i++){var cw=new THREE.Mesh(new THREE.ConeGeometry(0.007,0.038,4),gdM);cw.position.set(px,0.019-i*0.018,-0.27-i*0.020);cw.rotation.x=Math.PI/2;g.add(cw);}
+  });
+  // Barrel
+  var bpts=[[0.015,-0.65],[0.013,-0.48],[0.012,-0.22],[0.014,-0.06],[0.015,0]].map(function(p){return new THREE.Vector2(p[0],p[1]);});
+  var brl=new THREE.Mesh(new THREE.LatheGeometry(bpts,10),vdM);brl.rotation.x=Math.PI/2;brl.position.set(0,0.015,-0.30);g.add(brl);
+  // Lava cracks on barrel
+  for(var i=0;i<5;i++){var ck=new THREE.Mesh(new THREE.BoxGeometry(0.002,0.030,0.055),emM);ck.position.set(0.015,0.015,-0.15-i*0.1);ck.rotation.z=0.38*(i%2===0?1:-1);g.add(ck);}
+  // Muzzle
+  var muz=new THREE.Mesh(new THREE.CylinderGeometry(0.025,0.016,0.050,5),frM);muz.rotation.x=Math.PI/2;muz.position.set(0,0.015,-0.76);g.add(muz);
+  var ft=new THREE.Mesh(new THREE.SphereGeometry(0.018,8,6),lvM);ft.position.set(0,0.015,-0.79);g.add(ft);
+  // Bipod
+  [-0.017,0.017].forEach(function(bx){var leg=new THREE.Mesh(new THREE.BoxGeometry(0.005,0.11,0.005),frM);leg.position.set(bx,-0.065,-0.25);leg.rotation.z=bx>0?0.24:-0.24;g.add(leg);});
+  // Scope body — lava fill
+  var scpB=new THREE.Mesh(new THREE.CylinderGeometry(0.020,0.020,0.23,8),vdM);scpB.rotation.x=Math.PI/2;scpB.position.set(0,0.070,-0.05);g.add(scpB);
+  var scpGl=new THREE.Mesh(new THREE.CylinderGeometry(0.015,0.015,0.18,8),lvM);scpGl.rotation.x=Math.PI/2;scpGl.position.set(0,0.070,-0.05);g.add(scpGl);
+  [-0.078,0.028].forEach(function(sz){
+    var ring=new THREE.Mesh(new THREE.TorusGeometry(0.024,0.007,5,13),vdM);ring.rotation.x=Math.PI/2;ring.position.set(0,0.070,sz);g.add(ring);
+    var horn=new THREE.Mesh(new THREE.ConeGeometry(0.006,0.024,4),frM);horn.position.set(0,0.097,sz);g.add(horn);
+  });
+  // Vents
+  for(var i=0;i<4;i++){var v=new THREE.Mesh(new THREE.BoxGeometry(0.058,0.010,0.048),vdM);v.position.set(0,0.040,-0.12+i*0.07);g.add(v);var gv=new THREE.Mesh(new THREE.BoxGeometry(0.054,0.006,0.038),emM);gv.position.set(0,0.045,-0.12+i*0.07);g.add(gv);}
+  // Bolt
+  var bolt=new THREE.Mesh(new THREE.CylinderGeometry(0.007,0.007,0.064,6),vdM);bolt.rotation.z=Math.PI/2;bolt.position.set(0.045,0.014,0.079);g.add(bolt);
+  var bk=new THREE.Mesh(new THREE.SphereGeometry(0.013,8,6),frM);bk.position.set(0.081,0.014,0.079);g.add(bk);
+  // Grip
+  var grp=new THREE.Mesh(new THREE.BoxGeometry(0.048,0.152,0.099),vdM);grp.position.set(0,-0.070,0.118);grp.rotation.x=0.14;g.add(grp);
+  for(var i=0;i<4;i++){var rn=new THREE.Mesh(new THREE.BoxGeometry(0.050,0.004,0.078),frM);rn.position.set(0,-0.028-i*0.030,0.115);g.add(rn);}
+  var tg=new THREE.Mesh(new THREE.TorusGeometry(0.019,0.005,5,12,Math.PI),vdM);tg.rotation.x=Math.PI/2;tg.position.set(0,-0.017,0.063);g.add(tg);
+  var tr=new THREE.Mesh(new THREE.BoxGeometry(0.006,0.018,0.010),gdM);tr.position.set(0,-0.007,0.056);g.add(tr);
+  // Stock with wings
+  var stk=new THREE.Mesh(new THREE.BoxGeometry(0.055,0.070,0.31),vdM);stk.position.set(0,0,0.365);g.add(stk);
+  var wL=new THREE.Mesh(new THREE.BoxGeometry(0.010,0.090,0.20),frM);wL.position.set(-0.034,0.023,0.378);wL.rotation.z=0.28;g.add(wL);
+  var wR=wL.clone();wR.position.x=0.034;wR.rotation.z=-0.28;g.add(wR);
+  // Nameplate
+  var plate=new THREE.Mesh(new THREE.BoxGeometry(0.060,0.024,0.078),frM);plate.position.set(0,0.051,0);g.add(plate);
+  var pg=new THREE.Mesh(new THREE.BoxGeometry(0.056,0.017,0.073),lvM);pg.position.set(0,0.054,0);g.add(pg);
+  // Ragdoll chains — 3 anchor points along barrel and stock
+  attachHellChains(g,[
+    {x:-0.03,y:-0.005,z:-0.20,n:9},
+    {x: 0.03,y:-0.005,z:-0.40,n:7},
+    {x: 0.00,y:-0.004,z: 0.28,n:8},
+  ]);
+  return g;
+}
+function mkOmegaShotgun(c1,c2){
+  const g=new THREE.Group();
+  const dkM=new THREE.MeshPhongMaterial({color:0x08000f,shininess:140,specular:new THREE.Color(0x9900ff)});
+  const puM=new THREE.MeshPhongMaterial({color:0xaa00ff,shininess:160,specular:new THREE.Color(0xffffff)});
+  const pkM=new THREE.MeshPhongMaterial({color:0xff44cc,shininess:180,emissive:new THREE.Color(0xff00aa).multiplyScalar(0.15)});
+  const glM=new THREE.MeshBasicMaterial({color:0xff44cc,transparent:true,opacity:0.75});
+  // Receiver
+  const recv=new THREE.Mesh(new THREE.BoxGeometry(0.062,0.088,0.38),dkM);recv.position.set(0,0.008,0);g.add(recv);
+  // Pump
+  const pump=new THREE.Mesh(new THREE.BoxGeometry(0.055,0.05,0.13),puM);pump.position.set(0,-0.02,-0.1);g.add(pump);
+  // Barrel
+  const brl=new THREE.Mesh(new THREE.CylinderGeometry(0.026,0.030,0.35,8),dkM);brl.rotation.x=Math.PI/2;brl.position.set(0,0.022,-0.19);g.add(brl);
+  // Muzzle
+  const muz=new THREE.Mesh(new THREE.CylinderGeometry(0.038,0.026,0.038,6),puM);muz.rotation.x=Math.PI/2;muz.position.set(0,0.022,-0.38);g.add(muz);
+  // Glowing rings on barrel
+  for(let i=0;i<3;i++){const r=new THREE.Mesh(new THREE.TorusGeometry(0.028,0.004,6,14),glM);r.rotation.x=Math.PI/2;r.position.set(0,0.022,-0.11-i*0.08);g.add(r);}
+  // Top rib
+  const rib=new THREE.Mesh(new THREE.BoxGeometry(0.012,0.009,0.32),puM);rib.position.set(0,0.056,0.01);g.add(rib);
+  for(let i=0;i<4;i++){const bd=new THREE.Mesh(new THREE.SphereGeometry(0.006,5,4),pkM);bd.position.set(0,0.062,-0.09+i*0.06);g.add(bd);}
+  // Grip
+  const grp=new THREE.Mesh(new THREE.BoxGeometry(0.046,0.155,0.096),dkM);grp.position.set(0,-0.072,0.125);grp.rotation.x=0.17;g.add(grp);
+  for(let i=0;i<3;i++){const gl=new THREE.Mesh(new THREE.BoxGeometry(0.048,0.005,0.09),pkM);gl.position.set(0,-0.038-i*0.038,0.122);g.add(gl);}
+  // Trigger guard+trigger
+  const tg=new THREE.Mesh(new THREE.TorusGeometry(0.021,0.005,5,13,Math.PI),dkM);tg.rotation.x=Math.PI/2;tg.position.set(0,-0.019,0.068);g.add(tg);
+  const tr=new THREE.Mesh(new THREE.BoxGeometry(0.007,0.021,0.011),puM);tr.position.set(0,-0.011,0.060);g.add(tr);
+  // Stock
+  const stk=new THREE.Mesh(new THREE.BoxGeometry(0.050,0.070,0.22),dkM);stk.position.set(0,0.004,0.285);g.add(stk);
+  const stkBot=new THREE.Mesh(new THREE.BoxGeometry(0.050,0.009,0.22),pkM);stkBot.position.set(0,-0.031,0.285);g.add(stkBot);
+  // Omega logo plate
+  const logo=new THREE.Mesh(new THREE.BoxGeometry(0.064,0.028,0.055),pkM);logo.position.set(0,0.036,0.13);g.add(logo);
+  return g;
+}
+
+// ── OMEGA SNIPER ──
+function mkOmegaSniper(c1,c2){
+  const g=new THREE.Group();
+  const dkM=new THREE.MeshPhongMaterial({color:0x07000e,shininess:150,specular:new THREE.Color(0x9900ff)});
+  const puM=new THREE.MeshPhongMaterial({color:0xaa00ff,shininess:180,specular:new THREE.Color(0xffffff)});
+  const pkM=new THREE.MeshPhongMaterial({color:0xff44cc,shininess:200,emissive:new THREE.Color(0xff00aa).multiplyScalar(0.18)});
+  const glM=new THREE.MeshBasicMaterial({color:0xcc00ff,transparent:true,opacity:0.8});
+  const lnM=new THREE.MeshBasicMaterial({color:0xaa44ff,transparent:true,opacity:0.65});
+  // Receiver
+  const recv=new THREE.Mesh(new THREE.BoxGeometry(0.054,0.070,0.52),dkM);recv.position.set(0,0.004,0);g.add(recv);
+  // Barrel (lathe)
+  const bpts=[[0.015,-0.60],[0.013,-0.45],[0.012,-0.2],[0.014,-0.05],[0.015,0]].map(([r,d])=>new THREE.Vector2(r,d));
+  const brl=new THREE.Mesh(new THREE.LatheGeometry(bpts,10),dkM);brl.rotation.x=Math.PI/2;brl.position.set(0,0.013,-0.28);g.add(brl);
+  // Muzzle brake
+  const muz=new THREE.Mesh(new THREE.BoxGeometry(0.028,0.028,0.055),puM);muz.position.set(0,0.013,-0.63);g.add(muz);
+  for(let i=0;i<3;i++){const sl=new THREE.Mesh(new THREE.BoxGeometry(0.030,0.007,0.011),dkM);sl.position.set(0,0.020-i*0.008,-0.61+i*0.01);g.add(sl);}
+  // Bipod
+  [-0.017,0.017].forEach(bx=>{const leg=new THREE.Mesh(new THREE.BoxGeometry(0.005,0.11,0.005),puM);leg.position.set(bx,-0.065,-0.24);leg.rotation.z=bx>0?0.24:-0.24;g.add(leg);});
+  // Scope
+  const scpB=new THREE.Mesh(new THREE.CylinderGeometry(0.021,0.021,0.24,10),puM);scpB.rotation.x=Math.PI/2;scpB.position.set(0,0.073,-0.04);g.add(scpB);
+  const scpF=new THREE.Mesh(new THREE.CylinderGeometry(0.019,0.019,0.009,10),lnM);scpF.rotation.x=Math.PI/2;scpF.position.set(0,0.073,-0.165);g.add(scpF);
+  const scpR=scpF.clone();scpR.position.z=0.087;g.add(scpR);
+  [-0.068,0.038].forEach(sz=>{const ring=new THREE.Mesh(new THREE.TorusGeometry(0.024,0.006,6,13),dkM);ring.rotation.x=Math.PI/2;ring.position.set(0,0.073,sz);g.add(ring);});
+  // Glow strips
+  for(let i=0;i<5;i++){const s=new THREE.Mesh(new THREE.BoxGeometry(0.055,0.004,0.055),glM);s.position.set(0,0.040,-0.17+i*0.072);g.add(s);}
+  // Bolt
+  const bolt=new THREE.Mesh(new THREE.CylinderGeometry(0.007,0.007,0.058,7),puM);bolt.rotation.z=Math.PI/2;bolt.position.set(0.044,0.017,0.076);g.add(bolt);
+  const bk=new THREE.Mesh(new THREE.SphereGeometry(0.011,8,6),pkM);bk.position.set(0.076,0.017,0.076);g.add(bk);
+  // Grip
+  const grp=new THREE.Mesh(new THREE.BoxGeometry(0.043,0.148,0.092),dkM);grp.position.set(0,-0.068,0.116);grp.rotation.x=0.14;g.add(grp);
+  for(let i=0;i<3;i++){const ps=new THREE.Mesh(new THREE.BoxGeometry(0.045,0.005,0.088),pkM);ps.position.set(0,-0.033-i*0.034,0.114);g.add(ps);}
+  const tg=new THREE.Mesh(new THREE.TorusGeometry(0.019,0.005,5,12,Math.PI),dkM);tg.rotation.x=Math.PI/2;tg.position.set(0,-0.017,0.062);g.add(tg);
+  const tr=new THREE.Mesh(new THREE.BoxGeometry(0.006,0.017,0.010),puM);tr.position.set(0,-0.007,0.056);g.add(tr);
+  // Stock
+  const stk=new THREE.Mesh(new THREE.BoxGeometry(0.047,0.058,0.28),dkM);stk.position.set(0,0.004,0.35);g.add(stk);
+  const stkT=new THREE.Mesh(new THREE.BoxGeometry(0.047,0.009,0.26),puM);stkT.position.set(0,0.036,0.35);g.add(stkT);
+  const stkB=new THREE.Mesh(new THREE.BoxGeometry(0.047,0.009,0.26),pkM);stkB.position.set(0,-0.027,0.35);g.add(stkB);
+  // Omega logo
+  const ol=new THREE.Mesh(new THREE.BoxGeometry(0.055,0.026,0.052),pkM);ol.position.set(0,0.040,0.018);g.add(ol);
+  return g;
+}
+
+// ── HELLSWRATH ──
+function mkHellswrath(c1,c2){
+  const g=new THREE.Group();
+  const vdM=new THREE.MeshPhongMaterial({color:0x07000a,shininess:180,specular:new THREE.Color(0xff2200)});
+  const frM=new THREE.MeshPhongMaterial({color:0xff2200,shininess:200,emissive:new THREE.Color(0xff1100).multiplyScalar(0.28)});
+  const emM=new THREE.MeshBasicMaterial({color:0xff6600,transparent:true,opacity:0.85});
+  const gdM=new THREE.MeshPhongMaterial({color:0xcc4400,shininess:220,specular:new THREE.Color(0xffaa00)});
+  const lvM=new THREE.MeshBasicMaterial({color:0xff3300,transparent:true,opacity:0.6});
+  // Receiver
+  const recv=new THREE.Mesh(new THREE.BoxGeometry(0.059,0.080,0.50),vdM);recv.position.set(0,0,0);g.add(recv);
+  // Claw panels
+  [-0.030,0.030].forEach(px=>{
+    const panel=new THREE.Mesh(new THREE.BoxGeometry(0.007,0.062,0.42),frM);panel.position.set(px,0,0);g.add(panel);
+    for(let i=0;i<3;i++){const claw=new THREE.Mesh(new THREE.ConeGeometry(0.006,0.038,4),gdM);claw.position.set(px,0.018-i*0.018,-0.27-i*0.018);claw.rotation.x=Math.PI/2;g.add(claw);}
+  });
+  // Barrel
+  const brl=new THREE.Mesh(new THREE.CylinderGeometry(0.014,0.017,0.70,8),vdM);brl.rotation.x=Math.PI/2;brl.position.set(0,0.015,-0.36);g.add(brl);
+  // Lava cracks
+  for(let i=0;i<5;i++){const ck=new THREE.Mesh(new THREE.BoxGeometry(0.002,0.030,0.055),emM);ck.position.set(0.015,0.015,-0.14-i*0.1);ck.rotation.z=0.38*(i%2===0?1:-1);g.add(ck);}
+  // Muzzle
+  const muz=new THREE.Mesh(new THREE.CylinderGeometry(0.024,0.015,0.048,5),frM);muz.rotation.x=Math.PI/2;muz.position.set(0,0.015,-0.74);g.add(muz);
+  const ft=new THREE.Mesh(new THREE.SphereGeometry(0.017,8,6),lvM);ft.position.set(0,0.015,-0.77);g.add(ft);
+  // Scope
+  const scpB=new THREE.Mesh(new THREE.CylinderGeometry(0.019,0.019,0.21,8),vdM);scpB.rotation.x=Math.PI/2;scpB.position.set(0,0.068,-0.06);g.add(scpB);
+  const scpGl=new THREE.Mesh(new THREE.CylinderGeometry(0.015,0.015,0.17,8),lvM);scpGl.rotation.x=Math.PI/2;scpGl.position.set(0,0.068,-0.06);g.add(scpGl);
+  [-0.077,0.027].forEach(sz=>{
+    const ring=new THREE.Mesh(new THREE.TorusGeometry(0.023,0.007,5,13),vdM);ring.rotation.x=Math.PI/2;ring.position.set(0,0.068,sz);g.add(ring);
+    const horn=new THREE.Mesh(new THREE.ConeGeometry(0.005,0.023,4),frM);horn.position.set(0,0.095,sz);g.add(horn);
+  });
+  // Vents
+  for(let i=0;i<4;i++){const v=new THREE.Mesh(new THREE.BoxGeometry(0.060,0.010,0.048),vdM);v.position.set(0,0.042,-0.11+i*0.068);g.add(v);const gv=new THREE.Mesh(new THREE.BoxGeometry(0.056,0.006,0.038),emM);gv.position.set(0,0.047,-0.11+i*0.068);g.add(gv);}
+  // Bolt
+  const bolt=new THREE.Mesh(new THREE.CylinderGeometry(0.007,0.007,0.062,6),vdM);bolt.rotation.z=Math.PI/2;bolt.position.set(0.044,0.013,0.077);g.add(bolt);
+  const bk=new THREE.Mesh(new THREE.SphereGeometry(0.013,8,6),frM);bk.position.set(0.079,0.013,0.077);g.add(bk);
+  // Grip
+  const grp=new THREE.Mesh(new THREE.BoxGeometry(0.047,0.150,0.097),vdM);grp.position.set(0,-0.069,0.116);grp.rotation.x=0.13;g.add(grp);
+  for(let i=0;i<4;i++){const rn=new THREE.Mesh(new THREE.BoxGeometry(0.049,0.004,0.077),frM);rn.position.set(0,-0.029-i*0.031,0.114);g.add(rn);}
+  const tg=new THREE.Mesh(new THREE.TorusGeometry(0.019,0.005,5,12,Math.PI),vdM);tg.rotation.x=Math.PI/2;tg.position.set(0,-0.017,0.062);g.add(tg);
+  const tr=new THREE.Mesh(new THREE.BoxGeometry(0.006,0.017,0.010),gdM);tr.position.set(0,-0.007,0.056);g.add(tr);
+  // Stock with wings
+  const stk=new THREE.Mesh(new THREE.BoxGeometry(0.053,0.068,0.30),vdM);stk.position.set(0,0,0.35);g.add(stk);
+  const wL=new THREE.Mesh(new THREE.BoxGeometry(0.009,0.088,0.19),frM);wL.position.set(-0.033,0.021,0.37);wL.rotation.z=0.28;g.add(wL);
+  const wR=wL.clone();wR.position.x=0.033;wR.rotation.z=-0.28;g.add(wR);
+  // Nameplate
+  const plate=new THREE.Mesh(new THREE.BoxGeometry(0.060,0.024,0.077),frM);plate.position.set(0,0.051,0);g.add(plate);
+  const pg=new THREE.Mesh(new THREE.BoxGeometry(0.056,0.017,0.072),lvM);pg.position.set(0,0.054,0);g.add(pg);
+  return g;
+}
+
 function getMesh(wid,skinId){
-  const def=WDEFS[wid],skin=def.skins.find(s=>s.id===skinId)||def.skins[0];
+  const def=WDEFS[wid];
+  if(!def)return null;
+  const skin=def.skins.find(s=>s.id===skinId)||def.skins[0];
   const [c1,c2]=skin.colors;
   // Route legendary skins to unique models
   if(wid==='smg'&&skinId==='atomic')    return mkSMG_VoidReactor(c1,c2);
@@ -2276,18 +2669,24 @@ function getMesh(wid,skinId){
   if(wid==='compact'&&skinId==='hotrod')return mkCompact_DarkVortex(c1,c2);
   if(wid==='knife'&&skinId==='shadow')  return mkKnife_CrimsonPhantom(c1,c2);
   if(wid==='sledge'&&skinId==='void')   return mkSledge_Void(c1,c2);
-  if(wid==='pistol')  return mkPistol(c1,c2);
-  if(wid==='knife')   return mkKnife(skin.model||'std',c1,c2);
-  if(wid==='smg')     return mkSMG(c1,c2);
-  if(wid==='shotgun') return mkShotgun(c1,c2);
+  if(wid==='pistol')      return mkPistol(c1,c2);
+  if(wid==='knife')       return mkKnife(skin.model||'std',c1,c2);
+  if(wid==='smg')         return mkSMG(c1,c2);
+  if(wid==='shotgun')     return mkShotgun(c1,c2);
   if(wid==='sniper'&&skinId==='early') return mkSniper_EarlyAccess();
-  if(wid==='sniper')  return mkSniper(c1,c2);
-  if(wid==='lmg')     return mkLMG(c1,c2);
-  if(wid==='revolver')return mkRevolver(c1,c2);
-  if(wid==='deagle')  return mkDeagle(c1,c2);
-  if(wid==='compact') return mkCompact(c1,c2);
+  if(wid==='sniper')      return mkSniper(c1,c2);
+  if(wid==='lmg')         return mkLMG(c1,c2);
+  if(wid==='revolver')    return mkRevolver(c1,c2);
+  if(wid==='deagle')      return mkDeagle(c1,c2);
+  if(wid==='compact')     return mkCompact(c1,c2);
   if(wid==='boomerang'){const sk=def.skins.find(s=>s.id===skinId)||def.skins[0];return mkBoomerang(c1,c2,sk.hasSpikes);}
-  if(wid==='sledge')  return mkSledge(c1,c2);
+  if(wid==='sledge')      return mkSledge(c1,c2);
+  if(wid==='omegaShotgun'&&skinId==='hellswrath_shot') return mkOmegaShotgun_Hell(c1,c2);
+  if(wid==='omegaSniper' &&skinId==='hellswrath_snip') return mkOmegaSniper_Hell(c1,c2);
+  if(wid==='omegaShotgun')return mkOmegaShotgun(c1,c2);
+  if(wid==='omegaSniper') return mkOmegaSniper(c1,c2);
+  if(wid==='hellswrath')  return mkHellswrath(c1,c2);
+  return null;
 }
 function rebuildWeapon(){
   while(weaponGroup.children.length)weaponGroup.remove(weaponGroup.children[0]);
@@ -2686,13 +3085,20 @@ function tickZombies(dt){
 }
 function hitZombie(z,wid,isHead){
   if(!z||z.userData.dead)return;
+  const def=WDEFS[wid]||{};
   let dmg;
   if(wid==='sledge'){
-    // Sledge: 1-shot normal/runner, 4-hit brute (brute has 200hp so 50 per hit)
-    dmg = z.userData.type==='brute' ? 50 : z.userData.maxHp;
+    dmg=z.userData.type==='brute'?50:z.userData.maxHp;
+  } else if(def.omegaSniper){
+    // 75 body / 150 headshot — 1-shots normal (100hp) on headshot, NOT brute (200hp)
+    dmg=isHead?150:75;
+  } else if(def.hellswrath){
+    // 100 body / 200 headshot — 1-shots everything except brute on body
+    dmg=isHead?200:100;
   } else {
-    const base=z.userData.maxHp/WDEFS[wid].hitsToKill;
-    dmg=isHead?base*3:base;
+    // Standard: base = 100hp / hitsToKill. Headshot = 2x. Brute has 200hp so needs 2x hits.
+    const base=100/(def.hitsToKill||1);
+    dmg=isHead?base*2:base;
   }
   z.userData.hp-=dmg;
   z.children.forEach(c=>{
@@ -2706,11 +3112,12 @@ function hitZombie(z,wid,isHead){
   const cred=z.userData.type==='boss'?250:z.userData.type==='brute'?30:z.userData.type==='runner'?5:8;
   if(z.userData.hp<=0){
     z.userData.dead=true;
-    S.weapons[wid].kills++;S.totalKills++;
+    if(S.weapons[wid])S.weapons[wid].kills++;
+    S.totalKills++;
     S.credits+=isHead?cred*2:cred;
+    bpAwardXP(z.userData.type);
     updateHUD();hitMark(isHead);checkUnlock(wid);
     if(z.userData.type==='boss'){
-      // Boss dead = impossible mode victory
       notify('☠ BOSS DEFEATED!');
       const diff=DIFFICULTIES.impossible;
       setTimeout(()=>{
@@ -4145,10 +4552,11 @@ function tickUtilities(dt,now){
   });
   tickDrone(dt,now);
   tickFox(dt,now);
+  if(typeof mpTick==='function') mpTick(dt);
 }
 
 function soundGrenade(){
-  const ctx=getAudio(),n=ctx.currentTime;
+  const ctx=getAudio();if(!ctx)return;const n=ctx.currentTime;
   const buf=ctx.createBuffer(1,ctx.sampleRate*0.5,ctx.sampleRate);
   const d=buf.getChannelData(0);
   for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,1.5)*1.2;
@@ -4161,7 +4569,7 @@ function soundGrenade(){
   o.connect(og);og.connect(ctx.destination);o.start(n);o.stop(n+0.3);
 }
 function soundStun(){
-  const ctx=getAudio(),n=ctx.currentTime;
+  const ctx=getAudio();if(!ctx)return;const n=ctx.currentTime;
   const o=ctx.createOscillator();o.type='sine';o.frequency.setValueAtTime(3000,n);o.frequency.exponentialRampToValueAtTime(200,n+0.3);
   const g=ctx.createGain();g.gain.setValueAtTime(0.8,n);g.gain.exponentialRampToValueAtTime(0.001,n+0.3);
   o.connect(g);g.connect(ctx.destination);o.start(n);o.stop(n+0.3);
@@ -4171,8 +4579,10 @@ window.useGrenade=useGrenade; window.useStun=useStun; window.useDrone=useDrone; 
 
 function loop(ts){
   requestAnimationFrame(loop);
+  // iOS fix: lastT=0 on first frame causes huge dt; clamp and re-sync
+  if(lastT===0) lastT=ts;
   if(S.screen==='game'){
-    const dt=Math.min(ts-lastT,150);lastT=ts;
+    const dt=Math.min(ts-lastT,100);lastT=ts;
 
     // ── Sprint & stamina ──
     const wantSprint=keys['ShiftLeft']&&!stamDepleted;
@@ -4229,6 +4639,7 @@ function loop(ts){
     }
 
     tickInspect(ts); tickBolt(ts); tickBoomerang(ts); tickZombies(dt);tickWave(dt); tickDecals(ts); tickUtilities(dt,ts);
+    tickHellChains(dt);
     updateUtilHUD();
 
     // ── Melee cooldown bar / Sniper bolt bar ──
@@ -4419,7 +4830,38 @@ function openPreview(wid,skinId){
     c2.addEventListener('mousedown',e=>{pvMX=true;pvLX=e.clientX;pvLY=e.clientY;});
     c2.addEventListener('mousemove',e=>{if(!pvMX)return;pvRY+=(e.clientX-pvLX)*0.012;pvRX+=(e.clientY-pvLY)*0.012;pvLX=e.clientX;pvLY=e.clientY;});
     c2.addEventListener('mouseup',()=>pvMX=false);c2.addEventListener('mouseleave',()=>pvMX=false);
-    (function a(){requestAnimationFrame(a);if(pvMesh){pvMesh.rotation.y=pvRY+performance.now()*0.0006;pvMesh.rotation.x=pvRX;}if(pvRend)pvRend.render(pvScene,pvCam);})();
+    (function a(){requestAnimationFrame(a);
+      if(pvMesh){
+        pvMesh.rotation.y=pvRY+performance.now()*0.0006;
+        pvMesh.rotation.x=pvRX;
+        // Animate hell chains in preview
+        if(pvMesh.userData.hellChains){
+          var dt2=16;
+          var GRAVITY=0.000018, DAMPING=0.78, LINK_LEN=0.028;
+          pvMesh.userData.hellChains.forEach(function(chain){
+            var anchor=chain.anchor;
+            chain.links.forEach(function(link,i){
+              if(i===0){link.position.set(anchor.x,anchor.y,anchor.z);return;}
+              var v=link.userData.vel;
+              v.y-=GRAVITY*dt2;
+              v.x+=Math.sin(performance.now()*0.0007+i)*0.000012;
+              v.x*=DAMPING;v.y*=DAMPING;v.z*=DAMPING;
+              link.position.x+=v.x*dt2;
+              link.position.y+=v.y*dt2;
+              link.position.z+=v.z*dt2;
+              var prev=chain.links[i-1];
+              var dx=link.position.x-prev.position.x,dy=link.position.y-prev.position.y,dz=link.position.z-prev.position.z;
+              var dist=Math.sqrt(dx*dx+dy*dy+dz*dz)||0.001;
+              var sc=LINK_LEN/dist;
+              link.position.x=prev.position.x+dx*sc;
+              link.position.y=prev.position.y+dy*sc;
+              link.position.z=prev.position.z+dz*sc;
+            });
+          });
+        }
+      }
+      if(pvRend)pvRend.render(pvScene,pvCam);
+    })();
   }
   pvScene.children.filter(c=>c.userData.pv).forEach(c=>pvScene.remove(c));
   pvMesh=getMesh(wid,skinId);if(pvMesh){pvMesh.scale.setScalar(8.5);pvMesh.userData.pv=true;pvScene.add(pvMesh);}
@@ -4631,28 +5073,128 @@ function backToMenu(){
 // ══ SHOP ══
 function renderShop(){
   const wg=document.getElementById('shopWeapons');wg.innerHTML='';
-  // Purchasable weapons (have a price)
-  const icons={smg:'MP5',shotgun:'SHT',revolver:'REV',deagle:'DEG',compact:'MAC',sledge:'SLG'};
+
+  // SVG weapon silhouettes — inline, crisp, themed per weapon
+  const svgIcons={
+    smg:`<svg viewBox="0 0 64 32" fill="none" xmlns="http://www.w3.org/2000/svg" width="64" height="32">
+      <rect x="4" y="11" width="38" height="9" rx="2" fill="#888"/>
+      <rect x="30" y="8" width="18" height="4" rx="1" fill="#aaa"/><!-- barrel -->
+      <rect x="12" y="20" width="8" height="9" rx="1" fill="#666"/><!-- mag -->
+      <rect x="4" y="11" width="8" height="5" rx="1" fill="#999"/><!-- stock -->
+      <rect x="20" y="13" width="4" height="6" rx="1" fill="#555"/><!-- grip -->
+      <circle cx="46" cy="13" r="2" fill="#ccc"/><!-- muzzle -->
+    </svg>`,
+    shotgun:`<svg viewBox="0 0 64 28" fill="none" xmlns="http://www.w3.org/2000/svg" width="64" height="28">
+      <rect x="3" y="10" width="34" height="8" rx="2" fill="#8B6040"/>
+      <rect x="28" y="8" width="20" height="4" rx="1" fill="#aaa"/><!-- barrel -->
+      <rect x="5" y="18" width="14" height="6" rx="1" fill="#6a4820"/><!-- pump -->
+      <rect x="3" y="10" width="7" height="4" rx="1" fill="#7a5030"/><!-- stock -->
+      <rect x="17" y="16" width="5" height="7" rx="1" fill="#5a3a18"/><!-- grip -->
+      <rect x="46" y="9" width="4" height="5" rx="1" fill="#bbb"/><!-- muzzle -->
+    </svg>`,
+    sniper:`<svg viewBox="0 0 72 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="72" height="24">
+      <rect x="2" y="9" width="46" height="7" rx="1.5" fill="#4a5a3a"/>
+      <rect x="40" y="7" width="26" height="3" rx="1" fill="#888"/><!-- long barrel -->
+      <rect x="2" y="9" width="9" height="4" rx="1" fill="#3a4a2a"/><!-- stock -->
+      <rect x="22" y="14" width="5" height="7" rx="1" fill="#3a4a2a"/><!-- grip -->
+      <rect x="16" y="5" width="14" height="5" rx="1" fill="#555"/><!-- scope -->
+      <rect x="17" y="4" width="2" height="3" rx="0.5" fill="#666"/>
+      <rect x="27" y="4" width="2" height="3" rx="0.5" fill="#666"/>
+    </svg>`,
+    lmg:`<svg viewBox="0 0 68 30" fill="none" xmlns="http://www.w3.org/2000/svg" width="68" height="30">
+      <rect x="3" y="9" width="42" height="11" rx="2" fill="#5a5a40"/>
+      <rect x="36" y="7" width="22" height="5" rx="1" fill="#888"/>
+      <circle cx="14" cy="24" r="5" fill="#444"/><!-- drum mag -->
+      <circle cx="14" cy="24" r="2.5" fill="#333"/>
+      <rect x="3" y="9" width="8" height="5" rx="1" fill="#4a4a30"/><!-- stock -->
+      <rect x="25" y="18" width="5" height="8" rx="1" fill="#4a4a30"/>
+    </svg>`,
+    pistol:`<svg viewBox="0 0 44 32" fill="none" xmlns="http://www.w3.org/2000/svg" width="44" height="32">
+      <rect x="4" y="9" width="22" height="9" rx="2" fill="#777"/>
+      <rect x="20" y="7" width="14" height="4" rx="1" fill="#aaa"/>
+      <rect x="12" y="18" width="7" height="11" rx="1" fill="#555"/><!-- grip -->
+      <rect x="6" y="13" width="4" height="4" rx="0.5" fill="#999"/><!-- slide detail -->
+    </svg>`,
+    revolver:`<svg viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg" width="48" height="32">
+      <rect x="4" y="10" width="26" height="8" rx="2" fill="#777"/>
+      <rect x="24" y="8" width="16" height="4" rx="1" fill="#aaa"/>
+      <circle cx="16" cy="14" r="6" fill="#555"/><!-- cylinder -->
+      <circle cx="16" cy="14" r="3.5" fill="#444"/>
+      <circle cx="16" cy="11" r="1" fill="#666"/>
+      <circle cx="18.5" cy="15.5" r="1" fill="#666"/>
+      <circle cx="13.5" cy="15.5" r="1" fill="#666"/>
+      <rect x="14" y="22" width="6" height="9" rx="1" fill="#555"/>
+    </svg>`,
+    deagle:`<svg viewBox="0 0 50 34" fill="none" xmlns="http://www.w3.org/2000/svg" width="50" height="34">
+      <rect x="3" y="9" width="28" height="11" rx="2" fill="#666"/>
+      <rect x="24" y="7" width="18" height="5" rx="1" fill="#aaa"/>
+      <rect x="13" y="20" width="9" height="11" rx="1" fill="#444"/>
+      <rect x="5" y="10" width="6" height="5" rx="0.5" fill="#888"/>
+      <rect x="29" y="8" width="3" height="4" rx="0.5" fill="#ccc"/><!-- comp -->
+    </svg>`,
+    compact:`<svg viewBox="0 0 46 28" fill="none" xmlns="http://www.w3.org/2000/svg" width="46" height="28">
+      <rect x="3" y="9" width="20" height="8" rx="1.5" fill="#666"/>
+      <rect x="18" y="7" width="18" height="3.5" rx="1" fill="#999"/><!-- barrel -->
+      <rect x="11" y="17" width="7" height="9" rx="1" fill="#444"/>
+      <rect x="3" y="9" width="5" height="4" rx="0.5" fill="#777"/>
+      <!-- slots on barrel -->
+      <rect x="22" y="7.5" width="1.5" height="3" fill="#777"/>
+      <rect x="25" y="7.5" width="1.5" height="3" fill="#777"/>
+      <rect x="28" y="7.5" width="1.5" height="3" fill="#777"/>
+    </svg>`,
+    sledge:`<svg viewBox="0 0 48 36" fill="none" xmlns="http://www.w3.org/2000/svg" width="48" height="36">
+      <rect x="3" y="6" width="18" height="20" rx="3" fill="#777"/><!-- head -->
+      <rect x="8" y="8" width="8" height="16" rx="1" fill="#888"/><!-- face -->
+      <rect x="18" y="14" width="22" height="5" rx="2" fill="#8B5a20"/><!-- handle -->
+      <rect x="36" y="15" width="7" height="3" rx="1" fill="#7a4a10"/>
+    </svg>`,
+    boomerang:`<svg viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg" width="48" height="32">
+      <path d="M8 26 Q24 4 40 10 Q32 10 28 18 Q20 8 8 26Z" fill="#8B5a20"/>
+      <path d="M10 24 Q25 6 38 12" stroke="#a07040" stroke-width="1.5" fill="none"/>
+    </svg>`,
+  };
+
+  // Ammo icon
+  const ammoSvg=`<svg viewBox="0 0 32 44" fill="none" xmlns="http://www.w3.org/2000/svg" width="24" height="32">
+    <rect x="8" y="10" width="16" height="26" rx="2" fill="#888"/>
+    <rect x="10" y="12" width="12" height="4" rx="1" fill="#aaa"/>
+    <path d="M11 8 Q16 2 21 8Z" fill="#cc9900"/>
+    <rect x="10" y="32" width="12" height="2" rx="1" fill="#666"/>
+  </svg>`;
+
+  // Heal kit icon
+  const healSvg=`<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" width="36" height="36">
+    <rect x="4" y="4" width="32" height="32" rx="5" fill="#cc2222"/>
+    <rect x="16" y="10" width="8" height="20" rx="2" fill="white"/>
+    <rect x="10" y="16" width="20" height="8" rx="2" fill="white"/>
+  </svg>`;
+
   Object.keys(WDEFS).forEach(wid=>{
     const def=WDEFS[wid],ws=S.weapons[wid];
     if(!def.price)return;
     const c=document.createElement('div');c.className='shop-card';
     const slotTag=`<span style="font-size:9px;background:rgba(255,100,0,.15);border:1px solid rgba(255,100,0,.3);border-radius:2px;padding:1px 5px;color:#ff8040;letter-spacing:1px;font-family:'Space Mono',monospace">${def.slot.toUpperCase()}</span>`;
-    c.innerHTML=`<div class="icon">${icons[wid]||'GUN'}</div><h3>${def.name}</h3><div style="margin-bottom:6px">${slotTag}</div><div class="desc">${def.hitsToKill} hits/kill · ${def.fireMs<200?'Full-auto':def.fireMs>900?'Pump':'Semi'}</div><div class="price">CREDITS: ${def.price}</div>${ws.owned?'<div class="owned-badge">OWNED</div>':`<button class="btn-buy" ${S.credits>=def.price?'':'disabled'} onclick="buyWeapon('${wid}')">BUY</button>`}`;
+    const fireType=def.type==='melee'?'Melee':def.fireMs<200?'Full-auto':def.fireMs>900?'Bolt / Pump':'Semi-auto';
+    const iconHtml=svgIcons[wid]?`<div style="display:flex;align-items:center;justify-content:center;height:44px;margin-bottom:4px;filter:drop-shadow(0 0 4px rgba(255,100,0,0.3))">${svgIcons[wid]}</div>`:`<div class="icon">🔫</div>`;
+    c.innerHTML=`${iconHtml}<h3>${def.name}</h3><div style="margin-bottom:6px">${slotTag}</div><div class="desc">${fireType}${def.hitsToKill?` · ${def.hitsToKill} hits/kill`:''}</div><div class="price">CREDITS: ${def.price.toLocaleString()}</div>${ws.owned?'<div class="owned-badge">✓ OWNED</div>':`<button class="btn-buy" ${S.credits>=def.price?'':'disabled'} onclick="buyWeapon('${wid}')">BUY</button>`}`;
     wg.appendChild(c);
   });
+
   const sg=document.getElementById('shopSupplies');sg.innerHTML='';
   Object.keys(WDEFS).forEach(wid=>{
     const def=WDEFS[wid],ws=S.weapons[wid];
     if(!ws||!ws.owned||def.type==='melee'||def.type==='thrown')return;
     const c=document.createElement('div');c.className='shop-card';
-    c.innerHTML=`<div class="icon">AMO</div><h3>${def.name} Ammo</h3><div class="desc">+${def.boxAmt} rounds</div><div class="price">CREDITS: ${def.boxCost}</div><button class="btn-buy" ${S.credits>=def.boxCost?'':'disabled'} onclick="buyAmmo('${wid}')">BUY</button>`;
+    const aIcon=svgIcons[wid]?`<div style="display:flex;align-items:center;justify-content:center;height:36px;margin-bottom:4px;opacity:0.7;filter:drop-shadow(0 0 3px rgba(200,180,0,0.4))">${svgIcons[wid]}</div>`:
+      `<div style="display:flex;align-items:center;justify-content:center;height:36px;margin-bottom:4px">${ammoSvg}</div>`;
+    c.innerHTML=`${aIcon}<h3>${def.name} Ammo</h3><div class="desc">+${def.boxAmt} rounds</div><div class="price">CREDITS: ${def.boxCost}</div><button class="btn-buy" ${S.credits>=def.boxCost?'':'disabled'} onclick="buyAmmo('${wid}')">BUY</button>`;
     sg.appendChild(c);
   });
+
   const hc=document.createElement('div');hc.className='shop-card';
-  hc.innerHTML=`<div class="icon">MED</div><h3>Heal Kit</h3><div class="desc">+${HEAL_AMT} HP (H key)</div><div class="price">CREDITS: ${HEAL_COST}</div><button class="btn-buy" ${S.credits>=HEAL_COST?'':'disabled'} onclick="buyKit()">BUY</button>`;
+  hc.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:40px;margin-bottom:4px">${healSvg}</div><h3>Heal Kit</h3><div class="desc">+${HEAL_AMT} HP (H key)</div><div class="price">CREDITS: ${HEAL_COST}</div><button class="btn-buy" ${S.credits>=HEAL_COST?'':'disabled'} onclick="buyKit()">BUY</button>`;
   sg.appendChild(hc);
-  // ── Utilities ──
+
   const ug=document.getElementById('shopUtils');ug.innerHTML='';
   const utilMeta={
     grenade:{icon:'💣',name:'Frag Grenade',desc:'Explosive blast. 6-unit radius. Z key.',cdLabel:'30s cooldown'},
@@ -4662,7 +5204,7 @@ function renderShop(){
   Object.keys(utilMeta).forEach(uid=>{
     const u=S.utils[uid], m=utilMeta[uid];
     const c=document.createElement('div');c.className='shop-card';
-    c.innerHTML=`<div class="icon" style="font-size:28px">${m.icon}</div><h3>${m.name}</h3><div class="desc">${m.desc}<br><span style="color:#666">${m.cdLabel}</span></div><div class="price">CREDITS: ${u.price}</div>${u.owned?'<div class="owned-badge">OWNED</div>':`<button class="btn-buy" ${S.credits>=u.price?'':'disabled'} onclick="buyUtil('${uid}')">BUY</button>`}`;
+    c.innerHTML=`<div class="icon" style="font-size:28px">${m.icon}</div><h3>${m.name}</h3><div class="desc">${m.desc}<br><span style="color:#666">${m.cdLabel}</span></div><div class="price">CREDITS: ${u.price}</div>${u.owned?'<div class="owned-badge">✓ OWNED</div>':`<button class="btn-buy" ${S.credits>=u.price?'':'disabled'} onclick="buyUtil('${uid}')">BUY</button>`}`;
     ug.appendChild(c);
   });
 }
@@ -4674,7 +5216,16 @@ window.buyWeapon=wid=>{
   if(def.slot==='secondary') S.heldSecondary=wid;
   renderShop();document.getElementById('menuCredits').textContent=S.credits;notify(def.name+' purchased & set active!');
 };
-window.buyAmmo=wid=>{const def=WDEFS[wid];if(S.credits<def.boxCost)return;S.credits-=def.boxCost;S.weapons[wid].res+=def.boxAmt;renderShop();document.getElementById('menuCredits').textContent=S.credits;notify('+'+def.boxAmt+' ammo');};
+window.buyAmmo=wid=>{
+  const def=WDEFS[wid];
+  if(!def||!S.weapons[wid])return;
+  if(S.credits<def.boxCost){notify('Not enough credits!');return;}
+  S.credits-=def.boxCost;
+  S.weapons[wid].res=(S.weapons[wid].res||0)+def.boxAmt;
+  renderShop();
+  document.getElementById('menuCredits').textContent=S.credits;
+  notify('+'+def.boxAmt+' '+def.name+' ammo');
+};
 window.buyUtil=uid=>{
   const u=S.utils[uid];
   if(S.credits<u.price)return;
@@ -4683,6 +5234,228 @@ window.buyUtil=uid=>{
   notify(uid.charAt(0).toUpperCase()+uid.slice(1)+' unlocked!');
 };
 window.buyKit=()=>{if(S.credits<HEAL_COST)return;S.credits-=HEAL_COST;S.kits++;renderShop();document.getElementById('menuCredits').textContent=S.credits;notify('Heal kit added ('+S.kits+' total)');};
+
+// ══ BATTLE PASS ══
+const BP_XP_PER_LEVEL=750, BP_MAX_LEVEL=50, BP_PREMIUM_COST=20000;
+const BP_XP_BASE={normal:50,runner:75,brute:100};
+const BP_XP_MIN ={normal:10,runner:25,brute:35};
+const BP_WINDOW_MS=30000, BP_RAMP_KILLS=10;
+
+// Skin crate loot pools — exclusive to BP
+const BP_CRATE_POOLS={
+  gold:[
+    {wid:'smg',   sid:'bp_gsmg', name:'Void Gold MP5',    colors:[0xffd700,0x220066]},
+    {wid:'pistol',sid:'bp_gpist',name:'Void Gold Pistol',  colors:[0xffd700,0x330088]},
+    {wid:'shotgun',sid:'bp_gshot',name:'Void Gold Shotgun',colors:[0xffd700,0x110044]},
+  ],
+  shadow:[
+    {wid:'sniper',sid:'bp_ssnip',name:'Shadow Phantom Sniper',colors:[0x0a0010,0xcc00ff]},
+    {wid:'smg',   sid:'bp_ssmg', name:'Shadow Reactor MP5',   colors:[0x0a0010,0xaa00ff]},
+    {wid:'deagle',sid:'bp_sde',  name:'Shadow Eagle',          colors:[0x0a0010,0xff00cc]},
+  ],
+  inferno:[
+    {wid:'lmg',    sid:'bp_ilmg',name:'Inferno LMG',      colors:[0xff2200,0xff8800]},
+    {wid:'revolver',sid:'bp_irev',name:'Inferno Revolver', colors:[0xff4400,0xffaa00]},
+    {wid:'knife',  sid:'bp_iknf',name:'Hellfire Blade',    colors:[0xff2200,0xffcc00]},
+  ],
+};
+
+const BP_REWARDS=[
+  {level:1, tier:'free',type:'weapon',   wid:'omegaShotgun',label:'Omega Shotgun 💜'},
+  {level:1, tier:'paid',type:'weapon',   wid:'omegaSniper', label:'Omega Sniper 💜'},
+  {level:2, tier:'free',type:'credits',  amount:200,  label:'+200 Credits'},
+  {level:2, tier:'paid',type:'credits',  amount:500,  label:'+500 Credits'},
+  {level:3, tier:'free',type:'xpdoubler',amount:200,  label:'⚡ XP Doubler ×200'},
+  {level:3, tier:'paid',type:'xpdoubler',amount:500,  label:'⚡ XP Doubler ×500'},
+  {level:5, tier:'free',type:'crate',    crateType:'gold',   label:'📦 Gold Skin Crate'},
+  {level:5, tier:'paid',type:'crate',    crateType:'shadow', label:'📦 Shadow Skin Crate'},
+  {level:8, tier:'free',type:'credits',  amount:400,  label:'+400 Credits'},
+  {level:8, tier:'paid',type:'credits',  amount:900,  label:'+900 Credits'},
+  {level:10,tier:'free',type:'xpdoubler',amount:300,  label:'⚡ XP Doubler ×300'},
+  {level:10,tier:'paid',type:'crate',    crateType:'inferno',label:'📦 Inferno Skin Crate'},
+  {level:12,tier:'free',type:'credits',  amount:500,  label:'+500 Credits'},
+  {level:12,tier:'paid',type:'credits',  amount:1200, label:'+1,200 Credits'},
+  {level:15,tier:'free',type:'crate',    crateType:'gold',   label:'📦 Gold Skin Crate'},
+  {level:15,tier:'paid',type:'xpdoubler',amount:800,  label:'⚡ XP Doubler ×800'},
+  {level:18,tier:'free',type:'credits',  amount:600,  label:'+600 Credits'},
+  {level:18,tier:'paid',type:'credits',  amount:1500, label:'+1,500 Credits'},
+  {level:20,tier:'free',type:'xpdoubler',amount:500,  label:'⚡ XP Doubler ×500'},
+  {level:20,tier:'paid',type:'crate',    crateType:'shadow', label:'📦 Shadow Skin Crate'},
+  {level:22,tier:'free',type:'credits',  amount:700,  label:'+700 Credits'},
+  {level:22,tier:'paid',type:'credits',  amount:1800, label:'+1,800 Credits'},
+  {level:25,tier:'free',type:'crate',    crateType:'inferno',label:'📦 Inferno Skin Crate'},
+  {level:25,tier:'paid',type:'xpdoubler',amount:1000, label:'⚡ XP Doubler ×1,000'},
+  {level:28,tier:'free',type:'credits',  amount:800,  label:'+800 Credits'},
+  {level:28,tier:'paid',type:'credits',  amount:2000, label:'+2,000 Credits'},
+  {level:30,tier:'free',type:'xpdoubler',amount:600,  label:'⚡ XP Doubler ×600'},
+  {level:30,tier:'paid',type:'crate',    crateType:'inferno',label:'📦 Inferno Skin Crate'},
+  {level:33,tier:'free',type:'credits',  amount:900,  label:'+900 Credits'},
+  {level:33,tier:'paid',type:'credits',  amount:2200, label:'+2,200 Credits'},
+  {level:35,tier:'free',type:'crate',    crateType:'shadow', label:'📦 Shadow Skin Crate'},
+  {level:35,tier:'paid',type:'xpdoubler',amount:1200, label:'⚡ XP Doubler ×1,200'},
+  {level:38,tier:'free',type:'credits',  amount:1000, label:'+1,000 Credits'},
+  {level:38,tier:'paid',type:'credits',  amount:2500, label:'+2,500 Credits'},
+  {level:40,tier:'free',type:'xpdoubler',amount:800,  label:'⚡ XP Doubler ×800'},
+  {level:40,tier:'paid',type:'crate',    crateType:'gold',   label:'📦 Gold Skin Crate'},
+  {level:43,tier:'free',type:'credits',  amount:1200, label:'+1,200 Credits'},
+  {level:43,tier:'paid',type:'credits',  amount:3000, label:'+3,000 Credits'},
+  {level:45,tier:'free',type:'crate',    crateType:'inferno',label:'📦 Inferno Skin Crate'},
+  {level:45,tier:'paid',type:'xpdoubler',amount:1500, label:'⚡ XP Doubler ×1,500'},
+  {level:48,tier:'free',type:'credits',  amount:1500, label:'+1,500 Credits'},
+  {level:48,tier:'paid',type:'credits',  amount:4000, label:'+4,000 Credits'},
+  {level:49,tier:'paid',type:'skin',     wid:'omegaSniper',skinId:'hellswrath_snip', label:'🔥 Hellswrath Sniper Skin'},
+  {level:50,tier:'free',type:'skin',     wid:'omegaShotgun',skinId:'hellswrath_shot',label:'🔥 Hellswrath Shotgun Skin'},
+  {level:50,tier:'paid',type:'weapon',   wid:'hellswrath',   label:'🔥 HELLSWRATH'},
+];
+
+function bpAwardXP(zombieType){
+  const bp=S.bp;
+  if(bp.level>=BP_MAX_LEVEL)return;
+  const t=zombieType==='runner'?'runner':zombieType==='brute'?'brute':'normal';
+  const now=performance.now();
+  bp.killTimestamps[t]=(bp.killTimestamps[t]||[]).filter(ts=>now-ts<BP_WINDOW_MS);
+  const recent=bp.killTimestamps[t].length;
+  bp.killTimestamps[t].push(now);
+  const frac=Math.min(recent/BP_RAMP_KILLS,1);
+  let xp=Math.round(BP_XP_BASE[t]+(BP_XP_MIN[t]-BP_XP_BASE[t])*frac);
+  if(bp.xpDoubler>0){const bonus=Math.min(xp,bp.xpDoubler);bp.xpDoubler-=bonus;xp+=bonus;}
+  bp.xp+=xp;
+  let levelled=false;
+  while(bp.level<BP_MAX_LEVEL&&bp.xp>=(bp.level)*BP_XP_PER_LEVEL){
+    bp.level++;levelled=true;
+    notify('★ Battle Pass — Level '+bp.level+'!');
+    bpAutoGrant(bp.level);
+  }
+  if(levelled)renderBP();
+  bpRefreshHUD();
+}
+
+function bpAutoGrant(level){
+  // Silently grant weapon rewards on level-up (no claim needed)
+  BP_REWARDS.filter(r=>r.level===level&&r.type==='weapon').forEach(r=>{
+    if(r.tier==='free'){
+      if(!S.weapons[r.wid].owned){S.weapons[r.wid].owned=true;S.weapons[r.wid].ammo=WDEFS[r.wid].startAmmo;S.weapons[r.wid].res=WDEFS[r.wid].resAmmo;notify('🎁 '+WDEFS[r.wid].name+' unlocked!');}
+    } else if(r.tier==='paid'&&S.bp.owned){
+      if(!S.weapons[r.wid].owned){S.weapons[r.wid].owned=true;S.weapons[r.wid].ammo=WDEFS[r.wid].startAmmo;S.weapons[r.wid].res=WDEFS[r.wid].resAmmo;notify('★ '+WDEFS[r.wid].name+' unlocked!');}
+    }
+  });
+}
+
+function bpRefreshHUD(){
+  const bp=S.bp;
+  const levelBase=(bp.level-1)*BP_XP_PER_LEVEL;
+  const pct=bp.level>=BP_MAX_LEVEL?100:Math.min(100,(bp.xp-levelBase)/BP_XP_PER_LEVEL*100);
+  const ll=document.getElementById('bpLevelLabel');
+  const xl=document.getElementById('bpXpLabel');
+  const xb=document.getElementById('bpXpBar');
+  const db=document.getElementById('bpDoublerBadge');
+  const da=document.getElementById('bpDoublerAmt');
+  if(ll)ll.textContent='LEVEL '+bp.level+(bp.level>=BP_MAX_LEVEL?' (MAX)':'');
+  if(xl)xl.textContent=(bp.xp-levelBase)+' / '+BP_XP_PER_LEVEL+' XP';
+  if(xb)xb.style.width=pct+'%';
+  if(db)db.style.display=bp.xpDoubler>0?'block':'none';
+  if(da)da.textContent=bp.xpDoubler;
+}
+
+window.bpBuyPremium=function(){
+  if(S.bp.owned){notify('Already own the Premium Pass!');return;}
+  if(S.credits<BP_PREMIUM_COST){notify('Need '+BP_PREMIUM_COST+' credits — earn more in-game!');return;}
+  S.credits-=BP_PREMIUM_COST;S.bp.owned=true;
+  document.getElementById('menuCredits').textContent=S.credits;
+  notify('★ PREMIUM BATTLE PASS UNLOCKED!');
+  // Retroactively grant paid weapon rewards already reached
+  for(let l=1;l<=S.bp.level;l++)bpAutoGrant(l);
+  renderBP();
+};
+
+window.bpClaim=function(level,tier){
+  const bp=S.bp;
+  if(bp.level<level){notify('Reach level '+level+' first!');return;}
+  if(tier==='paid'&&!bp.owned){notify('Premium Pass required! Cost: '+BP_PREMIUM_COST+' credits.');return;}
+  const arr=tier==='free'?bp.claimedFree:bp.claimedPaid;
+  if(arr.includes(level)){return;}
+  arr.push(level);
+  const r=BP_REWARDS.find(r=>r.level===level&&r.tier===tier);
+  if(!r){renderBP();return;}
+  if(r.type==='credits'){S.credits+=r.amount;document.getElementById('menuCredits').textContent=S.credits;notify('+'+r.amount+' Credits!');}
+  else if(r.type==='xpdoubler'){bp.xpDoubler+=r.amount;notify('⚡ XP Doubler: next '+r.amount+' XP doubled!');}
+  else if(r.type==='crate'){bpOpenCrate(r.crateType);return;}
+  else if(r.type==='skin'){
+    if(!S.unlocked[r.wid])S.unlocked[r.wid]=[];
+    if(!S.unlocked[r.wid].includes(r.skinId)){
+      S.unlocked[r.wid].push(r.skinId);
+      const sk=WDEFS[r.wid]&&WDEFS[r.wid].skins.find(s=>s.id===r.skinId);
+      notify('🔥 '+(sk?sk.name:r.skinId)+' skin unlocked!');
+    }
+  }
+  else if(r.type==='weapon'&&!S.weapons[r.wid].owned){S.weapons[r.wid].owned=true;S.weapons[r.wid].ammo=WDEFS[r.wid].startAmmo;S.weapons[r.wid].res=WDEFS[r.wid].resAmmo;notify('★ '+WDEFS[r.wid].name+' UNLOCKED!');}
+  renderBP();
+};
+
+window.bpOpenCrate=function(crateType){
+  const pool=BP_CRATE_POOLS[crateType];if(!pool)return;
+  const item=pool[Math.floor(Math.random()*pool.length)];
+  if(!S.unlocked[item.wid])S.unlocked[item.wid]=[];
+  if(!S.unlocked[item.wid].includes(item.sid)){
+    S.unlocked[item.wid].push(item.sid);
+    if(!WDEFS[item.wid].skins.find(s=>s.id===item.sid))
+      WDEFS[item.wid].skins.push({id:item.sid,name:item.name,kills:0,colors:item.colors,rarity:'legendary',emoji:'★',bpExclusive:true});
+  }
+  notify('📦 Crate: '+item.name+'!');
+  renderBP();
+};
+
+function renderBP(){
+  bpRefreshHUD();
+  const bp=S.bp;
+  // Purchase area
+  const pa=document.getElementById('bpPurchaseArea');
+  if(pa)pa.innerHTML=bp.owned
+    ?'<div style="font-family:\'Bebas Neue\',sans-serif;font-size:14px;letter-spacing:3px;color:#ffaa00;background:rgba(255,170,0,0.08);border:1px solid rgba(255,170,0,0.28);border-radius:4px;padding:5px 14px">★ PREMIUM ACTIVE</div>'
+    :`<button class="btn-buy" onclick="bpBuyPremium()" style="background:linear-gradient(90deg,rgba(180,80,0,.28),rgba(255,160,0,.22));border-color:rgba(255,170,0,.45);color:#ffcc00;font-size:11px;padding:7px 16px;">${S.credits>=BP_PREMIUM_COST?'★':'🔒'} PREMIUM — 20,000 CR</button>`;
+  // Grid rows
+  const grid=document.getElementById('bpGrid');if(!grid)return;
+  grid.innerHTML='';
+  const levels=[...new Set(BP_REWARDS.map(r=>r.level))].sort((a,b)=>a-b);
+  levels.forEach(lv=>{
+    const unlocked=bp.level>=lv;
+    const fr=BP_REWARDS.find(r=>r.level===lv&&r.tier==='free');
+    const pr=BP_REWARDS.find(r=>r.level===lv&&r.tier==='paid');
+    const cfree=bp.claimedFree.includes(lv);
+    const cpaid=bp.claimedPaid.includes(lv);
+    const autoFree=fr&&(fr.type==='weapon'||fr.type==='skin');
+    const autoPaid=pr&&(pr.type==='weapon'||pr.type==='skin');
+    const row=document.createElement('div');
+    row.style.cssText='display:grid;grid-template-columns:52px 1fr 1fr;gap:5px;align-items:stretch;';
+    // Level number
+    const lvBg=unlocked?'rgba(255,170,0,0.1)':'rgba(255,255,255,0.02)';
+    const lvCol=unlocked?'#ffaa00':'#333';
+    // Free cell
+    function cell(reward,claimed,tier,auto){
+      if(!reward)return '<div></div>';
+      const avail=unlocked&&(tier==='free'||bp.owned);
+      const done=auto?(reward.type==='skin'?(S.unlocked[reward.wid]&&S.unlocked[reward.wid].includes(reward.skinId)):S.weapons[reward.wid]&&S.weapons[reward.wid].owned):claimed;
+      const btnTxt=done?'✓ GOT IT':(auto?'AUTO':'CLAIM');
+      const btnCol=done?'rgba(0,200,80,.12)':'rgba(255,255,255,.07)';
+      const btnBdr=done?'rgba(0,200,80,.3)':'rgba(255,255,255,.12)';
+      const txtCol=done?'#44ff88':(tier==='paid'?'#ffcc66':'#ccc');
+      const bg=tier==='paid'?'rgba(255,170,0,0.04)':'rgba(255,255,255,0.02)';
+      const bdr=tier==='paid'?`rgba(255,170,0,${avail?0.22:0.07})`:`rgba(255,255,255,${avail?0.09:0.03})`;
+      const lbl=`<span style="font-family:'Space Mono',monospace;font-size:8px;color:${avail?(tier==='paid'?'#ffcc66':'#aaa'):'#333'};flex:1;line-height:1.3">${reward.label}</span>`;
+      // VIEW button for weapon/skin rewards
+      const canView=(reward.type==='weapon'&&WDEFS[reward.wid])||(reward.type==='skin'&&WDEFS[reward.wid]);
+      const viewSkinId=reward.type==='skin'?reward.skinId:'default';
+      const viewBtn=canView&&avail?`<button onclick="openPreview('${reward.wid}','${viewSkinId}')" style="font-family:'Space Mono',monospace;font-size:7px;padding:2px 5px;background:rgba(255,100,0,0.15);border:1px solid rgba(255,100,0,0.3);border-radius:3px;color:#ff9944;cursor:pointer;white-space:nowrap;margin-right:2px">VIEW</button>`:'';
+      const btn=avail&&!done?`<button onclick="bpClaim(${lv},'${tier}')" style="font-family:'Space Mono',monospace;font-size:7px;padding:2px 7px;background:${btnCol};border:1px solid ${btnBdr};border-radius:3px;color:${btnTxt==='CLAIM'?'#aaa':'#44ff88'};cursor:pointer;white-space:nowrap">${btnTxt}</button>`
+        :(done?`<span style="font-size:9px;color:#44ff88">✓</span>`:`<span style="font-size:9px;color:#333">🔒</span>`);
+      return `<div style="background:${bg};border:1px solid ${bdr};border-radius:4px;padding:5px 8px;display:flex;align-items:center;gap:4px">${lbl}${viewBtn}${btn}</div>`;
+    }
+    row.innerHTML=`<div style="background:${lvBg};border:1px solid rgba(255,170,0,${unlocked?0.2:0.06});border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;color:${lvCol}">${lv}</div>`
+      +cell(fr,cfree,'free',autoFree)+cell(pr,cpaid,'paid',autoPaid);
+    grid.appendChild(row);
+  });
+}
+window.renderBP=renderBP;
 
 // ══ CODES ══
 document.getElementById('btnRedeem').onclick=redeemCode;
@@ -4708,7 +5481,7 @@ function redeemCode(){
   }
   else if(code.type==='godpowers'){ GOD.unlocked=true; }
   else if(code.type==='fox'){ S.utils.fox.owned=true; }
-  else if(code.type==='devmode'){Object.keys(S.weapons).forEach(wid=>{if(!WDEFS[wid])return;S.weapons[wid].owned=true;if(WDEFS[wid].type==='gun'){S.weapons[wid].ammo=WDEFS[wid].startAmmo;S.weapons[wid].res=WDEFS[wid].resAmmo*3;}WDEFS[wid].skins.forEach(sk=>{if(!S.unlocked[wid].includes(sk.id))S.unlocked[wid].push(sk.id);});});Object.keys(S.utils).forEach(uid=>{S.utils[uid].owned=true;});}
+  else if(code.type==='devmode'){Object.keys(S.weapons).forEach(wid=>{if(!WDEFS[wid])return;S.weapons[wid].owned=true;if(WDEFS[wid].type==='gun'){S.weapons[wid].ammo=WDEFS[wid].startAmmo;S.weapons[wid].res=WDEFS[wid].resAmmo*3;}WDEFS[wid].skins.forEach(sk=>{if(!S.unlocked[wid].includes(sk.id))S.unlocked[wid].push(sk.id);});});Object.keys(S.utils).forEach(uid=>{if(uid==='fox')return;S.utils[uid].owned=true;});}
   msg.innerHTML='<div class="code-msg-ok">'+code.msg+'</div>';
   document.getElementById('menuCredits').textContent=S.credits;renderShop();renderInventory();
 }
@@ -4835,6 +5608,7 @@ document.querySelectorAll('.nav-tab').forEach(tab=>{
     document.getElementById(tid).classList.add('active');
     if(tab.dataset.tab==='shop')renderShop();
     if(tab.dataset.tab==='inventory')renderInventory();
+    if(tab.dataset.tab==='battlepass'){renderBP();}
     if(tab.dataset.tab==='settings'){
       // Sync sliders to current settings
       document.getElementById('settingFov').value=SETTINGS.fov;
@@ -4871,12 +5645,20 @@ window.addEventListener('resize',()=>{renderer.setSize(innerWidth,innerHeight);c
 // ══ AUDIO ══
 let audioCtx=null;
 function getAudio(){
-  if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-  if(audioCtx.state==='suspended') audioCtx.resume();
-  return audioCtx;
+  try{
+    if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==='suspended') audioCtx.resume().catch(()=>{});
+    return audioCtx;
+  }catch(e){ return null; }
 }
+// iOS: resume AudioContext on any touch/click (required by Safari)
+function resumeAudioOnGesture(){
+  if(audioCtx&&audioCtx.state==='suspended') audioCtx.resume().catch(()=>{});
+}
+document.addEventListener('touchstart', resumeAudioOnGesture, {passive:true});
+document.addEventListener('click', resumeAudioOnGesture, {passive:true});
 function soundPistol(){
-  const ctx=getAudio(),now=ctx.currentTime;
+  const ctx=getAudio();if(!ctx)return;const now=ctx.currentTime;
   // Main bang - noise burst
   const buf=ctx.createBuffer(1,ctx.sampleRate*0.18,ctx.sampleRate);
   const d=buf.getChannelData(0);
@@ -4891,7 +5673,7 @@ function soundPistol(){
   osc.connect(og); og.connect(ctx.destination); osc.start(now); osc.stop(now+0.1);
 }
 function soundSMG(){
-  const ctx=getAudio(),now=ctx.currentTime;
+  const ctx=getAudio();if(!ctx)return;const now=ctx.currentTime;
   const buf=ctx.createBuffer(1,ctx.sampleRate*0.1,ctx.sampleRate);
   const d=buf.getChannelData(0);
   for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3);
@@ -4905,7 +5687,7 @@ function soundSMG(){
   osc.connect(og); og.connect(ctx.destination); osc.start(now); osc.stop(now+0.07);
 }
 function soundShotgun(){
-  const ctx=getAudio(),now=ctx.currentTime;
+  const ctx=getAudio();if(!ctx)return;const now=ctx.currentTime;
   const buf=ctx.createBuffer(1,ctx.sampleRate*0.38,ctx.sampleRate);
   const d=buf.getChannelData(0);
   for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,1.4);
@@ -4918,7 +5700,7 @@ function soundShotgun(){
   osc.connect(og); og.connect(ctx.destination); osc.start(now); osc.stop(now+0.18);
 }
 function soundKnife(){
-  const ctx=getAudio(),now=ctx.currentTime;
+  const ctx=getAudio();if(!ctx)return;const now=ctx.currentTime;
   const buf=ctx.createBuffer(1,ctx.sampleRate*0.14,ctx.sampleRate);
   const d=buf.getChannelData(0);
   for(let i=0;i<d.length;i++){ const t=i/d.length; d[i]=(Math.random()*2-1)*Math.sin(t*Math.PI)*0.6; }
@@ -4928,13 +5710,13 @@ function soundKnife(){
   src.connect(hp); hp.connect(gain); gain.connect(ctx.destination); src.start(now);
 }
 function soundEmpty(){
-  const ctx=getAudio(),now=ctx.currentTime;
+  const ctx=getAudio();if(!ctx)return;const now=ctx.currentTime;
   const osc=ctx.createOscillator(); osc.type='square'; osc.frequency.value=220;
   const g=ctx.createGain(); g.gain.setValueAtTime(0.15,now); g.gain.exponentialRampToValueAtTime(0.001,now+0.06);
   osc.connect(g); g.connect(ctx.destination); osc.start(now); osc.stop(now+0.06);
 }
 function soundRevolver(){
-  const ctx=getAudio(),now=ctx.currentTime;
+  const ctx=getAudio();if(!ctx)return;const now=ctx.currentTime;
   const buf=ctx.createBuffer(1,ctx.sampleRate*0.32,ctx.sampleRate);
   const d=buf.getChannelData(0);
   for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,1.8)*0.9;
@@ -4951,7 +5733,7 @@ function soundRevolver(){
   oc2.connect(og2);og2.connect(ctx.destination);oc2.start(now+0.05);oc2.stop(now+0.08);
 }
 function soundDeagle(){
-  const ctx=getAudio(),now=ctx.currentTime;
+  const ctx=getAudio();if(!ctx)return;const now=ctx.currentTime;
   const buf=ctx.createBuffer(1,ctx.sampleRate*0.25,ctx.sampleRate);
   const d=buf.getChannelData(0);
   for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2.2);
@@ -4964,7 +5746,7 @@ function soundDeagle(){
   osc.connect(og);og.connect(ctx.destination);osc.start(now);osc.stop(now+0.12);
 }
 function soundCompact(){
-  const ctx=getAudio(),now=ctx.currentTime;
+  const ctx=getAudio();if(!ctx)return;const now=ctx.currentTime;
   const buf=ctx.createBuffer(1,ctx.sampleRate*0.07,ctx.sampleRate);
   const d=buf.getChannelData(0);
   for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,4)*0.8;
@@ -4975,7 +5757,7 @@ function soundCompact(){
   src.connect(hp);hp.connect(lp);lp.connect(gain);gain.connect(ctx.destination);src.start(now);
 }
 function soundSniper(){
-  const ctx=getAudio(),now=ctx.currentTime;
+  const ctx=getAudio();if(!ctx)return;const now=ctx.currentTime;
   // Deep, massive low-end crack
   const buf=ctx.createBuffer(1,ctx.sampleRate*0.55,ctx.sampleRate);
   const d=buf.getChannelData(0);
@@ -5044,9 +5826,16 @@ function saveGame(){
       stun:{owned:S.utils.stun.owned},
       drone:{owned:S.utils.drone.owned},
     },
+    bp:{
+      owned:S.bp.owned,
+      xp:S.bp.xp,
+      level:S.bp.level,
+      xpDoubler:S.bp.xpDoubler,
+      claimedFree:S.bp.claimedFree,
+      claimedPaid:S.bp.claimedPaid,
+    },
     savedAt:Date.now(),
   };
-  // Save each weapon's owned/ammo/res/kills/skin state
   Object.keys(S.weapons).forEach(wid=>{
     const ws=S.weapons[wid];
     save.weapons[wid]={owned:ws.owned,kills:ws.kills,skin:ws.skin,ammo:ws.ammo||0,res:ws.res||0};
@@ -5092,9 +5881,18 @@ function loadGame(){
         if(S.utils[uid]) S.utils[uid].owned=save.utils[uid].owned||false;
       });
     }
+    // Restore Battle Pass
+    if(save.bp){
+      S.bp.owned=save.bp.owned||false;
+      S.bp.xp=save.bp.xp||0;
+      S.bp.level=save.bp.level||1;
+      S.bp.xpDoubler=save.bp.xpDoubler||0;
+      S.bp.claimedFree=save.bp.claimedFree||[];
+      S.bp.claimedPaid=save.bp.claimedPaid||[];
+    }
     // Update menu display
     document.getElementById('menuCredits').textContent=S.credits;
-    renderShop(); renderInventory();
+    renderShop(); renderInventory(); bpRefreshHUD();
     const d=new Date(save.savedAt||0);
     const timeStr=d.toLocaleDateString()+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
     document.getElementById('saveStatus').textContent='Loaded save from '+timeStr;
@@ -5135,6 +5933,8 @@ buildMap();
 initDecals();
 rebuildWeapon();
 requestAnimationFrame(loop);
+// iOS: reset lastT when returning from background to prevent dt spike
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) lastT=0; });
 </script>
 <style>
 /* ── MOBILE CONTROLS ── */
@@ -5409,6 +6209,337 @@ if(isMobile()){
 }
 
 })();
+</script>
+
+<!-- PeerJS CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.2/peerjs.min.js"></script>
+<script>
+/* ══ MULTIPLAYER — WebRTC P2P Co-op ══ */
+var MP = {
+  peer:null, conn:null, role:null, roomId:null,
+  connected:false, guestReady:false, remotePlayers:{},
+  myId:null, enabled:false
+};
+var mpSyncTimer=0, mpZombieTimer=0;
+
+function mpSetStatus(t){ var e=document.getElementById('mpStatus'); if(e)e.textContent=t; }
+function mpSetMsg(t){ var e=document.getElementById('mpMsg'); if(e)e.textContent=t; }
+function mpSend(d){ try{ if(MP.conn&&MP.conn.open)MP.conn.send(d); }catch(e){} }
+function genRoomCode(){ return Math.random().toString(36).substr(2,6).toUpperCase(); }
+
+function buildRemotePlayerMesh(){
+  var g=new THREE.Group();
+  var bM=new THREE.MeshLambertMaterial({color:0x0055cc});
+  var hM=new THREE.MeshLambertMaterial({color:0x002266});
+  var vM=new THREE.MeshBasicMaterial({color:0x00ccff,transparent:true,opacity:0.7});
+  var dM=new THREE.MeshLambertMaterial({color:0x111111});
+  var body=new THREE.Mesh(new THREE.BoxGeometry(0.44,0.6,0.26),bM); body.position.y=1.1; g.add(body);
+  var vest=new THREE.Mesh(new THREE.BoxGeometry(0.36,0.36,0.27),new THREE.MeshLambertMaterial({color:0x002255})); vest.position.y=1.14; g.add(vest);
+  var neck=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.08,0.14,7),bM); neck.position.y=1.5; g.add(neck);
+  var head=new THREE.Mesh(new THREE.BoxGeometry(0.29,0.27,0.26),bM); head.position.y=1.73; g.add(head);
+  var helm=new THREE.Mesh(new THREE.BoxGeometry(0.31,0.17,0.29),hM); helm.position.set(0,1.86,0); g.add(helm);
+  var brim=new THREE.Mesh(new THREE.BoxGeometry(0.33,0.04,0.09),hM); brim.position.set(0,1.78,-0.1); g.add(brim);
+  var visor=new THREE.Mesh(new THREE.BoxGeometry(0.25,0.1,0.01),vM); visor.position.set(0,1.72,0.133); g.add(visor);
+  [-0.28,0.28].forEach(function(ax){
+    var arm=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.48,0.14),bM); arm.position.set(ax,1.08,0); g.add(arm);
+    var glove=new THREE.Mesh(new THREE.BoxGeometry(0.11,0.13,0.12),dM); glove.position.set(ax,0.77,0); g.add(glove);
+  });
+  [-0.1,0.1].forEach(function(lx){
+    var leg=new THREE.Mesh(new THREE.BoxGeometry(0.17,0.54,0.19),new THREE.MeshLambertMaterial({color:0x001a44})); leg.position.set(lx,0.49,0); g.add(leg);
+    var boot=new THREE.Mesh(new THREE.BoxGeometry(0.15,0.11,0.24),dM); boot.position.set(lx,0.17,0.03); g.add(boot);
+  });
+  // HP bar
+  var hpBg=new THREE.Mesh(new THREE.PlaneGeometry(0.46,0.055),new THREE.MeshBasicMaterial({color:0x111111})); hpBg.position.set(0,2.12,0); g.add(hpBg);
+  var hpFg=new THREE.Mesh(new THREE.PlaneGeometry(0.46,0.055),new THREE.MeshBasicMaterial({color:0x44ff88})); hpFg.position.set(0,2.122,0); hpFg.userData.mpHp=true; g.add(hpFg);
+  // Name plate
+  var nb=new THREE.Mesh(new THREE.PlaneGeometry(0.5,0.09),new THREE.MeshBasicMaterial({color:0x001133,transparent:true,opacity:0.8})); nb.position.set(0,2.26,0); g.add(nb);
+  var nf=new THREE.Mesh(new THREE.PlaneGeometry(0.44,0.06),new THREE.MeshBasicMaterial({color:0x0088ff,transparent:true,opacity:0.9})); nf.position.set(0,2.262,0); g.add(nf);
+  // Weapon holder group — weapon mesh will be attached here
+  var wh=new THREE.Group(); wh.userData.mpWeaponHolder=true;
+  // Position: right hand out front, like first-person arms but from third-person
+  wh.position.set(0.28, 0.82, -0.38);
+  wh.rotation.set(0, Math.PI, 0);
+  g.add(wh);
+  return g;
+}
+
+// Attach or replace the weapon mesh on a remote player
+function mpSetRemoteWeapon(rp, wid, skinId){
+  var holder=null;
+  rp.mesh.children.forEach(function(c){ if(c.userData.mpWeaponHolder) holder=c; });
+  if(!holder) return;
+  // Clear old weapon
+  while(holder.children.length) holder.remove(holder.children[0]);
+  // Build new weapon mesh
+  var mesh=null;
+  try{ mesh=getMesh(wid, skinId||'default'); } catch(e){}
+  if(mesh){
+    // Scale down slightly for third-person view
+    mesh.scale.setScalar(0.82);
+    holder.add(mesh);
+  }
+  rp.wid=wid; rp.skinId=skinId;
+}
+
+function mpOnData(data){
+  if(!data||!data.type) return;
+  try{
+    if(data.type==='playerState'){
+      if(!MP.remotePlayers[data.id]){
+        var mesh=buildRemotePlayerMesh();
+        scene.add(mesh);
+        MP.remotePlayers[data.id]={mesh:mesh,hp:100,wid:null,skinId:null};
+      }
+      var rp=MP.remotePlayers[data.id];
+      rp.mesh.position.set(data.x,data.y-0.87,data.z);
+      rp.mesh.rotation.y=data.yaw+Math.PI;
+      rp.hp=data.hp;
+      // Update weapon if changed
+      if(data.wid && (data.wid!==rp.wid || data.skinId!==rp.skinId)){
+        mpSetRemoteWeapon(rp, data.wid, data.skinId);
+      }
+      // Update HP bar scale and billboard planes
+      rp.mesh.children.forEach(function(c){
+        if(c.userData.mpHp) c.scale.x=Math.max(0.01,data.hp/100);
+        if(c.geometry&&c.geometry.type==='PlaneGeometry') c.lookAt(camera.position);
+      });
+    } else if(data.type==='zombieHit'){
+      // Only host authoritative — host applies damage from guest
+      if(MP.role==='host'){
+        S.zombies.forEach(function(z){
+          if(!z.userData.dead&&z.uuid===data.uuid){
+            z.userData.hp-=data.dmg;
+            flashZombie(z);
+            if(z.userData.hp<=0){z.userData.dead=true;S.totalKills++;var cr=z.userData.type==='brute'?30:z.userData.type==='runner'?5:8;S.credits+=cr;updateHUD();}
+          }
+        });
+      }
+    } else if(data.type==='zombieSync'&&MP.role==='guest'){
+      // Host is authoritative — snap guest zombies to host positions
+      var syncMap={};
+      data.zombies.forEach(function(zd){ syncMap[zd.uuid]=zd; });
+      S.zombies.forEach(function(z){
+        var zd=syncMap[z.uuid];
+        if(zd&&!z.userData.dead){
+          z.position.x+=(zd.x-z.position.x)*0.35;
+          z.position.z+=(zd.z-z.position.z)*0.35;
+          if(zd.ry!==undefined) z.rotation.y=zd.ry;
+          z.userData.hp=zd.hp;
+          if(z.userData.hp<=0&&!z.userData.dead){
+            z.userData.dead=true;
+            S.totalKills++;
+            var cr=z.userData.type==='brute'?30:z.userData.type==='runner'?5:8;
+            S.credits+=cr; updateHUD();
+          }
+        }
+      });
+      // Sync kill counts from host
+      if(data.totalKills!==undefined) S.totalKills=data.totalKills;
+      updateHUD();
+    } else if(data.type==='spawnZombie'&&MP.role==='guest'){
+      spawnZombie();
+    } else if(data.type==='waveStart'&&MP.role==='guest'){
+      S.wave=data.wave;S.waveSize=data.size;S.waveKilled=0;S.spawnQueue=0;S.waveActive=true;
+      document.getElementById('waveNum').textContent='WAVE '+S.wave;
+      var wa=document.getElementById('waveAnnounce');wa.style.opacity='1';setTimeout(function(){wa.style.opacity='0';},2800);
+      updateHUD();
+    } else if(data.type==='gameStart'&&MP.role==='guest'){
+      MP.enabled=true;startGame();mpSetStatus('🎮 Co-op active');
+    } else if(data.type==='gameOver'&&MP.role==='guest'){
+      gameOver();
+    } else if(data.type==='ready'&&MP.role==='host'){
+      MP.guestReady=true;
+      mpSetStatus('✅ Partner connected!');
+      mpSetMsg('Both ready — hit START CO-OP');
+      document.getElementById('btnMpPlay').style.display='block';
+      var pl=document.getElementById('mpPeerList');if(pl)pl.textContent='👥 1 player connected';
+    }
+  }catch(err){console.warn('MP data error:',err);}
+}
+
+function mpSetupConn(conn){
+  MP.conn=conn;
+  conn.on('open',function(){
+    MP.connected=true;
+    if(MP.role==='guest'){
+      mpSetStatus('✅ Connected to host!');
+      mpSetMsg('Waiting for host to start...');
+      mpSend({type:'ready'});
+      document.getElementById('btnMpDisconnect').style.display='block';
+    }
+  });
+  conn.on('data',mpOnData);
+  conn.on('close',function(){
+    mpSetStatus('⚪ Disconnected');mpSetMsg('Connection closed.');
+    MP.connected=false;MP.enabled=false;
+    Object.values(MP.remotePlayers).forEach(function(rp){scene.remove(rp.mesh);});
+    MP.remotePlayers={};
+    document.getElementById('btnMpDisconnect').style.display='none';
+    document.getElementById('btnMpPlay').style.display='none';
+    if(S.screen==='game')notify('⚠ Partner disconnected!');
+  });
+  conn.on('error',function(e){mpSetMsg('Connection error');});
+}
+
+function mpInitPeer(id,onOpen){
+  if(MP.peer){try{MP.peer.destroy();}catch(e){}}
+  if(typeof Peer==='undefined'){mpSetMsg('PeerJS not loaded — check internet.');return;}
+  var opts={host:'0.peerjs.com',port:443,path:'/',secure:true,config:{iceServers:[{urls:'stun:stun.l.google.com:19302'}]}};
+  MP.peer=id?new Peer(id,opts):new Peer(opts);
+  MP.peer.on('open',onOpen);
+  MP.peer.on('error',function(e){mpSetStatus('⚠ '+(e&&e.message||String(e)));mpSetMsg('Try again or check Room ID.');});
+}
+
+document.getElementById('btnMpHost').onclick=function(){
+  MP.role='host';MP.roomId=genRoomCode();
+  mpSetStatus('🔄 Creating room...');mpSetMsg('');
+  mpInitPeer('zs-'+MP.roomId,function(id){
+    MP.myId=id;
+    mpSetStatus('✅ Room ready — share ID with friend');
+    document.getElementById('mpRoomId').textContent=MP.roomId;
+    document.getElementById('mpRoomDisplay').style.display='block';
+    document.getElementById('btnMpDisconnect').style.display='block';
+    MP.peer.on('connection',function(conn){mpSetupConn(conn);mpSetStatus('🔄 Partner connecting...');});
+  });
+};
+
+document.getElementById('btnMpJoin').onclick=function(){
+  var code=document.getElementById('mpJoinInput').value.trim().toUpperCase();
+  if(code.length<4){mpSetMsg('Enter a valid Room ID.');return;}
+  MP.role='guest';MP.roomId=code;
+  mpSetStatus('🔄 Joining room '+code+'...');mpSetMsg('');
+  mpInitPeer(null,function(id){
+    MP.myId=id;
+    var conn=MP.peer.connect('zs-'+code,{reliable:true});
+    mpSetupConn(conn);
+  });
+};
+
+document.getElementById('btnMpPlay').onclick=function(){
+  if(!MP.connected||!MP.guestReady){mpSetMsg('Wait for partner to connect.');return;}
+  MP.enabled=true;
+  mpSend({type:'gameStart'});
+  startGame();
+  mpSetStatus('🎮 Co-op active');
+};
+
+window.mpDisconnect=function(){
+  if(MP.peer){try{MP.peer.destroy();}catch(e){}MP.peer=null;}
+  MP.conn=null;MP.connected=false;MP.enabled=false;MP.role=null;MP.guestReady=false;
+  Object.values(MP.remotePlayers).forEach(function(rp){scene.remove(rp.mesh);});
+  MP.remotePlayers={};
+  mpSetStatus('⚪ Not connected');mpSetMsg('');
+  document.getElementById('mpRoomDisplay').style.display='none';
+  document.getElementById('btnMpPlay').style.display='none';
+  document.getElementById('btnMpDisconnect').style.display='none';
+};
+document.getElementById('btnMpDisconnect').onclick=window.mpDisconnect;
+
+window.mpCopyRoom=function(){
+  try{navigator.clipboard.writeText(MP.roomId).then(function(){mpSetMsg('Copied!');setTimeout(function(){mpSetMsg('');},1500);});}catch(e){}
+};
+
+/* Called from game loop via tickUtilities chain */
+window.mpTick=function(dt){
+  if(!MP.enabled||!MP.connected||S.screen!=='game')return;
+  mpSyncTimer+=dt;
+  if(mpSyncTimer>=50){
+    mpSyncTimer=0;
+    // Include current held weapon + skin so remote sees it
+    var ws=S.weapons[S.held]||{};
+    mpSend({
+      type:'playerState',
+      id:MP.myId,
+      x:camera.position.x, y:camera.position.y, z:camera.position.z,
+      yaw:yaw, hp:S.health,
+      wid:S.held, skinId:ws.skin||'default'
+    });
+  }
+  if(MP.role==='host'){
+    mpZombieTimer+=dt;
+    if(mpZombieTimer>=80){
+      mpZombieTimer=0;
+      // Send full authoritative zombie state to guest
+      var zd=S.zombies
+        .filter(function(z){return !z.userData.dead;})
+        .slice(0,50)
+        .map(function(z){return {
+          uuid:z.uuid,
+          x:z.position.x, z:z.position.z,
+          ry:z.rotation.y,
+          hp:z.userData.hp,
+          dead:z.userData.dead
+        };});
+      mpSend({type:'zombieSync',zombies:zd,totalKills:S.totalKills,waveKilled:S.waveKilled});
+    }
+  }
+  // Billboard name/HP plates toward camera
+  Object.values(MP.remotePlayers).forEach(function(rp){
+    rp.mesh.children.forEach(function(c){
+      if(c.geometry&&c.geometry.type==='PlaneGeometry') c.lookAt(camera.position);
+    });
+  });
+};
+
+/* Guest skips zombie AI — host is authoritative. 
+   Wrap tickZombies: if guest in MP, only animate (walk cycle/rotation) 
+   but skip movement AI and attack — positions come from zombieSync */
+var _mpOrigTickZombies=tickZombies;
+tickZombies=function(dt){
+  if(MP.enabled&&MP.role==='guest'){
+    // Guest only does death animation and visual updates — no AI movement
+    var alive=0;
+    for(var i=S.zombies.length-1;i>=0;i--){
+      var z=S.zombies[i];
+      if(z.userData.dead){
+        z.userData.deathT=(z.userData.deathT||0)+dt;
+        z.rotation.z+=dt*0.003; z.position.y-=dt*0.0005;
+        if(z.userData.deathT>1400){scene.remove(z);S.zombies.splice(i,1);}
+        continue;
+      }
+      alive++;
+      // Walk cycle animation only (no movement)
+      var tw=performance.now()*0.004*z.userData.speed;
+      z.children.forEach(function(c){
+        if(c.userData.l==='ll'||c.userData.l==='rl') c.rotation.x=Math.sin(tw+(c.userData.l==='rl'?Math.PI:0))*0.45;
+        if(c.userData.l==='la'||c.userData.l==='ra') c.rotation.x=-Math.sin(tw+(c.userData.l==='ra'?Math.PI:0))*0.35-0.5;
+      });
+    }
+    document.getElementById('hudZombies').textContent='ZOMBIES: '+alive;
+  } else {
+    _mpOrigTickZombies(dt);
+  }
+};
+
+/* Wrap pause functions — block pause in MP, show quick settings overlay instead */
+var _mpOrigPause=pause;
+pause=function(){
+  if(MP.enabled){
+    // In MP, pressing ESC/P shows a minimal overlay that doesn't freeze the game
+    var el=document.getElementById('mpPauseHint');
+    if(!el){
+      el=document.createElement('div');
+      el.id='mpPauseHint';
+      el.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,10,30,0.88);border:1px solid rgba(0,120,255,0.35);border-radius:8px;padding:22px 36px;font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:3px;color:#88aaff;z-index:50;text-align:center;pointer-events:all;';
+      el.innerHTML='<div style="font-size:26px;color:#44aaff;margin-bottom:10px">⚡ CO-OP</div><div style="font-size:13px;color:#446688;margin-bottom:14px;font-family:\'Space Mono\',monospace;letter-spacing:1px">Pause disabled in multiplayer</div><button onclick="document.getElementById(\'mpPauseHint\').style.display=\'none\'" style="background:rgba(0,80,200,0.25);border:1px solid rgba(0,120,255,0.4);border-radius:4px;color:#88ccff;font-family:\'Bebas Neue\',sans-serif;font-size:16px;letter-spacing:2px;padding:6px 24px;cursor:pointer">CLOSE</button><br><button onclick="backToMenu()" style="background:rgba(200,40,40,0.15);border:1px solid rgba(200,40,40,0.3);border-radius:4px;color:#ff6666;font-family:\'Bebas Neue\',sans-serif;font-size:14px;letter-spacing:2px;padding:5px 18px;cursor:pointer;margin-top:8px">QUIT TO MENU</button>';
+      document.body.appendChild(el);
+    }
+    el.style.display='block';
+    return;
+  }
+  _mpOrigPause();
+};
+var _mpSZ=spawnZombie, _mpSW=startWave, _mpGO=gameOver;
+spawnZombie=function(){_mpSZ();if(MP.enabled&&MP.role==='host'&&MP.connected)mpSend({type:'spawnZombie'});};
+startWave=function(){_mpSW();if(MP.enabled&&MP.role==='host'&&MP.connected)mpSend({type:'waveStart',wave:S.wave,size:S.waveSize});};
+gameOver=function(){if(MP.enabled&&MP.role==='host'&&MP.connected)mpSend({type:'gameOver'});_mpGO();};
+
+/* CO-OP HUD badge */
+var mpBadge=document.createElement('div');
+mpBadge.style.cssText='position:fixed;top:16px;left:50%;transform:translateX(-50%);font-family:"Space Mono",monospace;font-size:10px;letter-spacing:2px;color:#00aaff;background:rgba(0,20,60,0.75);border:1px solid rgba(0,100,200,0.4);border-radius:4px;padding:4px 14px;display:none;pointer-events:none;z-index:20;';
+mpBadge.textContent='⚡ CO-OP';
+document.body.appendChild(mpBadge);
+setInterval(function(){mpBadge.style.display=(MP.enabled&&S.screen==='game')?'block':'none';},400);
 </script>
 </body>
 </html>
