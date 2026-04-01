@@ -1,4 +1,4 @@
-[zombie-slayer (76).html](https://github.com/user-attachments/files/26390234/zombie-slayer.76.html)
+[zombie-slayer (79).html](https://github.com/user-attachments/files/26398968/zombie-slayer.79.html)
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -599,9 +599,6 @@ const WDEFS={
     {id:'default',       name:'Omega Default',      kills:0,colors:[0x0a0010,0xaa00ff],rarity:'legendary',emoji:'💜'},
     {id:'hellswrath_snip',name:'Hellswrath Sniper',  kills:0,colors:[0x080008,0xff2200],rarity:'legendary',emoji:'🔥',hellChains:true,bpExclusive:true},
   ]},
-  hellswrath:{name:'Hellswrath',slot:'primary',type:'gun',price:0,hitsToKill:0,fireMs:900,startAmmo:8,resAmmo:24,boxCost:150,boxAmt:8,isBoltAction:true,bpWeapon:true,hellswrath:true,skins:[
-    {id:'default',name:'Hellswrath',kills:0,colors:[0x080008,0xff2200],rarity:'legendary',emoji:'🔥'},
-  ]},
 };
 const WAVES=[3,6,10,18,32];
 const HEAL_COST=75,HEAL_AMT=50,SKIN_BONUS=50;
@@ -624,12 +621,11 @@ const S={
     sledge: {owned:false,         kills:0, skin:'default',lastFire:0,cd:0},
     omegaShotgun:{owned:false,ammo:0,res:0,kills:0,skin:'default',lastFire:0},
     omegaSniper: {owned:false,ammo:0,res:0,kills:0,skin:'default',lastFire:0},
-    hellswrath:  {owned:false,ammo:0,res:0,kills:0,skin:'default',lastFire:0},
   },
   held:'pistol',
   heldPrimary:'smg', heldSecondary:'pistol', heldKnife:'knife',
   usedCodes:[],
-  unlocked:{smg:['default'],shotgun:['default'],sniper:['default'],lmg:['default'],pistol:['default'],revolver:['default'],deagle:['default'],compact:['default'],boomerang:['default'],knife:['default'],sledge:['default'],omegaShotgun:['default'],omegaSniper:['default'],hellswrath:['default']},
+  unlocked:{smg:['default'],shotgun:['default'],sniper:['default'],lmg:['default'],pistol:['default'],revolver:['default'],deagle:['default'],compact:['default'],boomerang:['default'],knife:['default'],sledge:['default'],omegaShotgun:['default'],omegaSniper:['default']},
   zombies:[],totalKills:0,
   wave:0,waveActive:false,waveKilled:0,waveSize:0,spawnQueue:0,spawnTimer:0,
   invSlot:'primary',
@@ -2685,7 +2681,6 @@ function getMesh(wid,skinId){
   if(wid==='omegaSniper' &&skinId==='hellswrath_snip') return mkOmegaSniper_Hell(c1,c2);
   if(wid==='omegaShotgun')return mkOmegaShotgun(c1,c2);
   if(wid==='omegaSniper') return mkOmegaSniper(c1,c2);
-  if(wid==='hellswrath')  return mkHellswrath(c1,c2);
   return null;
 }
 function rebuildWeapon(){
@@ -3092,9 +3087,6 @@ function hitZombie(z,wid,isHead){
   } else if(def.omegaSniper){
     // 75 body / 150 headshot — 1-shots normal (100hp) on headshot, NOT brute (200hp)
     dmg=isHead?150:75;
-  } else if(def.hellswrath){
-    // 100 body / 200 headshot — 1-shots everything except brute on body
-    dmg=isHead?200:100;
   } else {
     // Standard: base = 100hp / hitsToKill. Headshot = 2x. Brute has 200hp so needs 2x hits.
     const base=100/(def.hitsToKill||1);
@@ -5042,8 +5034,17 @@ function startGame(){
   document.querySelector('.crosshair').style.display='block';
   // Reset per-weapon timers
   Object.keys(S.weapons).forEach(wid=>{ S.weapons[wid].lastFire=0; if(S.weapons[wid].cd!==undefined) S.weapons[wid].cd=0; });
-  S.weapons.pistol.ammo=30;S.weapons.pistol.res=90;
-  Object.keys(S.weapons).forEach(wid=>{if(wid!=='pistol'&&wid!=='knife'&&S.weapons[wid].owned){S.weapons[wid].ammo=WDEFS[wid].startAmmo;S.weapons[wid].res=WDEFS[wid].resAmmo;}});
+  S.weapons.pistol.ammo=30;
+  // Keep reserve ammo the player bought — only top up to resAmmo minimum, never reduce
+  if(S.weapons.pistol.res<90) S.weapons.pistol.res=90;
+  Object.keys(S.weapons).forEach(wid=>{
+    if(wid==='pistol'||wid==='knife')return;
+    if(S.weapons[wid].owned){
+      // Restore mag to full, but preserve any extra reserve bought in shop
+      S.weapons[wid].ammo=WDEFS[wid].startAmmo;
+      if((S.weapons[wid].res||0)<WDEFS[wid].resAmmo) S.weapons[wid].res=WDEFS[wid].resAmmo;
+    }
+  });
   hideEl('menuScreen');
   document.getElementById('hud').style.display='block';
   updateHUD();rebuildWeapon();
@@ -5261,51 +5262,106 @@ const BP_CRATE_POOLS={
 };
 
 const BP_REWARDS=[
-  {level:1, tier:'free',type:'weapon',   wid:'omegaShotgun',label:'Omega Shotgun 💜'},
-  {level:1, tier:'paid',type:'weapon',   wid:'omegaSniper', label:'Omega Sniper 💜'},
-  {level:2, tier:'free',type:'credits',  amount:200,  label:'+200 Credits'},
-  {level:2, tier:'paid',type:'credits',  amount:500,  label:'+500 Credits'},
-  {level:3, tier:'free',type:'xpdoubler',amount:200,  label:'⚡ XP Doubler ×200'},
-  {level:3, tier:'paid',type:'xpdoubler',amount:500,  label:'⚡ XP Doubler ×500'},
-  {level:5, tier:'free',type:'crate',    crateType:'gold',   label:'📦 Gold Skin Crate'},
-  {level:5, tier:'paid',type:'crate',    crateType:'shadow', label:'📦 Shadow Skin Crate'},
-  {level:8, tier:'free',type:'credits',  amount:400,  label:'+400 Credits'},
-  {level:8, tier:'paid',type:'credits',  amount:900,  label:'+900 Credits'},
-  {level:10,tier:'free',type:'xpdoubler',amount:300,  label:'⚡ XP Doubler ×300'},
-  {level:10,tier:'paid',type:'crate',    crateType:'inferno',label:'📦 Inferno Skin Crate'},
-  {level:12,tier:'free',type:'credits',  amount:500,  label:'+500 Credits'},
-  {level:12,tier:'paid',type:'credits',  amount:1200, label:'+1,200 Credits'},
-  {level:15,tier:'free',type:'crate',    crateType:'gold',   label:'📦 Gold Skin Crate'},
-  {level:15,tier:'paid',type:'xpdoubler',amount:800,  label:'⚡ XP Doubler ×800'},
-  {level:18,tier:'free',type:'credits',  amount:600,  label:'+600 Credits'},
-  {level:18,tier:'paid',type:'credits',  amount:1500, label:'+1,500 Credits'},
-  {level:20,tier:'free',type:'xpdoubler',amount:500,  label:'⚡ XP Doubler ×500'},
-  {level:20,tier:'paid',type:'crate',    crateType:'shadow', label:'📦 Shadow Skin Crate'},
-  {level:22,tier:'free',type:'credits',  amount:700,  label:'+700 Credits'},
-  {level:22,tier:'paid',type:'credits',  amount:1800, label:'+1,800 Credits'},
-  {level:25,tier:'free',type:'crate',    crateType:'inferno',label:'📦 Inferno Skin Crate'},
-  {level:25,tier:'paid',type:'xpdoubler',amount:1000, label:'⚡ XP Doubler ×1,000'},
-  {level:28,tier:'free',type:'credits',  amount:800,  label:'+800 Credits'},
-  {level:28,tier:'paid',type:'credits',  amount:2000, label:'+2,000 Credits'},
-  {level:30,tier:'free',type:'xpdoubler',amount:600,  label:'⚡ XP Doubler ×600'},
-  {level:30,tier:'paid',type:'crate',    crateType:'inferno',label:'📦 Inferno Skin Crate'},
-  {level:33,tier:'free',type:'credits',  amount:900,  label:'+900 Credits'},
-  {level:33,tier:'paid',type:'credits',  amount:2200, label:'+2,200 Credits'},
-  {level:35,tier:'free',type:'crate',    crateType:'shadow', label:'📦 Shadow Skin Crate'},
-  {level:35,tier:'paid',type:'xpdoubler',amount:1200, label:'⚡ XP Doubler ×1,200'},
-  {level:38,tier:'free',type:'credits',  amount:1000, label:'+1,000 Credits'},
-  {level:38,tier:'paid',type:'credits',  amount:2500, label:'+2,500 Credits'},
-  {level:40,tier:'free',type:'xpdoubler',amount:800,  label:'⚡ XP Doubler ×800'},
-  {level:40,tier:'paid',type:'crate',    crateType:'gold',   label:'📦 Gold Skin Crate'},
-  {level:43,tier:'free',type:'credits',  amount:1200, label:'+1,200 Credits'},
-  {level:43,tier:'paid',type:'credits',  amount:3000, label:'+3,000 Credits'},
-  {level:45,tier:'free',type:'crate',    crateType:'inferno',label:'📦 Inferno Skin Crate'},
-  {level:45,tier:'paid',type:'xpdoubler',amount:1500, label:'⚡ XP Doubler ×1,500'},
-  {level:48,tier:'free',type:'credits',  amount:1500, label:'+1,500 Credits'},
-  {level:48,tier:'paid',type:'credits',  amount:4000, label:'+4,000 Credits'},
-  {level:49,tier:'paid',type:'skin',     wid:'omegaSniper',skinId:'hellswrath_snip', label:'🔥 Hellswrath Sniper Skin'},
-  {level:50,tier:'free',type:'skin',     wid:'omegaShotgun',skinId:'hellswrath_shot',label:'🔥 Hellswrath Shotgun Skin'},
-  {level:50,tier:'paid',type:'weapon',   wid:'hellswrath',   label:'🔥 HELLSWRATH'},
+  {level:1,  tier:'free',type:'weapon',   wid:'omegaShotgun', label:'Omega Shotgun 💜'},
+  {level:1,  tier:'paid',type:'weapon',   wid:'omegaSniper',  label:'Omega Sniper 💜'},
+  {level:2,  tier:'free',type:'credits',  amount:150,  label:'+150 Credits'},
+  {level:2,  tier:'paid',type:'credits',  amount:350,  label:'+350 Credits'},
+  {level:3,  tier:'free',type:'xpdoubler',amount:200,  label:'⚡ XP Doubler ×200'},
+  {level:3,  tier:'paid',type:'xpdoubler',amount:500,  label:'⚡ XP Doubler ×500'},
+  {level:4,  tier:'free',type:'credits',  amount:200,  label:'+200 Credits'},
+  {level:4,  tier:'paid',type:'credits',  amount:450,  label:'+450 Credits'},
+  {level:5,  tier:'free',type:'crate',    crateType:'gold',   label:'📦 Gold Skin Crate'},
+  {level:5,  tier:'paid',type:'crate',    crateType:'shadow', label:'📦 Shadow Skin Crate'},
+  {level:6,  tier:'free',type:'credits',  amount:200,  label:'+200 Credits'},
+  {level:6,  tier:'paid',type:'credits',  amount:500,  label:'+500 Credits'},
+  {level:7,  tier:'free',type:'xpdoubler',amount:250,  label:'⚡ XP Doubler ×250'},
+  {level:7,  tier:'paid',type:'xpdoubler',amount:600,  label:'⚡ XP Doubler ×600'},
+  {level:8,  tier:'free',type:'credits',  amount:300,  label:'+300 Credits'},
+  {level:8,  tier:'paid',type:'credits',  amount:700,  label:'+700 Credits'},
+  {level:9,  tier:'free',type:'credits',  amount:300,  label:'+300 Credits'},
+  {level:9,  tier:'paid',type:'crate',    crateType:'inferno',label:'📦 Inferno Skin Crate'},
+  {level:10, tier:'free',type:'xpdoubler',amount:300,  label:'⚡ XP Doubler ×300'},
+  {level:10, tier:'paid',type:'xpdoubler',amount:750,  label:'⚡ XP Doubler ×750'},
+  {level:11, tier:'free',type:'credits',  amount:350,  label:'+350 Credits'},
+  {level:11, tier:'paid',type:'credits',  amount:800,  label:'+800 Credits'},
+  {level:12, tier:'free',type:'credits',  amount:400,  label:'+400 Credits'},
+  {level:12, tier:'paid',type:'credits',  amount:900,  label:'+900 Credits'},
+  {level:13, tier:'free',type:'xpdoubler',amount:350,  label:'⚡ XP Doubler ×350'},
+  {level:13, tier:'paid',type:'xpdoubler',amount:800,  label:'⚡ XP Doubler ×800'},
+  {level:14, tier:'free',type:'credits',  amount:400,  label:'+400 Credits'},
+  {level:14, tier:'paid',type:'credits',  amount:950,  label:'+950 Credits'},
+  {level:15, tier:'free',type:'crate',    crateType:'gold',   label:'📦 Gold Skin Crate'},
+  {level:15, tier:'paid',type:'crate',    crateType:'shadow', label:'📦 Shadow Skin Crate'},
+  {level:16, tier:'free',type:'credits',  amount:450,  label:'+450 Credits'},
+  {level:16, tier:'paid',type:'credits',  amount:1000, label:'+1,000 Credits'},
+  {level:17, tier:'free',type:'xpdoubler',amount:400,  label:'⚡ XP Doubler ×400'},
+  {level:17, tier:'paid',type:'xpdoubler',amount:900,  label:'⚡ XP Doubler ×900'},
+  {level:18, tier:'free',type:'credits',  amount:500,  label:'+500 Credits'},
+  {level:18, tier:'paid',type:'credits',  amount:1100, label:'+1,100 Credits'},
+  {level:19, tier:'free',type:'credits',  amount:500,  label:'+500 Credits'},
+  {level:19, tier:'paid',type:'crate',    crateType:'inferno',label:'📦 Inferno Skin Crate'},
+  {level:20, tier:'free',type:'xpdoubler',amount:500,  label:'⚡ XP Doubler ×500'},
+  {level:20, tier:'paid',type:'xpdoubler',amount:1100, label:'⚡ XP Doubler ×1,100'},
+  {level:21, tier:'free',type:'credits',  amount:550,  label:'+550 Credits'},
+  {level:21, tier:'paid',type:'credits',  amount:1200, label:'+1,200 Credits'},
+  {level:22, tier:'free',type:'credits',  amount:600,  label:'+600 Credits'},
+  {level:22, tier:'paid',type:'credits',  amount:1300, label:'+1,300 Credits'},
+  {level:23, tier:'free',type:'xpdoubler',amount:450,  label:'⚡ XP Doubler ×450'},
+  {level:23, tier:'paid',type:'xpdoubler',amount:1000, label:'⚡ XP Doubler ×1,000'},
+  {level:24, tier:'free',type:'credits',  amount:600,  label:'+600 Credits'},
+  {level:24, tier:'paid',type:'credits',  amount:1400, label:'+1,400 Credits'},
+  {level:25, tier:'free',type:'crate',    crateType:'shadow', label:'📦 Shadow Skin Crate'},
+  {level:25, tier:'paid',type:'crate',    crateType:'inferno',label:'📦 Inferno Skin Crate'},
+  {level:26, tier:'free',type:'credits',  amount:650,  label:'+650 Credits'},
+  {level:26, tier:'paid',type:'xpdoubler',amount:1200, label:'⚡ XP Doubler ×1,200'},
+  {level:27, tier:'free',type:'xpdoubler',amount:500,  label:'⚡ XP Doubler ×500'},
+  {level:27, tier:'paid',type:'credits',  amount:1500, label:'+1,500 Credits'},
+  {level:28, tier:'free',type:'credits',  amount:700,  label:'+700 Credits'},
+  {level:28, tier:'paid',type:'credits',  amount:1600, label:'+1,600 Credits'},
+  {level:29, tier:'free',type:'credits',  amount:700,  label:'+700 Credits'},
+  {level:29, tier:'paid',type:'crate',    crateType:'gold',   label:'📦 Gold Skin Crate'},
+  {level:30, tier:'free',type:'xpdoubler',amount:600,  label:'⚡ XP Doubler ×600'},
+  {level:30, tier:'paid',type:'xpdoubler',amount:1400, label:'⚡ XP Doubler ×1,400'},
+  {level:31, tier:'free',type:'credits',  amount:750,  label:'+750 Credits'},
+  {level:31, tier:'paid',type:'credits',  amount:1700, label:'+1,700 Credits'},
+  {level:32, tier:'free',type:'credits',  amount:800,  label:'+800 Credits'},
+  {level:32, tier:'paid',type:'credits',  amount:1800, label:'+1,800 Credits'},
+  {level:33, tier:'free',type:'xpdoubler',amount:600,  label:'⚡ XP Doubler ×600'},
+  {level:33, tier:'paid',type:'xpdoubler',amount:1500, label:'⚡ XP Doubler ×1,500'},
+  {level:34, tier:'free',type:'credits',  amount:850,  label:'+850 Credits'},
+  {level:34, tier:'paid',type:'credits',  amount:1900, label:'+1,900 Credits'},
+  {level:35, tier:'free',type:'crate',    crateType:'inferno',label:'📦 Inferno Skin Crate'},
+  {level:35, tier:'paid',type:'crate',    crateType:'shadow', label:'📦 Shadow Skin Crate'},
+  {level:36, tier:'free',type:'credits',  amount:900,  label:'+900 Credits'},
+  {level:36, tier:'paid',type:'xpdoubler',amount:1600, label:'⚡ XP Doubler ×1,600'},
+  {level:37, tier:'free',type:'xpdoubler',amount:700,  label:'⚡ XP Doubler ×700'},
+  {level:37, tier:'paid',type:'credits',  amount:2000, label:'+2,000 Credits'},
+  {level:38, tier:'free',type:'credits',  amount:950,  label:'+950 Credits'},
+  {level:38, tier:'paid',type:'credits',  amount:2100, label:'+2,100 Credits'},
+  {level:39, tier:'free',type:'credits',  amount:1000, label:'+1,000 Credits'},
+  {level:39, tier:'paid',type:'crate',    crateType:'inferno',label:'📦 Inferno Skin Crate'},
+  {level:40, tier:'free',type:'xpdoubler',amount:800,  label:'⚡ XP Doubler ×800'},
+  {level:40, tier:'paid',type:'xpdoubler',amount:1800, label:'⚡ XP Doubler ×1,800'},
+  {level:41, tier:'free',type:'credits',  amount:1000, label:'+1,000 Credits'},
+  {level:41, tier:'paid',type:'credits',  amount:2200, label:'+2,200 Credits'},
+  {level:42, tier:'free',type:'credits',  amount:1100, label:'+1,100 Credits'},
+  {level:42, tier:'paid',type:'crate',    crateType:'gold',   label:'📦 Gold Skin Crate'},
+  {level:43, tier:'free',type:'xpdoubler',amount:900,  label:'⚡ XP Doubler ×900'},
+  {level:43, tier:'paid',type:'xpdoubler',amount:2000, label:'⚡ XP Doubler ×2,000'},
+  {level:44, tier:'free',type:'credits',  amount:1200, label:'+1,200 Credits'},
+  {level:44, tier:'paid',type:'credits',  amount:2500, label:'+2,500 Credits'},
+  {level:45, tier:'free',type:'crate',    crateType:'gold',   label:'📦 Gold Skin Crate'},
+  {level:45, tier:'paid',type:'crate',    crateType:'shadow', label:'📦 Shadow Skin Crate'},
+  {level:46, tier:'free',type:'credits',  amount:1300, label:'+1,300 Credits'},
+  {level:46, tier:'paid',type:'xpdoubler',amount:2200, label:'⚡ XP Doubler ×2,200'},
+  {level:47, tier:'free',type:'xpdoubler',amount:1000, label:'⚡ XP Doubler ×1,000'},
+  {level:47, tier:'paid',type:'credits',  amount:2800, label:'+2,800 Credits'},
+  {level:48, tier:'free',type:'credits',  amount:1400, label:'+1,400 Credits'},
+  {level:48, tier:'paid',type:'credits',  amount:3000, label:'+3,000 Credits'},
+  {level:49, tier:'free',type:'credits',  amount:1500, label:'+1,500 Credits'},
+  {level:49, tier:'paid',type:'credits',  amount:3500, label:'+3,500 Credits'},
+  {level:50, tier:'free',type:'skin',     wid:'omegaShotgun',skinId:'hellswrath_shot',label:'🔥 Hellswrath Shotgun Skin'},
+  {level:50, tier:'paid',type:'skin',     wid:'omegaSniper', skinId:'hellswrath_snip',label:'🔥 Hellswrath Sniper'},
 ];
 
 function bpAwardXP(zombieType){
@@ -6291,7 +6347,8 @@ function mpOnData(data){
         MP.remotePlayers[data.id]={mesh:mesh,hp:100,wid:null,skinId:null};
       }
       var rp=MP.remotePlayers[data.id];
-      rp.mesh.position.set(data.x,data.y-0.87,data.z);
+      // camera.position.y = 1.75 at ground level, so subtract 1.75 to put mesh root at floor
+      rp.mesh.position.set(data.x, data.y - 1.75, data.z);
       rp.mesh.rotation.y=data.yaw+Math.PI;
       rp.hp=data.hp;
       // Update weapon if changed
