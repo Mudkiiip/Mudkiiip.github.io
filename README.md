@@ -1,4 +1,4 @@
-[zombie-slayer (89).html](https://github.com/user-attachments/files/26634943/zombie-slayer.89.html)
+[zombie-slayer (93).html](https://github.com/user-attachments/files/26823683/zombie-slayer.93.html)
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -545,10 +545,7 @@ const WDEFS={
     {id:'tiger',    name:'Tiger Stripe',    kills:30, colors:[0x2a4a2a,0x0a1a0a],rarity:'epic',     emoji:'T'},
     {id:'plasma',   name:'Plasma Core',     kills:50, colors:[0x001a33,0x0088ff],rarity:'legendary',emoji:'P'},
   ]},
-  flamethrower:{name:'Flamethrower',slot:'primary',type:'flame',price:9500,fireMs:80,startAmmo:100,resAmmo:100,boxCost:250,boxAmt:100,flameDmg:8,splashRadius:1.8,skins:[
-    {id:'default',name:'Default',kills:0,colors:[0x882200,0xff4400],rarity:'common',emoji:'🔥'},
-    {id:'infernal',name:'Infernal',kills:25,colors:[0x110000,0xff6600],rarity:'epic',emoji:'🔥'},
-  ]},
+
   // ── SECONDARIES (slot 2) ──
   pistol:{name:'Pistol',slot:'secondary',type:'gun',hitsToKill:8,fireMs:480,startAmmo:30,resAmmo:90,boxCost:50,boxAmt:30,skins:[
     {id:'default',name:'Default',       kills:0,  colors:[0x888888,0x333333],rarity:'common',   emoji:'?'},
@@ -616,7 +613,6 @@ const S={
     shotgun:{owned:false,ammo:0,  res:0,   kills:0,skin:'default',lastFire:0},
     sniper: {owned:false,ammo:0,  res:0,   kills:0,skin:'default',lastFire:0},
     lmg:    {owned:false,ammo:0,  res:0,   kills:0,skin:'default',lastFire:0},
-    flamethrower:{owned:false,ammo:0,res:0,kills:0,skin:'default',lastFire:0},
     pistol: {owned:true, ammo:30, res:90,  kills:0,skin:'default',lastFire:0},
     revolver:{owned:false,ammo:0, res:0,   kills:0,skin:'default',lastFire:0},
     deagle: {owned:false,ammo:0,  res:0,   kills:0,skin:'default',lastFire:0},
@@ -630,7 +626,7 @@ const S={
   held:'pistol',
   heldPrimary:'smg', heldSecondary:'pistol', heldKnife:'knife',
   usedCodes:[],
-  unlocked:{smg:['default'],shotgun:['default'],sniper:['default'],lmg:['default'],flamethrower:['default'],pistol:['default'],revolver:['default'],deagle:['default'],compact:['default'],boomerang:['default'],knife:['default'],sledge:['default'],omegaShotgun:['default'],omegaSniper:['default']},
+  unlocked:{smg:['default'],shotgun:['default'],sniper:['default'],lmg:['default'],pistol:['default'],revolver:['default'],deagle:['default'],compact:['default'],boomerang:['default'],knife:['default'],sledge:['default'],omegaShotgun:['default'],omegaSniper:['default']},
   zombies:[],totalKills:0,
   wave:0,waveActive:false,waveKilled:0,waveSize:0,spawnQueue:0,spawnTimer:0,
   invSlot:'primary',
@@ -2349,49 +2345,6 @@ function mkLMG(c1,c2){
   return g;
 }
 
-// ── FLAMETHROWER ──
-function mkFlamethrower(c1,c2){
-  const g=new THREE.Group();
-  const bodM=new THREE.MeshPhongMaterial({color:0x882200,shininess:60,specular:new THREE.Color(0xcc4400)});
-  const tankM=new THREE.MeshPhongMaterial({color:0x331100,shininess:80,specular:new THREE.Color(0x884400)});
-  const metM=new THREE.MeshLambertMaterial({color:0x555555});
-  const hoseM=new THREE.MeshLambertMaterial({color:0x222222});
-  const nozzM=new THREE.MeshPhongMaterial({color:0x888866,shininess:120});
-  const warM=new THREE.MeshBasicMaterial({color:0xffcc00});
-  const glowM=new THREE.MeshBasicMaterial({color:0xff4400,transparent:true,opacity:0.7});
-  // Main body/receiver
-  const body=new THREE.Mesh(new THREE.BoxGeometry(0.072,0.088,0.38),bodM);body.position.set(0,0,0);g.add(body);
-  // Fuel tank (large cylinder under body)
-  const tank=new THREE.Mesh(new THREE.CylinderGeometry(0.038,0.038,0.32,12),tankM);tank.rotation.x=Math.PI/2;tank.position.set(0,-0.068,-0.02);g.add(tank);
-  // Tank end caps
-  const capF=new THREE.Mesh(new THREE.SphereGeometry(0.038,10,8,0,Math.PI*2,0,Math.PI/2),tankM);capF.rotation.x=-Math.PI/2;capF.position.set(0,-0.068,-0.18);g.add(capF);
-  const capB=new THREE.Mesh(new THREE.SphereGeometry(0.038,10,8,0,Math.PI*2,Math.PI/2,Math.PI/2),tankM);capB.rotation.x=-Math.PI/2;capB.position.set(0,-0.068,0.16);g.add(capB);
-  // Warning stripe on tank
-  for(let i=0;i<3;i++){const stripe=new THREE.Mesh(new THREE.CylinderGeometry(0.040,0.040,0.016,12),warM);stripe.rotation.x=Math.PI/2;stripe.position.set(0,-0.068,-0.08+i*0.07);g.add(stripe);}
-  // Pressure gauge on tank
-  const gauge=new THREE.Mesh(new THREE.CylinderGeometry(0.012,0.012,0.018,8),metM);gauge.position.set(0.038,-0.058,0.04);g.add(gauge);
-  const gaugeFace=new THREE.Mesh(new THREE.CircleGeometry(0.01,8),new THREE.MeshBasicMaterial({color:0x00ff44}));gaugeFace.rotation.y=-Math.PI/2;gaugeFace.position.set(0.050,-0.058,0.04);g.add(gaugeFace);
-  // Hose connecting tank to nozzle
-  const hoseSeg=new THREE.Mesh(new THREE.CylinderGeometry(0.009,0.009,0.14,7),hoseM);hoseSeg.position.set(0.018,-0.02,-0.19);hoseSeg.rotation.z=0.5;g.add(hoseSeg);
-  // Barrel / nozzle assembly
-  const brl=new THREE.Mesh(new THREE.CylinderGeometry(0.022,0.026,0.34,10),bodM);brl.rotation.x=Math.PI/2;brl.position.set(0,0.018,-0.2);g.add(brl);
-  // Nozzle tip (flared)
-  const nozzle=new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.022,0.06,10),nozzM);nozzle.rotation.x=Math.PI/2;nozzle.position.set(0,0.018,-0.4);g.add(nozzle);
-  // Nozzle glow ring
-  const glow=new THREE.Mesh(new THREE.TorusGeometry(0.028,0.006,6,14),glowM);glow.rotation.x=Math.PI/2;glow.position.set(0,0.018,-0.43);g.add(glow);
-  // Heat vents on barrel
-  for(let i=0;i<5;i++){const v=new THREE.Mesh(new THREE.BoxGeometry(0.048,0.008,0.024),metM);v.position.set(0,0.030,-0.08-i*0.055);g.add(v);}
-  // Carry handle / top rail
-  const rail=new THREE.Mesh(new THREE.BoxGeometry(0.018,0.018,0.22),metM);rail.position.set(0,0.052,0.02);g.add(rail);
-  // Pistol grip
-  const grip=new THREE.Mesh(new THREE.BoxGeometry(0.044,0.14,0.088),new THREE.MeshLambertMaterial({color:0x1a0800}));grip.position.set(0,-0.062,0.13);grip.rotation.x=0.18;g.add(grip);
-  // Trigger guard
-  const tg=new THREE.Mesh(new THREE.TorusGeometry(0.022,0.005,5,13,Math.PI),metM);tg.rotation.x=Math.PI/2;tg.position.set(0,-0.02,0.068);g.add(tg);
-  const tr=new THREE.Mesh(new THREE.BoxGeometry(0.006,0.022,0.011),metM);tr.position.set(0,-0.009,0.060);g.add(tr);
-  // Igniter button (red)
-  const ign=new THREE.Mesh(new THREE.CylinderGeometry(0.008,0.008,0.012,7),new THREE.MeshBasicMaterial({color:0xff2200}));ign.rotation.x=Math.PI/2;ign.position.set(0,0.047,-0.15);g.add(ign);
-  return g;
-}
 
 
 // Chain link meshes live directly in the scene (not in weaponGroup),
@@ -2811,7 +2764,6 @@ function getMesh(wid,skinId){
   if(wid==='sniper'&&skinId==='early') return mkSniper_EarlyAccess();
   if(wid==='sniper')      return mkSniper(c1,c2);
   if(wid==='lmg')         return mkLMG(c1,c2);
-  if(wid==='flamethrower')return mkFlamethrower(c1,c2);
   if(wid==='revolver')    return mkRevolver(c1,c2);
   if(wid==='deagle')      return mkDeagle(c1,c2);
   if(wid==='compact')     return mkCompact(c1,c2);
@@ -3387,89 +3339,6 @@ function shoot(){
       exitScope();
       setTimeout(()=>{ if((S.held==='sniper'||S.held==='omegaSniper')&&S.screen==='game') enterScope(); }, BOLT_DUR+120);
     }
-  } else if(def.type==='flame'){
-    if(ws.ammo<=0){notify('Out of fuel! Buy more in Shop.');soundEmpty();return;}
-    ws.ammo--;updateHUD();
-
-    // ── Flame light flicker ──
-    const fl=new THREE.PointLight(0xff6600,6,4);fl.position.set(0,0.02,-0.52);camera.add(fl);
-    setTimeout(()=>camera.remove(fl),100);
-
-    // ── Flame particle stream ──
-    const fwd=new THREE.Vector3();camera.getWorldDirection(fwd);
-    const origin=new THREE.Vector3();camera.getWorldPosition(origin);
-    origin.addScaledVector(fwd,0.5);
-    const colorsFlame=[0xff6600,0xff3300,0xff9900,0xffcc00,0xdd2200];
-    for(let p=0;p<5;p++){
-      const sz=0.06+Math.random()*0.08;
-      const pm=new THREE.MeshBasicMaterial({color:colorsFlame[p%colorsFlame.length],transparent:true,opacity:0.85,side:THREE.DoubleSide,depthWrite:false});
-      const pg=new THREE.Mesh(new THREE.PlaneGeometry(sz,sz),pm);
-      // Spread slightly from center
-      const spread=0.04;
-      pg.position.copy(origin);
-      pg.position.x+=(Math.random()-0.5)*spread;
-      pg.position.y+=(Math.random()-0.5)*spread;
-      pg.position.z+=(Math.random()-0.5)*spread;
-      pg.lookAt(camera.position);
-      scene.add(pg);
-      // Travel forward, fade, and expand
-      const spd=0.014+Math.random()*0.01;
-      const life=300+Math.random()*200;
-      const t0=performance.now();
-      (function(mesh,vx,vy,vz,lifeMs){
-        function animFlame(){
-          const age=performance.now()-t0;
-          const frac=Math.min(age/lifeMs,1);
-          mesh.position.x+=vx;mesh.position.y+=vy+0.002;mesh.position.z+=vz;
-          mesh.scale.setScalar(1+frac*2.5);
-          mesh.material.opacity=0.85*(1-frac);
-          mesh.rotation.z+=0.05;
-          if(frac<1)requestAnimationFrame(animFlame);
-          else scene.remove(mesh);
-        }
-        animFlame();
-      })(pg, fwd.x*spd+(Math.random()-0.5)*0.004, fwd.y*spd, fwd.z*spd+(Math.random()-0.5)*0.004, life);
-    }
-
-    // ── DPS damage: flameDmg per tick, NOT hitZombie (no instant kill logic) ──
-    const dmgPerTick=def.flameDmg||8;
-    RAY.setFromCamera(new THREE.Vector2(0,0),camera);
-    const allHbs=[];S.zombies.forEach(z=>{z.children.forEach(c=>{if(c.userData.hitbox)allHbs.push(c);});});
-    const flameHits=RAY.intersectObjects(allHbs);
-    const hitSet=new Set();
-    flameHits.forEach(h=>{
-      if(h.distance>10)return;
-      let zg=h.object.parent;
-      while(zg&&zg.userData.type===undefined&&zg.parent)zg=zg.parent;
-      if(zg&&!zg.userData.dead&&!hitSet.has(zg)){
-        hitSet.add(zg);
-        // Apply flat damage — no hitsToKill formula
-        zg.userData.hp-=dmgPerTick;
-        flashZombie(zg);
-        // Splash: half damage to nearby zombies
-        S.zombies.forEach(nb=>{
-          if(!nb.userData.dead&&nb!==zg&&!hitSet.has(nb)&&zg.position.distanceTo(nb.position)<(def.splashRadius||1.8)){
-            hitSet.add(nb);
-            nb.userData.hp-=dmgPerTick*0.5;
-            flashZombie(nb);
-            if(nb.userData.hp<=0&&!nb.userData.dead){
-              nb.userData.dead=true;
-              if(S.weapons[wid])S.weapons[wid].kills++;
-              S.totalKills++;
-              const cr=nb.userData.type==='brute'?30:nb.userData.type==='runner'?5:8;
-              S.credits+=cr; bpAwardXP(nb.userData.type); updateHUD(); checkUnlock(wid);
-            }
-          }
-        });
-        if(zg.userData.hp<=0&&!zg.userData.dead){
-          zg.userData.dead=true;
-          if(S.weapons[wid])S.weapons[wid].kills++;
-          S.totalKills++;
-          const cr=zg.userData.type==='brute'?30:zg.userData.type==='runner'?5:8;
-          S.credits+=cr; bpAwardXP(zg.userData.type); updateHUD(); hitMark(false); checkUnlock(wid);
-        }
-      }
-    });
   } else if(def.type==='thrown'&&S.held==='boomerang'){
     // Boomerang throw
     if(boomerangActive){notify('Boomerang still in flight!');return;}
@@ -4127,8 +3996,8 @@ document.addEventListener('mousedown',e=>{
   if(e.button!==0)return;
   shoot();
   const def_=WDEFS[S.held];
-  // Auto-fire: full-auto guns AND flamethrower (hold to spray)
-  if((def_.type==='gun'&&def_.fireMs<250)||def_.type==='flame'){
+  // Auto-fire: full-auto guns (hold to fire)
+  if(def_.type==='gun'&&def_.fireMs<250){
     clearInterval(S.autoFire);
     S.autoFire=setInterval(()=>{if(S.screen==='game')shoot();else clearInterval(S.autoFire);},def_.fireMs+5);
   }
@@ -5008,11 +4877,6 @@ function updateHUD(){
     document.getElementById('ammoCur').style.color='';
     document.getElementById('ammoCur').textContent=ws.ammo;
     document.getElementById('ammoRes').textContent='/ '+ws.res;
-  } else if(def.type==='flame'){
-    document.getElementById('hudAmmoBlock').style.display='block';
-    document.getElementById('ammoCur').style.color='#ff6600';
-    document.getElementById('ammoCur').textContent='⛽'+ws.ammo;
-    document.getElementById('ammoRes').textContent='/ '+ws.res;
   } else if(def.type==='thrown'){
     document.getElementById('hudAmmoBlock').style.display='block';
     document.getElementById('ammoCur').textContent=boomerangActive?'↗':'●';
@@ -5108,6 +4972,27 @@ function showNextUnlock(){
 
 // ══ PREVIEW ══
 let pvRend=null,pvScene=null,pvCam=null,pvMesh=null,pvMX=false,pvLX=0,pvLY=0,pvRX=0,pvRY=0;
+let pvChains=[];
+function pvBuildChains(mesh){
+  pvChains.forEach(function(c){ c.links.forEach(function(lk){ if(pvScene)pvScene.remove(lk.mesh); }); });
+  pvChains=[];
+  if(!mesh||!mesh.userData.hellChainDefs||!pvScene) return;
+  var chainM=new THREE.MeshLambertMaterial({color:0x2a2a2a,side:THREE.DoubleSide});
+  var emberM=new THREE.MeshBasicMaterial({color:0xff4400,transparent:true,opacity:0.9,side:THREE.DoubleSide});
+  mesh.userData.hellChainDefs.forEach(function(def){
+    var N=def.n||7;
+    var links=[];
+    for(var i=0;i<N;i++){
+      var mat=(i%3===2)?emberM.clone():chainM.clone();
+      var s=mesh.scale.x;
+      var lkMesh=new THREE.Mesh(new THREE.TorusGeometry(0.016*s,0.006*s,6,12),mat);
+      lkMesh.position.set(def.x*s,(def.y-i*CHAIN_LINK_LEN)*s,def.z*s);
+      pvScene.add(lkMesh);
+      links.push({mesh:lkMesh,pos:{x:def.x*s,y:(def.y-i*CHAIN_LINK_LEN)*s,z:def.z*s},vel:{x:0,y:0,z:0}});
+    }
+    pvChains.push({def:def,links:links,scale:mesh.scale.x});
+  });
+}
 function openPreview(wid,skinId){
   const def=WDEFS[wid];if(!def)return;
   // Auto-register crate skins that may not be in WDEFS.skins yet
@@ -5137,30 +5022,6 @@ function openPreview(wid,skinId){
     c2.addEventListener('mousedown',e=>{pvMX=true;pvLX=e.clientX;pvLY=e.clientY;});
     c2.addEventListener('mousemove',e=>{if(!pvMX)return;pvRY+=(e.clientX-pvLX)*0.012;pvRX+=(e.clientY-pvLY)*0.012;pvLX=e.clientX;pvLY=e.clientY;});
     c2.addEventListener('mouseup',()=>pvMX=false);c2.addEventListener('mouseleave',()=>pvMX=false);
-    var pvChains=[];
-    function pvBuildChains(mesh){
-      // Remove old preview chains
-      pvChains.forEach(function(c){ c.links.forEach(function(lk){ pvScene.remove(lk.mesh); }); });
-      pvChains=[];
-      if(!mesh||!mesh.userData.hellChainDefs) return;
-      var chainM=new THREE.MeshLambertMaterial({color:0x2a2a2a,side:THREE.DoubleSide});
-      var emberM=new THREE.MeshBasicMaterial({color:0xff4400,transparent:true,opacity:0.9,side:THREE.DoubleSide});
-      mesh.userData.hellChainDefs.forEach(function(def){
-        var N=def.n||7;
-        var links=[];
-        for(var i=0;i<N;i++){
-          var mat=(i%3===2)?emberM.clone():chainM.clone();
-          var lkMesh=new THREE.Mesh(new THREE.TorusGeometry(0.016*mesh.scale.x,0.006*mesh.scale.x,6,12),mat);
-          // Start at rest position in preview space (scaled)
-          var s=mesh.scale.x;
-          lkMesh.position.set(def.x*s,(def.y-i*CHAIN_LINK_LEN)*s,def.z*s);
-          pvScene.add(lkMesh);
-          links.push({mesh:lkMesh,pos:{x:def.x*s,y:(def.y-i*CHAIN_LINK_LEN)*s,z:def.z*s},vel:{x:0,y:0,z:0}});
-        }
-        pvChains.push({def:def,links:links,scale:mesh.scale.x});
-      });
-    }
-
     (function a(){requestAnimationFrame(a);
       if(pvMesh){
         pvMesh.rotation.y=pvRY+performance.now()*0.0006;
@@ -5508,15 +5369,6 @@ function renderShop(){
       <path d="M8 26 Q24 4 40 10 Q32 10 28 18 Q20 8 8 26Z" fill="#8B5a20"/>
       <path d="M10 24 Q25 6 38 12" stroke="#a07040" stroke-width="1.5" fill="none"/>
     </svg>`,
-    flamethrower:`<svg viewBox="0 0 64 32" fill="none" xmlns="http://www.w3.org/2000/svg" width="64" height="32">
-      <rect x="3" y="10" width="32" height="11" rx="2" fill="#882200"/>
-      <rect x="8" y="19" width="22" height="7" rx="2" fill="#331100"/>
-      <rect x="28" y="12" width="22" height="5" rx="1" fill="#882200"/>
-      <rect x="48" y="11" width="8" height="6" rx="1" fill="#aa4400"/>
-      <path d="M56 14 Q62 10 60 6 Q58 10 56 8 Q58 12 54 14Z" fill="#ff4400" opacity="0.9"/>
-      <path d="M57 15 Q63 13 61 9 Q59 13 57 11 Q59 14 55 15Z" fill="#ff8800" opacity="0.7"/>
-      <rect x="10" y="13" width="18" height="3" rx="0.5" fill="#aa3300"/>
-    </svg>`,
   };
 
   // Ammo icon
@@ -5550,10 +5402,10 @@ function renderShop(){
     const def=WDEFS[wid],ws=S.weapons[wid];
     if(!ws||!ws.owned||def.type==='melee'||def.type==='thrown')return;
     const c=document.createElement('div');c.className='shop-card';
-    const aLabel=def.type==='flame'?'Fuel':'Ammo';
+    const aLabel='Ammo';
     const aIcon=svgIcons[wid]?`<div style="display:flex;align-items:center;justify-content:center;height:36px;margin-bottom:4px;opacity:0.7;filter:drop-shadow(0 0 3px rgba(200,180,0,0.4))">${svgIcons[wid]}</div>`:
       `<div style="display:flex;align-items:center;justify-content:center;height:36px;margin-bottom:4px">${ammoSvg}</div>`;
-    c.innerHTML=`${aIcon}<h3>${def.name} ${aLabel}</h3><div class="desc">+${def.boxAmt} ${def.type==='flame'?'fuel':'rounds'}</div><div class="price">CREDITS: ${def.boxCost}</div><button class="btn-buy" ${S.credits>=def.boxCost?'':'disabled'} onclick="buyAmmo('${wid}')">BUY</button>`;
+    c.innerHTML=`${aIcon}<h3>${def.name} ${aLabel}</h3><div class="desc">+${def.boxAmt} ${'rounds'}</div><div class="price">CREDITS: ${def.boxCost}</div><button class="btn-buy" ${S.credits>=def.boxCost?'':'disabled'} onclick="buyAmmo('${wid}')">BUY</button>`;
     sg.appendChild(c);
   });
 
@@ -5868,6 +5720,8 @@ window.bpViewCrate=function(crateType){
 };
 
 function renderBP(){
+  // Ensure all auto-grant rewards up to current level are applied
+  for(let l=1;l<=S.bp.level;l++) bpAutoGrant(l);
   bpRefreshHUD();
   const bp=S.bp;
   // Purchase area
@@ -6331,6 +6185,20 @@ function loadGame(){
     S.heldSecondary=save.heldSecondary||'pistol';
     S.heldKnife=save.heldKnife||'knife';
     S.unlocked=save.unlocked||S.unlocked;
+    // Re-register any crate skins that are unlocked but not in WDEFS yet
+    Object.entries(S.unlocked).forEach(([wid,ids])=>{
+      ids.forEach(sid=>{
+        if(!WDEFS[wid])return;
+        if(WDEFS[wid].skins.find(s=>s.id===sid))return;
+        // Search crate pools
+        Object.values(BP_CRATE_POOLS).forEach(pool=>{
+          (pool.items||[]).forEach(item=>{
+            if(item.wid===wid&&item.sid===sid)
+              WDEFS[wid].skins.push({id:item.sid,name:item.name,kills:0,colors:item.colors,rarity:item.rarity,emoji:'★',bpExclusive:true});
+          });
+        });
+      });
+    });
     // Restore weapons
     Object.keys(save.weapons||{}).forEach(wid=>{
       if(!S.weapons[wid]) return;
@@ -6358,6 +6226,8 @@ function loadGame(){
     }
     // Update menu display
     document.getElementById('menuCredits').textContent=S.credits;
+    // Re-apply all auto-grant rewards (weapons) for levels already reached
+    for(let l=1;l<=S.bp.level;l++) bpAutoGrant(l);
     renderShop(); renderInventory(); bpRefreshHUD();
     const d=new Date(save.savedAt||0);
     const timeStr=d.toLocaleDateString()+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
@@ -6585,7 +6455,7 @@ mobBtn('btnShoot',
     if(S.screen!=='game') return;
     shoot();
     const heldDef=WDEFS[S.held];
-    if((heldDef.fireMs<300&&heldDef.type==='gun')||heldDef.type==='flame'){
+    if(heldDef.fireMs<300&&heldDef.type==='gun'){
       clearInterval(shootInterval);
       shootInterval=setInterval(()=>{ if(S.screen==='game') shoot(); else clearInterval(shootInterval); }, heldDef.fireMs);
     }
